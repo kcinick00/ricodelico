@@ -1,0 +1,19 @@
+IMAGENES REALISTAS PARA ARMA TU SANDWICH
+
+Copia todos los archivos PNG de esta carpeta dentro de:
+images/layers/
+
+en tu proyecto.
+
+Los nombres ya coinciden con ingredients.js:
+- pan-blanco-top.png / pan-blanco-bottom.png
+- pan-integral-top.png / pan-integral-bottom.png
+- telera-top.png / telera-bottom.png
+- baguette-top.png / baguette-bottom.png
+- mayonesa.png / mostaza.png / chipotle.png / bbq.png
+- jamon.png / pavo.png / salami.png / tocino.png
+- pollo.png / res.png / queso-panela.png / huevo.png
+- lechuga.png / jitomate.png / aguacate.png / cebolla.png
+
+Son PNG con transparencia para que el fondo desaparezca al apilarlos.
+Si ya tienes archivos con esos mismos nombres, reemplázalos por estos.

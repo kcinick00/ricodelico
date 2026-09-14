@@ -1,0 +1,26 @@
+{
+  "name": "Arma tu sándwich",
+  "short_name": "Sándwich",
+  "description": "Arma tu sándwich a la medida y mira el total al instante",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0F0F0F",
+  "theme_color": "#0F0F0F",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

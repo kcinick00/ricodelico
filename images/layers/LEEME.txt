@@ -1,0 +1,40 @@
+FOTOS QUE PUEDES SUBIR AQUÍ (fondo transparente, formato PNG)
+============================================================
+
+PAN (dos fotos por tipo: la de abajo recta, la de arriba en domo)
+  pan-blanco-bottom.png   (Pan blanco)
+  pan-blanco-top.png      (Pan blanco)
+  pan-integral-bottom.png   (Pan integral)
+  pan-integral-top.png      (Pan integral)
+  telera-bottom.png   (Telera)
+  telera-top.png      (Telera)
+  baguette-bottom.png   (Baguette)
+  baguette-top.png      (Baguette)
+
+SALSAS
+  mayonesa.png   (Mayonesa)
+  mostaza.png   (Mostaza)
+  chipotle.png   (Chipotle)
+  bbq.png   (BBQ)
+
+EMBUTIDOS
+  jamon.png   (Jamón)
+  pavo.png   (Pechuga de pavo)
+  salami.png   (Salami)
+  tocino.png   (Tocino)
+
+PROTEINAS
+  pollo.png   (Pollo asado)
+  res.png   (Res desmenuzada)
+  queso-panela.png   (Queso panela)
+  huevo.png   (Huevo)
+
+VERDURAS
+  lechuga.png   (Lechuga)
+  jitomate.png   (Jitomate)
+  aguacate.png   (Aguacate)
+  cebolla.png   (Cebolla morada)
+
+Tip: la foto debe verse como una rebanada o capa vista de perfil/frente,
+recortada sin fondo (transparente), para que se vea bien apilada.
+Mientras no subas una foto con ese nombre exacto, se sigue usando el color.
