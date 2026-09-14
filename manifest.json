@@ -1,7 +1,7 @@
 {
   "name": "Arma tu sándwich",
   "short_name": "Sándwich",
-  "description": "Arma tu sándwich a la medida y mira el total al instante",
+  "description": "Arma tu subs a la medida y mira el total al instante",
   "start_url": "index.html",
   "scope": "./",
   "display": "fullscreen",
