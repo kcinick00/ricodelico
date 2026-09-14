@@ -4,7 +4,7 @@
   "description": "Arma tu sándwich a la medida y mira el total al instante",
   "start_url": "index.html",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#0F0F0F",
   "theme_color": "#0F0F0F",
