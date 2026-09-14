@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con ticket legible
+// app.js - Versión con ticket compacto y legible
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -678,7 +678,7 @@ function fillModalSummary() {
 }
 
 // =========================================================
-// IMPRIMIR TICKET (letras más grandes y en negritas)
+// IMPRIMIR TICKET (compacto y legible)
 // =========================================================
 function printTicket() {
   const clientName = document.getElementById("client-name").value.trim();
@@ -697,7 +697,7 @@ function printTicket() {
 
   const dateObj = new Date(date + "T" + time);
   const dateFormatted = dateObj.toLocaleDateString("es-MX", {
-    day: "2-digit", month: "long", year: "numeric"
+    day: "2-digit", month: "2-digit", year: "numeric"
   });
 
   let ticketItems = "";
@@ -736,158 +736,134 @@ function printTicket() {
       <title>Ticket - ${clientName}</title>
       <style>
         @page { size: 80mm auto; margin: 0; }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
           font-family: 'Arial', 'Helvetica', sans-serif;
-          font-size: 15px;
+          font-size: 13px;
           font-weight: bold;
-          margin: 0;
-          padding: 12px 8px;
           color: #000;
           background: #fff;
           width: 80mm;
-          line-height: 1.4;
+          line-height: 1.2;
+          padding: 4px 6px;
         }
-        .ticket { max-width: 80mm; margin: 0 auto; }
         .header {
           text-align: center;
-          border-bottom: 3px solid #000;
-          padding-bottom: 12px;
-          margin-bottom: 12px;
+          border-bottom: 2px solid #000;
+          padding-bottom: 4px;
+          margin-bottom: 4px;
         }
         .header h1 {
-          margin: 0;
-          font-size: 26px;
+          font-size: 18px;
           font-weight: 900;
-          letter-spacing: 3px;
+          letter-spacing: 2px;
           text-transform: uppercase;
         }
         .header p {
-          margin: 6px 0 0;
-          font-size: 14px;
+          font-size: 11px;
           font-weight: bold;
         }
         .info {
-          margin-bottom: 14px;
-          font-size: 14px;
+          font-size: 12px;
           font-weight: bold;
+          margin-bottom: 4px;
         }
-        .info div {
+        .info-row {
           display: flex;
           justify-content: space-between;
-          margin: 5px 0;
-          padding: 2px 0;
+          padding: 1px 0;
         }
-        .info .label { font-weight: 900; }
-        .info .value { text-align: right; font-weight: bold; }
+        .info-row .label { font-weight: 900; }
+        .info-row .value { text-align: right; font-weight: bold; }
         .separator {
-          border-top: 2px dashed #000;
-          margin: 12px 0;
+          border-top: 1px dashed #000;
+          margin: 4px 0;
         }
         table {
           width: 100%;
           border-collapse: collapse;
-          margin: 8px 0;
+          margin: 2px 0;
         }
         table th {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 900;
           text-align: left;
-          border-bottom: 2px solid #000;
-          padding: 6px 0;
+          border-bottom: 1px solid #000;
+          padding: 2px 0;
           text-transform: uppercase;
         }
-        table th.qty,
-        table th.price { text-align: right; }
+        table th.qty { text-align: center; width: 28px; }
+        table th.price { text-align: right; width: 60px; }
         table td {
-          padding: 6px 0;
-          font-size: 14px;
+          padding: 1px 0;
+          font-size: 12px;
           font-weight: bold;
           vertical-align: top;
         }
-        table td.qty {
-          text-align: center;
-          width: 40px;
-          font-weight: 900;
-        }
-        table td.price {
-          text-align: right;
-          width: 80px;
-          font-weight: 900;
-        }
+        table td.qty { text-align: center; font-weight: 900; }
+        table td.price { text-align: right; font-weight: 900; }
         .total {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          font-size: 22px;
-          font-weight: 900;
-          padding: 12px 0;
-          margin-top: 8px;
-          border-top: 3px solid #000;
-          border-bottom: 3px solid #000;
-        }
-        .total span:first-child {
-          text-transform: uppercase;
-          letter-spacing: 2px;
-        }
-        .footer {
-          text-align: center;
-          font-size: 14px;
-          font-weight: bold;
-          margin-top: 16px;
-          padding-top: 12px;
-          border-top: 2px dashed #000;
-        }
-        .footer p { margin: 5px 0; }
-        .gracias {
           font-size: 18px;
           font-weight: 900;
-          margin-top: 10px;
+          padding: 4px 0;
+          margin-top: 4px;
+          border-top: 2px solid #000;
+          border-bottom: 2px solid #000;
+        }
+        .total span:first-child { text-transform: uppercase; letter-spacing: 1px; }
+        .footer {
+          text-align: center;
+          font-size: 11px;
+          font-weight: bold;
+          margin-top: 6px;
+          padding-top: 4px;
+          border-top: 1px dashed #000;
+        }
+        .footer p { margin: 1px 0; }
+        .gracias {
+          font-size: 14px;
+          font-weight: 900;
+          margin-top: 2px;
           letter-spacing: 1px;
         }
       </style>
     </head>
     <body>
-      <div class="ticket">
-        <div class="header">
-          <h1>ARMA TU SÁNDWICH</h1>
-          <p>Ticket de pedido</p>
-        </div>
-        <div class="info">
-          <div><span class="label">Cliente:</span><span class="value">${clientName}</span></div>
-          <div><span class="label">Fecha:</span><span class="value">${dateFormatted}</span></div>
-          <div><span class="label">Hora:</span><span class="value">${time}</span></div>
-          <div><span class="label">Pago:</span><span class="value">${paymentMethod}</span></div>
-        </div>
-        <div class="separator"></div>
-        <table>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th class="qty">Cant</th>
-              <th class="price">Importe</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${ticketItems}
-          </tbody>
-        </table>
-        <div class="total">
-          <span>TOTAL</span>
-          <span>${fmt(total)}</span>
-        </div>
-        <div class="footer">
-          <p>¡Gracias por tu pedido!</p>
-          <p class="gracias">*** VUELVE PRONTO ***</p>
-          <p>Conserve este ticket</p>
-        </div>
+      <div class="header">
+        <h1>ARMA TU SÁNDWICH</h1>
+        <p>Ticket de pedido</p>
       </div>
-      <script>
-        window.onload = function() {
-          window.print();
-          setTimeout(() => window.close(), 500);
-        };
-      <\/script>
+      <div class="info">
+        <div class="info-row"><span class="label">Cliente:</span><span class="value">${clientName}</span></div>
+        <div class="info-row"><span class="label">Fecha:</span><span class="value">${dateFormatted}</span></div>
+        <div class="info-row"><span class="label">Hora:</span><span class="value">${time}</span></div>
+        <div class="info-row"><span class="label">Pago:</span><span class="value">${paymentMethod}</span></div>
+      </div>
+      <div class="separator"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="qty">Cant</th>
+            <th class="price">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ticketItems}
+        </tbody>
+      </table>
+      <div class="total">
+        <span>TOTAL</span>
+        <span>${fmt(total)}</span>
+      </div>
+      <div class="footer">
+        <p>¡Gracias por tu pedido!</p>
+        <p class="gracias">*** VUELVE PRONTO ***</p>
+        <p>Conserve este ticket</p>
+      </div>
     </body>
     </html>
   `;
