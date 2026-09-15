@@ -24,6 +24,8 @@
     --accent-dark: #8FD62E;
     --accent-glow: rgba(180, 255, 57, 0.4);
     --orange: #FF6B35;
+    --red: #FF3B30;
+    --blue: #60A5FA;
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
     --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
   }
@@ -41,13 +43,11 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
-    position: relative;
     -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
   }
 
-  /* ===== FONDO ===== */
   body.con-fondo::before {
     content: "";
     position: fixed;
@@ -67,7 +67,6 @@
     pointer-events: none;
   }
 
-  /* ===== HEADER ===== */
   header {
     padding: 18px 24px 14px;
     background: rgba(15, 15, 15, 0.85);
@@ -76,6 +75,10 @@
     overflow: hidden;
     flex-shrink: 0;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
   }
   header::before {
     content: "";
@@ -112,7 +115,415 @@
     font-weight: 700;
   }
 
-  /* ===== LAYOUT ===== */
+  .btn-volver {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .btn-volver:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .pantalla {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .pantalla.activa {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== PANTALLA 1: CANTIDAD ===== */
+  #pantalla-cantidad {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .cantidad-titulo {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .cantidad-titulo h1 {
+    margin: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--text);
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .cantidad-titulo h1 span { color: var(--accent); display: block; }
+  .cantidad-titulo p {
+    margin: 12px 0 0;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .cantidad-titulo p em {
+    font-family: 'Caveat', cursive;
+    font-style: normal;
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .cantidad-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 30px 50px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-md);
+  }
+  .cantidad-control .btn-cant {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #0F0F0F;
+    border: none;
+    font-size: 44px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+  }
+  .cantidad-control .btn-cant:hover { background: var(--accent-dark); }
+  .cantidad-control .btn-cant:active { transform: scale(0.95); }
+  .cantidad-control .numero-grande {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 96px;
+    font-weight: 800;
+    color: var(--accent);
+    min-width: 140px;
+    text-align: center;
+    line-height: 1;
+  }
+  .btn-continuar {
+    background: var(--accent);
+    color: #0F0F0F;
+    border: none;
+    padding: 20px 60px;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    box-shadow: 0 8px 24px rgba(180, 255, 57, 0.3);
+    transition: all 0.2s;
+  }
+  .btn-continuar:hover { background: var(--accent-dark); transform: translateY(-2px); }
+
+  /* ===== PANTALLA 2: MENÚ ===== */
+  #pantalla-menu {
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .menu-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .menu-header h2 {
+    margin: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .menu-header h2 span { color: var(--accent); }
+  .menu-header p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .progreso-bar {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progreso-bar .label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .progreso-bar .barra {
+    flex: 1;
+    height: 12px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progreso-bar .barra .relleno {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .progreso-bar .contador {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .panes-lista {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pan-guardado {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 4px 16px rgba(180, 255, 57, 0.15);
+  }
+  .pan-guardado .info { flex: 1; min-width: 0; }
+  .pan-guardado .numero {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .pan-guardado .detalle {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pan-guardado .precio {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .pan-guardado .acciones {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .pan-guardado .btn-accion {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    padding: 0;
+  }
+  .pan-guardado .btn-accion:hover { border-color: var(--accent); color: var(--accent); }
+  .pan-guardado .btn-accion.eliminar:hover { border-color: var(--red); color: var(--red); }
+
+  .menu-opciones {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .menu-opciones { grid-template-columns: 1fr; } }
+  .opcion-card {
+    background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .opcion-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--orange) 100%);
+  }
+  .opcion-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .opcion-card:active { transform: translateY(-2px) scale(0.98); }
+  .opcion-emoji { font-size: 56px; line-height: 1; }
+  .opcion-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .opcion-titulo span { color: var(--accent); display: block; }
+  .opcion-desc { font-size: 13px; color: var(--text-muted); }
+
+  .btn-repetir {
+    max-width: 900px;
+    margin: 16px auto 0;
+    width: 100%;
+    background: transparent;
+    border: 2px dashed var(--border);
+    color: var(--text-muted);
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-repetir:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(180, 255, 57, 0.05);
+  }
+  .btn-repetir:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ===== PANTALLA 3: COMBOS ===== */
+  #pantalla-combos {
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .combos-titulo {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .combos-titulo h2 {
+    margin: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .combos-titulo h2 span { color: var(--accent); }
+  .combos-titulo p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .combos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .combo-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .combo-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .combo-emoji { font-size: 56px; line-height: 1; text-align: center; }
+  .combo-nombre {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: center;
+  }
+  .combo-ingredientes {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    text-align: center;
+    flex: 1;
+    min-height: 50px;
+  }
+  .combo-precio {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    text-align: center;
+    padding: 8px 0;
+    border-top: 2px solid var(--border);
+    margin-top: 4px;
+  }
+  .combo-agregar {
+    background: var(--accent);
+    color: #0F0F0F;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .combo-agregar:hover { background: var(--accent-dark); }
+
+  /* ===== PANTALLA 4: ARMA SÁNDWICH ===== */
   .layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -124,17 +535,12 @@
     flex: 1;
     min-height: 0;
   }
-
   @media (min-width: 1100px) {
-    .layout {
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 14px;
-    }
+    .layout { grid-template-columns: 2fr 1fr 1fr; gap: 14px; }
     .col-ingredientes { order: 1; }
     .col-resumen { order: 2; }
     .col-sandwich { order: 3; }
   }
-
   @media (max-width: 1099px) {
     html, body { overflow: auto; height: auto; min-height: 100dvh; }
     body { min-height: 100dvh; display: block; }
@@ -143,45 +549,20 @@
     .col-ingredientes { order: 2; margin-bottom: 16px; }
     .col-resumen { order: 3; }
   }
-
-  /* ===== COLUMNA IZQUIERDA: INGREDIENTES ===== */
   .col-ingredientes {
     overflow-y: auto;
     padding-right: 8px;
     min-height: 0;
     height: 100%;
-    -webkit-overflow-scrolling: touch;
   }
   .col-ingredientes::-webkit-scrollbar { width: 6px; }
-  .col-ingredientes::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 3px;
-  }
-
+  .col-ingredientes::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   @media (max-width: 1099px) {
-    .col-ingredientes {
-      overflow-y: visible;
-      height: auto;
-      padding-right: 0;
-    }
+    .col-ingredientes { overflow-y: visible; height: auto; padding-right: 0; }
   }
-
-  .col-resumen,
-  .col-sandwich {
-    min-height: 0;
-    height: 100%;
-  }
-
-  @media (max-width: 1099px) {
-    .col-resumen, .col-sandwich { height: auto; }
-  }
-
-  /* ===== VISTA PREVIA ===== */
-  .col-sandwich {
-    max-width: 320px;
-    width: 100%;
-    margin: 0 auto;
-  }
+  .col-resumen, .col-sandwich { min-height: 0; height: 100%; }
+  @media (max-width: 1099px) { .col-resumen, .col-sandwich { height: auto; } }
+  .col-sandwich { max-width: 320px; width: 100%; margin: 0 auto; }
 
   .preview-card {
     background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
@@ -196,7 +577,6 @@
     top: 14px;
     overflow: hidden;
     max-height: calc(100vh - 120px);
-    max-height: calc(100dvh - 120px);
   }
   .preview-card::before {
     content: "";
@@ -217,25 +597,21 @@
     gap: 6px;
     width: 100%;
   }
-  .preview-title::before,
-  .preview-title::after {
+  .preview-title::before, .preview-title::after {
     content: "";
     height: 1px;
     background: var(--accent);
     flex: 1;
     opacity: 0.3;
   }
-  
   #sandwich-canvas {
     width: 100%;
     max-width: 220px;
     height: auto;
     display: block;
     margin: 0 auto;
-    image-rendering: -webkit-optimize-contrast;
   }
 
-  /* ===== RESUMEN ===== */
   .summary-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -251,7 +627,6 @@
     margin: 0 0 12px;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 16px;
-    font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -262,7 +637,6 @@
     padding: 0;
     flex: 1;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
   #summary-list li {
     display: flex;
@@ -274,11 +648,7 @@
     align-items: center;
   }
   #summary-list li:last-child { border-bottom: none; }
-  #summary-list li .item-name {
-    color: var(--text);
-    font-weight: 500;
-    font-size: 14px;
-  }
+  #summary-list li .item-name { color: var(--text); font-weight: 500; font-size: 14px; }
   #summary-list li .item-price {
     color: var(--accent);
     font-weight: 700;
@@ -313,8 +683,6 @@
     font-size: 22px;
     font-weight: 700;
   }
-
-  /* ===== BOTÓN LIMPIAR ===== */
   .clear-btn {
     width: 100%;
     margin-top: 10px;
@@ -326,21 +694,16 @@
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
-    font-family: inherit;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     flex-shrink: 0;
   }
   .clear-btn:active { transform: scale(0.98); }
 
-  /* ===== SECCIONES DE INGREDIENTES ===== */
-  .col-ingredientes section {
-    margin-bottom: 24px;
-  }
+  .col-ingredientes section { margin-bottom: 24px; }
   .col-ingredientes h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 24px;
-    font-weight: 400;
     margin: 0 0 12px;
     color: var(--text);
     letter-spacing: 2px;
@@ -362,14 +725,11 @@
     height: 1px;
     background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
   }
-
   .category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 10px;
   }
-
-  /* ===== TARJETAS DE OPCIÓN ===== */
   .option {
     display: flex;
     flex-direction: column;
@@ -406,11 +766,7 @@
     font-size: 12px;
     font-weight: 900;
   }
-  .option input {
-    position: absolute;
-    opacity: 0;
-    width: 1px; height: 1px;
-  }
+  .option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .option-img {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -418,20 +774,9 @@
     object-fit: cover;
     background: var(--bg-soft);
   }
-  .option-name {
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.2;
-    color: var(--text);
-  }
-  .price {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .option-name { font-size: 12px; font-weight: 600; line-height: 1.2; color: var(--text); }
+  .price { font-size: 12px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
-  /* ===== CONTROLES DE CANTIDAD ===== */
   .qty-controls {
     display: none;
     align-items: center;
@@ -458,11 +803,7 @@
     justify-content: center;
     padding: 0;
   }
-  .qty-btn.qty-minus {
-    background: transparent;
-    color: var(--accent);
-    border: 1.5px solid var(--accent);
-  }
+  .qty-btn.qty-minus { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
   .qty-display {
     min-width: 18px;
     text-align: center;
@@ -471,6 +812,175 @@
     color: var(--accent);
     font-family: 'JetBrains Mono', monospace;
   }
+
+  .barra-acciones-sandwich {
+    padding: 14px 24px;
+    background: rgba(15, 15, 15, 0.98);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+  }
+  .barra-acciones-sandwich::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--orange) 100%);
+  }
+  .btn-guardar {
+    background: var(--accent);
+    color: #0F0F0F;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(180, 255, 57, 0.3);
+  }
+  .btn-guardar:hover { background: var(--accent-dark); }
+  .btn-cancelar-pan {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .btn-cancelar-pan:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* ===== PANTALLA 5: RESUMEN GENERAL ===== */
+  #pantalla-resumen {
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .resumen-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .resumen-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .resumen-header h2 {
+    margin: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .resumen-header p {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+  .resumen-items {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .resumen-item {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .resumen-item .info { flex: 1; min-width: 0; }
+  .resumen-item .titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .resumen-item .detalle {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .resumen-item .precio {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .resumen-totales {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .resumen-totales .fila {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  .resumen-totales .fila:last-child { border-bottom: none; }
+  .resumen-totales .fila.total {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--accent);
+    border-top: 2px solid var(--accent);
+    margin-top: 8px;
+    padding-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .resumen-botones {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .resumen-botones button {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+  }
+  .btn-editar-resumen {
+    background: transparent;
+    border: 2px solid var(--border) !important;
+    color: var(--text-muted);
+  }
+  .btn-editar-resumen:hover {
+    border-color: var(--accent) !important;
+    color: var(--accent);
+  }
+  .btn-confirmar-resumen {
+    background: var(--accent);
+    color: #0F0F0F;
+    box-shadow: 0 4px 16px rgba(180, 255, 57, 0.3);
+  }
+  .btn-confirmar-resumen:hover { background: var(--accent-dark); }
 
   /* ===== BARRA TOTAL ===== */
   .total-bar {
@@ -483,6 +993,7 @@
     z-index: 10;
     position: relative;
     flex-shrink: 0;
+    gap: 12px;
   }
   .total-bar::before {
     content: "";
@@ -519,8 +1030,25 @@
     letter-spacing: 2px;
     text-transform: uppercase;
   }
+  .total-bar button:disabled {
+    background: var(--border);
+    color: #555;
+    cursor: not-allowed;
+  }
+  .btn-reimprimir {
+    background: transparent !important;
+    color: var(--text-muted) !important;
+    border: 1.5px solid var(--border) !important;
+    padding: 12px 18px !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-reimprimir:hover {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+  }
 
-  /* ===== TOAST ===== */
   .toast-container {
     position: fixed;
     top: 20px;
@@ -552,7 +1080,7 @@
   .toast.toast-hiding { transform: translateX(120%); opacity: 0; }
   .toast.toast-success { border-left-color: var(--accent); }
   .toast.toast-remove { border-left-color: var(--orange); }
-  .toast.toast-info { border-left-color: #60A5FA; }
+  .toast.toast-info { border-left-color: var(--blue); }
   .toast-icon {
     width: 24px;
     height: 24px;
@@ -565,9 +1093,8 @@
   }
   .toast-success .toast-icon { background: var(--accent); }
   .toast-remove .toast-icon { background: var(--orange); color: white; }
-  .toast-info .toast-icon { background: #60A5FA; color: white; }
+  .toast-info .toast-icon { background: var(--blue); color: white; }
 
-  /* ===== MODAL ===== */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -603,8 +1130,6 @@
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 22px;
-    font-weight: 400;
-    color: var(--text);
     letter-spacing: 2px;
     text-transform: uppercase;
   }
@@ -654,7 +1179,6 @@
     margin: 0 0 10px;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 15px;
-    font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
@@ -663,7 +1187,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    max-height: 180px;
+    max-height: 200px;
     overflow-y: auto;
   }
   #modal-summary-list li {
@@ -673,7 +1197,9 @@
     padding: 6px 0;
     font-size: 14px;
     color: var(--text);
+    border-bottom: 1px solid var(--border);
   }
+  #modal-summary-list li:last-child { border-bottom: none; }
   #modal-summary-list li .item-price {
     font-weight: 700;
     color: var(--accent);
@@ -728,150 +1254,174 @@
     background: var(--accent);
     color: #0F0F0F;
   }
-
-  /* ===== BOTÓN DE MICRÓFONO ===== */
-  .voice-btn {
-    position: fixed;
-    bottom: 100px;
-    right: 24px;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #0F0F0F;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(180, 255, 57, 0.5);
-    z-index: 9998;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  .voice-btn:active {
-    transform: scale(0.95);
-  }
-  .voice-btn.listening {
-    background: #FF3B30;
-    color: #FFFFFF;
-    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
-    animation: pulse 1.5s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
-    70% { box-shadow: 0 0 0 20px rgba(255, 59, 48, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
-  }
-
-  /* ===== VISTA PREVIA DE VOZ ===== */
-  .voice-preview {
-    position: fixed;
-    bottom: 180px;
-    right: 24px;
-    max-width: 320px;
-    background: rgba(26, 26, 26, 0.98);
-    color: var(--accent);
-    padding: 12px 16px;
-    border-radius: 12px;
-    border-left: 4px solid var(--accent);
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    z-index: 9999;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-  }
-  .voice-preview.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  @media (max-width: 600px) {
-    .voice-btn {
-      bottom: 80px;
-      right: 16px;
-      width: 56px;
-      height: 56px;
-      font-size: 24px;
-    }
-    .voice-preview {
-      bottom: 150px;
-      right: 16px;
-      max-width: calc(100vw - 32px);
-    }
-  }
 </style>
 </head>
 <body class="con-fondo">
 
-<header>
-  <h1>ARMA TU <span>SÁNDWICH</span></h1>
-  <p>Elige tus ingredientes y mira el total <em>al instante</em></p>
+<header id="header-app">
+  <div>
+    <h1 id="header-titulo">ARMA TU <span>SÁNDWICH</span></h1>
+    <p id="header-subtitulo">Elige tus ingredientes y mira el total <em>al instante</em></p>
+  </div>
+  <button id="btn-volver" class="btn-volver" style="display: none;" onclick="volverAtras()">← Volver</button>
 </header>
 
-<div class="layout">
-
-  <div class="col-ingredientes">
-    <section>
-      <h2>Pan</h2>
-      <div id="pan-group" class="category-grid"></div>
-    </section>
-
-    <section>
-      <h2>Salsas</h2>
-      <div id="salsas-group" class="category-grid"></div>
-    </section>
-
-    <section>
-      <h2>Embutidos</h2>
-      <div id="embutidos-group" class="category-grid"></div>
-    </section>
-
-    <section>
-      <h2>Proteínas</h2>
-      <div id="proteinas-group" class="category-grid"></div>
-    </section>
-
-    <section>
-      <h2>Verduras</h2>
-      <div id="verduras-group" class="category-grid"></div>
-    </section>
+<!-- ===== PANTALLA 1: CANTIDAD ===== -->
+<div id="pantalla-cantidad" class="pantalla activa">
+  <div class="cantidad-titulo">
+    <h1>¿CUÁNTOS PANES <span>VA A LLEVAR?</span></h1>
+    <p>Elige la cantidad de sándwiches <em>para empezar</em></p>
   </div>
-
-  <div class="col-resumen">
-    <div class="summary-card">
-      <h2>Resumen del pedido</h2>
-      <ul id="summary-list"></ul>
-      <div class="subtotal-row">
-        <span>Subtotal</span>
-        <span id="subtotal-out">$0.00</span>
-      </div>
-      <button id="clear-btn" class="clear-btn">🗑 Limpiar todo</button>
-    </div>
+  
+  <div class="cantidad-control">
+    <button type="button" class="btn-cant" onclick="cambiarCantidadInicial(-1)">−</button>
+    <div class="numero-grande" id="cantidad-inicial-display">1</div>
+    <button type="button" class="btn-cant" onclick="cambiarCantidadInicial(1)">+</button>
   </div>
-
-  <div class="col-sandwich">
-    <div class="preview-card">
-      <span class="preview-title">Así va tu sándwich</span>
-      <canvas id="sandwich-canvas" width="220" height="440"></canvas>
-    </div>
-  </div>
-
+  
+  <button type="button" class="btn-continuar" onclick="confirmarCantidadInicial()">
+    Continuar →
+  </button>
 </div>
 
+<!-- ===== PANTALLA 2: MENÚ ===== -->
+<div id="pantalla-menu" class="pantalla">
+  <div class="menu-header">
+    <h2>TU PEDIDO <span id="menu-cantidad">(0 / 1)</span></h2>
+    <p>Arma cada pan por separado o elige un combo</p>
+  </div>
+  
+  <div class="progreso-bar">
+    <span class="label">Progreso</span>
+    <div class="barra"><div class="relleno" id="progreso-relleno" style="width: 0%;"></div></div>
+    <span class="contador" id="progreso-contador">0 / 1</span>
+  </div>
+  
+  <div class="panes-lista" id="panes-lista"></div>
+  
+  <div class="menu-opciones">
+    <div class="opcion-card" onclick="abrirSandwich()">
+      <div class="opcion-emoji">🥪</div>
+      <div class="opcion-titulo">ARMA TU <span>SÁNDWICH</span></div>
+      <div class="opcion-desc">Elige cada ingrediente a tu gusto</div>
+    </div>
+    
+    <div class="opcion-card" onclick="abrirCombos()">
+      <div class="opcion-emoji">🎁</div>
+      <div class="opcion-titulo">COMBOS <span>PREARMADOS</span></div>
+      <div class="opcion-desc">Los favoritos de la casa, listos</div>
+    </div>
+  </div>
+  
+  <button id="btn-repetir" class="btn-repetir" onclick="repetirUltimoPan()" disabled>
+    🔄 Repetir último pan armado
+  </button>
+</div>
+
+<!-- ===== PANTALLA 3: COMBOS ===== -->
+<div id="pantalla-combos" class="pantalla">
+  <div class="combos-titulo">
+    <h2>COMBOS <span>PREARMADOS</span></h2>
+    <p>Selecciona el combo para completar un pan</p>
+  </div>
+  <div id="combos-grid" class="combos-grid"></div>
+</div>
+
+<!-- ===== PANTALLA 4: ARMA TU SÁNDWICH ===== -->
+<div id="pantalla-sandwich" class="pantalla">
+  <div class="layout">
+    <div class="col-ingredientes">
+      <section>
+        <h2>Pan</h2>
+        <div id="pan-group" class="category-grid"></div>
+      </section>
+      <section>
+        <h2>Salsas</h2>
+        <div id="salsas-group" class="category-grid"></div>
+      </section>
+      <section>
+        <h2>Embutidos</h2>
+        <div id="embutidos-group" class="category-grid"></div>
+      </section>
+      <section>
+        <h2>Proteínas</h2>
+        <div id="proteinas-group" class="category-grid"></div>
+      </section>
+      <section>
+        <h2>Verduras</h2>
+        <div id="verduras-group" class="category-grid"></div>
+      </section>
+    </div>
+
+    <div class="col-resumen">
+      <div class="summary-card">
+        <h2>Este pan</h2>
+        <ul id="summary-list"></ul>
+        <div class="subtotal-row">
+          <span>Subtotal</span>
+          <span id="subtotal-out">$0.00</span>
+        </div>
+        <button id="clear-btn" class="clear-btn">🗑 Limpiar este pan</button>
+      </div>
+    </div>
+
+    <div class="col-sandwich">
+      <div class="preview-card">
+        <span class="preview-title">Así va tu sándwich</span>
+        <canvas id="sandwich-canvas" width="220" height="440"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <div class="barra-acciones-sandwich">
+    <button type="button" class="btn-cancelar-pan" onclick="cancelarPan()">Cancelar</button>
+    <button type="button" class="btn-guardar" onclick="guardarPan()">✓ Guardar este pan</button>
+  </div>
+</div>
+
+<!-- ===== PANTALLA 5: RESUMEN GENERAL ===== -->
+<div id="pantalla-resumen" class="pantalla">
+  <div class="resumen-container">
+    <div class="resumen-header">
+      <h2>RESUMEN DEL PEDIDO</h2>
+      <p id="resumen-subtitulo">Revisa antes de imprimir</p>
+    </div>
+    
+    <div class="resumen-items" id="resumen-items"></div>
+    
+    <div class="resumen-totales">
+      <div class="fila">
+        <span>Panes armados</span>
+        <span id="resumen-cantidad">0</span>
+      </div>
+      <div class="fila">
+        <span>Combos</span>
+        <span id="resumen-combos-cantidad">0</span>
+      </div>
+      <div class="fila total">
+        <span>TOTAL</span>
+        <span id="resumen-total">$0.00</span>
+      </div>
+    </div>
+    
+    <div class="resumen-botones">
+      <button class="btn-editar-resumen" onclick="volverAlMenu()">← Editar pedido</button>
+      <button class="btn-confirmar-resumen" onclick="openOrderModal()">Confirmar e imprimir →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BARRA TOTAL ===== -->
 <div class="total-bar">
   <div>
     <div class="label">Total</div>
     <div class="amount" id="total-out">$0.00</div>
   </div>
-  <button onclick="openOrderModal()">Ordenar ahora</button>
+  <button id="btn-reimprimir" class="btn-reimprimir" onclick="reimprimirUltimoPedido()" style="display: none;">🖨 Reimprimir</button>
+  <button id="btn-ordenar" onclick="irAResumen()">Revisar pedido</button>
 </div>
 
-<!-- ===== MODAL DE ORDENAR ===== -->
+<!-- ===== MODAL ===== -->
 <div id="order-modal" class="modal-overlay">
   <div class="modal-content">
     <div class="modal-header">
@@ -925,12 +1475,8 @@
   </div>
 </div>
 
-<!-- ===== BOTÓN DE MICRÓFONO ===== -->
-<button id="voice-btn" class="voice-btn" title="Pedir por voz">🎤</button>
-<div id="voice-preview" class="voice-preview"></div>
-
 <script src="ingredients.js"></script>
+<script src="combos.js"></script>
 <script src="app.js"></script>
-<script src="voice.js"></script>
 </body>
 </html>
