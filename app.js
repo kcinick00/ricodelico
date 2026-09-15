@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con ticket compacto y legible
+// app.js - Versión con ticket compacto e impresión Android
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -678,7 +678,7 @@ function fillModalSummary() {
 }
 
 // =========================================================
-// IMPRIMIR TICKET (compacto y legible)
+// IMPRIMIR TICKET (con iframe oculto - método confiable en Android)
 // =========================================================
 function printTicket() {
   const clientName = document.getElementById("client-name").value.trim();
@@ -728,14 +728,13 @@ function printTicket() {
     });
   });
 
+  // Crear el HTML del ticket
   const ticketHTML = `
     <!DOCTYPE html>
     <html lang="es">
     <head>
       <meta charset="UTF-8">
-      <title>Ticket - ${clientName}</title>
       <style>
-        @page { size: 80mm auto; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
           font-family: 'Arial', 'Helvetica', sans-serif;
@@ -743,9 +742,9 @@ function printTicket() {
           font-weight: bold;
           color: #000;
           background: #fff;
-          width: 80mm;
-          line-height: 1.2;
+          width: 100%;
           padding: 4px 6px;
+          line-height: 1.2;
         }
         .header {
           text-align: center;
@@ -868,12 +867,38 @@ function printTicket() {
     </html>
   `;
 
-  const printWindow = window.open("", "_blank", "width=400,height=600");
-  printWindow.document.write(ticketHTML);
-  printWindow.document.close();
+  // Crear un iframe oculto
+  const oldIframe = document.getElementById("print-iframe");
+  if (oldIframe) oldIframe.remove();
 
-  closeOrderModal();
-  showToast("Ticket generado correctamente", "success");
+  const iframe = document.createElement("iframe");
+  iframe.id = "print-iframe";
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  iframe.style.visibility = "hidden";
+  document.body.appendChild(iframe);
+
+  const iframeDoc = iframe.contentWindow.document;
+  iframeDoc.open();
+  iframeDoc.write(ticketHTML);
+  iframeDoc.close();
+
+  // Esperar a que cargue y luego imprimir
+  setTimeout(() => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+    closeOrderModal();
+    showToast("Ticket generado correctamente", "success");
+    
+    // Eliminar el iframe después de un tiempo
+    setTimeout(() => {
+      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    }, 1000);
+  }, 500);
 }
 
 // =========================================================
