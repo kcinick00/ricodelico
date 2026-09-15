@@ -1,8 +1,8 @@
-const CACHE_NAME = "sandwich-app-v9";
+const CACHE_NAME = "sandwich-app-v10";
 const FILES_TO_CACHE = [
   "index.html",
   "app.js",
-  "voice.js",
+  "combos.js",
   "ingredients.js",
   "manifest.json",
   "icon-192.png",
