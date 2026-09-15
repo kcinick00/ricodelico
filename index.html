@@ -31,12 +31,14 @@
   }
   * { box-sizing: border-box; }
 
+  /* 👇 CAMBIO CLAVE: Permitimos scroll vertical general */
   html, body {
     margin: 0;
     padding: 0;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto; /* ✅ Ahora sí permite scroll vertical */
   }
   
   body {
@@ -46,6 +48,8 @@
     -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   body.con-fondo::before {
@@ -137,11 +141,13 @@
     color: var(--accent);
   }
 
+  /* 👇 CAMBIO: Las pantallas ahora pueden scrollear */
   .pantalla {
     display: none;
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .pantalla.activa {
     display: flex;
@@ -153,6 +159,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+    overflow-y: auto;
   }
   .cantidad-titulo {
     text-align: center;
@@ -440,7 +447,8 @@
   /* ===== PANTALLA 3: COMBOS ===== */
   #pantalla-combos {
     padding: 24px;
-    overflow-y: auto;
+    overflow-y: auto; /* ✅ Ahora sí scrollea */
+    -webkit-overflow-scrolling: touch;
   }
   .combos-titulo {
     text-align: center;
@@ -466,6 +474,7 @@
     gap: 20px;
     max-width: 1400px;
     margin: 0 auto;
+    padding-bottom: 40px; /* ✅ Espacio extra abajo para que el último combo no quede pegado */
   }
   .combo-card {
     background: var(--card);
@@ -524,6 +533,9 @@
   .combo-agregar:hover { background: var(--accent-dark); }
 
   /* ===== PANTALLA 4: ARMA SÁNDWICH ===== */
+  #pantalla-sandwich {
+    overflow-y: auto;
+  }
   .layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -542,8 +554,6 @@
     .col-sandwich { order: 3; }
   }
   @media (max-width: 1099px) {
-    html, body { overflow: auto; height: auto; min-height: 100dvh; }
-    body { min-height: 100dvh; display: block; }
     .layout { display: block; padding: 16px; }
     .col-sandwich { order: 1; margin-bottom: 16px; }
     .col-ingredientes { order: 2; margin-bottom: 16px; }
@@ -824,6 +834,8 @@
     flex-shrink: 0;
     position: relative;
     z-index: 5;
+    position: sticky;
+    bottom: 0;
   }
   .barra-acciones-sandwich::before {
     content: "";
@@ -991,9 +1003,10 @@
     align-items: center;
     justify-content: space-between;
     z-index: 10;
-    position: relative;
-    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
     gap: 12px;
+    flex-shrink: 0;
   }
   .total-bar::before {
     content: "";
@@ -1266,7 +1279,6 @@
   <button id="btn-volver" class="btn-volver" style="display: none;" onclick="volverAtras()">← Volver</button>
 </header>
 
-<!-- ===== PANTALLA 1: CANTIDAD ===== -->
 <div id="pantalla-cantidad" class="pantalla activa">
   <div class="cantidad-titulo">
     <h1>¿CUÁNTOS PANES <span>VA A LLEVAR?</span></h1>
@@ -1284,7 +1296,6 @@
   </button>
 </div>
 
-<!-- ===== PANTALLA 2: MENÚ ===== -->
 <div id="pantalla-menu" class="pantalla">
   <div class="menu-header">
     <h2>TU PEDIDO <span id="menu-cantidad">(0 / 1)</span></h2>
@@ -1318,7 +1329,6 @@
   </button>
 </div>
 
-<!-- ===== PANTALLA 3: COMBOS ===== -->
 <div id="pantalla-combos" class="pantalla">
   <div class="combos-titulo">
     <h2>COMBOS <span>PREARMADOS</span></h2>
@@ -1327,7 +1337,6 @@
   <div id="combos-grid" class="combos-grid"></div>
 </div>
 
-<!-- ===== PANTALLA 4: ARMA TU SÁNDWICH ===== -->
 <div id="pantalla-sandwich" class="pantalla">
   <div class="layout">
     <div class="col-ingredientes">
@@ -1379,7 +1388,6 @@
   </div>
 </div>
 
-<!-- ===== PANTALLA 5: RESUMEN GENERAL ===== -->
 <div id="pantalla-resumen" class="pantalla">
   <div class="resumen-container">
     <div class="resumen-header">
@@ -1411,7 +1419,6 @@
   </div>
 </div>
 
-<!-- ===== BARRA TOTAL ===== -->
 <div class="total-bar">
   <div>
     <div class="label">Total</div>
@@ -1421,7 +1428,6 @@
   <button id="btn-ordenar" onclick="irAResumen()">Revisar pedido</button>
 </div>
 
-<!-- ===== MODAL ===== -->
 <div id="order-modal" class="modal-overlay">
   <div class="modal-content">
     <div class="modal-header">
