@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con panes mostrados como combos en el ticket
+// app.js - Versión con tamaños equilibrados en el ticket
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -905,7 +905,6 @@ function fillModalSummary() {
 
 // =========================================================
 // GENERAR HTML DE CADA PAN PARA EL TICKET
-// (AHORA EL PAN SE MUESTRA COMO UN COMBO)
 // =========================================================
 function generarDetallePanHTML(pan, idx) {
   const esCombo = pan.tipo === "combo";
@@ -914,13 +913,11 @@ function generarDetallePanHTML(pan, idx) {
   const getNombre = (item) => item.nombre || item.name || "Sin nombre";
   
   if (esCombo) {
-    // Es un combo: se muestra tal cual
     html += `<div class="pan-bloque">`;
     html += `<div class="pan-titulo"><span>🎁 PAN ${idx + 1} - COMBO ${pan.nombre.toUpperCase()}</span><span class="pan-precio">${fmt(pan.precio)}</span></div>`;
     html += `<div class="pan-detalle">${pan.descripcion}</div>`;
     html += `</div>`;
   } else {
-    // Es un pan personalizado: se muestra como un combo (solo descripción)
     const partes = [];
     if (pan.pan) partes.push(getNombre(pan.pan));
     
@@ -1045,29 +1042,29 @@ function imprimirPedido(pedido) {
           border-bottom: none;
         }
         
+        /* ⬇️ TÍTULO DEL PAN - TAMAÑO EQUILIBRADO ⬇️ */
         .pan-titulo {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: #000;
-          color: #fff;
-          padding: 1mm 2mm;
-          font-size: 10pt;
+          border-bottom: 1.5px solid #000;
+          padding-bottom: 1mm;
+          margin-bottom: 1.5mm;
+          font-size: 11pt;       /* 👈 Reducido de 13pt a 11pt */
           font-weight: 900;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          margin-bottom: 1.5mm;
         }
-        .pan-precio {
+        .pan-titulo .pan-precio {
+          font-size: 12pt;       /* 👈 Reducido de 15pt a 12pt */
           font-weight: 900;
         }
         
         .pan-detalle {
-          font-size: 9pt;
-          padding: 1mm 2mm;
-          font-style: italic;
-          color: #333;
+          font-size: 9pt;         /* 👈 Reducido de 10pt a 9pt */
+          padding: 0.5mm 0;
           line-height: 1.4;
+          font-weight: bold;
         }
         
         .total-general {
