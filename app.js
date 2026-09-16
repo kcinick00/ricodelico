@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con pestañas de categorías y scroll
+// app.js - Versión con pestañas funcionando correctamente
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -45,14 +45,56 @@ function scrollToCategoria(cat) {
   if (!section || !contenido) return;
   
   // Scroll suave al inicio de la sección
+  const top = section.offsetTop - contenido.offsetTop - 10;
   contenido.scrollTo({
-    top: section.offsetTop - 10,
+    top: top,
     behavior: "smooth"
   });
   
-  // Actualizar pestaña activa
+  // Actualizar pestaña activa inmediatamente
   document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
   const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
+  if (tab) tab.classList.add("active");
+}
+
+// =========================================================
+// ACTUALIZAR PESTAÑA ACTIVA SEGÚN SCROLL
+// =========================================================
+function actualizarPestanaActiva() {
+  const contenido = document.getElementById("categorias-contenido");
+  if (!contenido) return;
+  
+  const sections = document.querySelectorAll(".categoria-section");
+  const contenidoRect = contenido.getBoundingClientRect();
+  const puntoReferencia = contenidoRect.top + 80; // 80px desde el top del contenedor
+  
+  let activeCat = "pan";
+  let minDistancia = Infinity;
+  
+  sections.forEach(sec => {
+    const secRect = sec.getBoundingClientRect();
+    const distancia = Math.abs(secRect.top - puntoReferencia);
+    
+    // Si la sección está visible y más cerca del punto de referencia
+    if (secRect.top <= puntoReferencia && distancia < minDistancia) {
+      minDistancia = distancia;
+      activeCat = sec.dataset.cat;
+    }
+  });
+  
+  // Si aún no hemos encontrado ninguna con distancia, usar la primera visible
+  if (activeCat === "pan") {
+    for (const sec of sections) {
+      const secRect = sec.getBoundingClientRect();
+      if (secRect.bottom > contenidoRect.top) {
+        activeCat = sec.dataset.cat;
+        break;
+      }
+    }
+  }
+  
+  document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
+  const tab = document.querySelector(`.categoria-tab[data-cat="${activeCat}"]`);
   if (tab) tab.classList.add("active");
 }
 
@@ -267,6 +309,15 @@ function abrirSandwich() {
   renderSandwich();
   startAnimation();
   actualizarResumenPan();
+  
+  // Resetear pestaña activa a "Pan" y hacer scroll al inicio
+  setTimeout(() => {
+    const contenido = document.getElementById("categorias-contenido");
+    if (contenido) contenido.scrollTop = 0;
+    document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
+    const tab = document.querySelector('.categoria-tab[data-cat="pan"]');
+    if (tab) tab.classList.add("active");
+  }, 100);
 }
 
 function abrirCombos() {
@@ -1122,21 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Detectar scroll para actualizar la pestaña activa automáticamente
   const contenido = document.getElementById("categorias-contenido");
   if (contenido) {
-    contenido.addEventListener("scroll", () => {
-      const sections = document.querySelectorAll(".categoria-section");
-      const scrollTop = contenido.scrollTop + 80;
-      
-      let activeCat = "pan";
-      sections.forEach(sec => {
-        if (sec.offsetTop <= scrollTop) {
-          activeCat = sec.dataset.cat;
-        }
-      });
-      
-      document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
-      const tab = document.querySelector(`.categoria-tab[data-cat="${activeCat}"]`);
-      if (tab) tab.classList.add("active");
-    });
+    contenido.addEventListener("scroll", actualizarPestanaActiva);
   }
 });
 
