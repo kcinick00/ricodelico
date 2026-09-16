@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con botón volver corregido
+// app.js - Versión con pestañas de categorías y scroll
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -37,6 +37,26 @@ function showToast(message, type = "success") {
 }
 
 // =========================================================
+// SCROLL A CATEGORÍA (al tocar una pestaña)
+// =========================================================
+function scrollToCategoria(cat) {
+  const section = document.getElementById("section-" + cat);
+  const contenido = document.getElementById("categorias-contenido");
+  if (!section || !contenido) return;
+  
+  // Scroll suave al inicio de la sección
+  contenido.scrollTo({
+    top: section.offsetTop - 10,
+    behavior: "smooth"
+  });
+  
+  // Actualizar pestaña activa
+  document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
+  const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
+  if (tab) tab.classList.add("active");
+}
+
+// =========================================================
 // NAVEGACIÓN
 // =========================================================
 function mostrarPantalla(id) {
@@ -52,10 +72,6 @@ function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
   if (!btn) return;
   
-  // Mostrar el botón volver en:
-  // - pantalla-combos
-  // - pantalla-sandwich
-  // - pantalla-resumen (SIEMPRE, con texto diferente según haya panes o no)
   if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich") {
     btn.style.display = "flex";
     btn.innerHTML = "← Volver";
@@ -102,7 +118,6 @@ function volverAtras() {
       renderResumenGeneral();
     }
   } else if (pantallaActual === "pantalla-resumen") {
-    // Volver a empezar de nuevo
     if (panesArmados.length > 0) {
       const confirmar = confirm("¿Empezar de nuevo? Se borrará el pedido actual.");
       if (confirmar) {
@@ -115,7 +130,6 @@ function volverAtras() {
         mostrarPantalla("pantalla-cantidad");
       }
     } else {
-      // No hay panes, volver directo a cantidad
       panesArmados = [];
       panEnEdicion = null;
       ultimoPanArmado = null;
@@ -1104,6 +1118,26 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && modal && modal.classList.contains("active")) closeOrderModal();
   });
+  
+  // Detectar scroll para actualizar la pestaña activa automáticamente
+  const contenido = document.getElementById("categorias-contenido");
+  if (contenido) {
+    contenido.addEventListener("scroll", () => {
+      const sections = document.querySelectorAll(".categoria-section");
+      const scrollTop = contenido.scrollTop + 80;
+      
+      let activeCat = "pan";
+      sections.forEach(sec => {
+        if (sec.offsetTop <= scrollTop) {
+          activeCat = sec.dataset.cat;
+        }
+      });
+      
+      document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
+      const tab = document.querySelector(`.categoria-tab[data-cat="${activeCat}"]`);
+      if (tab) tab.classList.add("active");
+    });
+  }
 });
 
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
