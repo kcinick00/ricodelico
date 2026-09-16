@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con pestañas funcionando correctamente
+// app.js - Versión con pestañas de categorías y scroll
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -44,14 +44,12 @@ function scrollToCategoria(cat) {
   const contenido = document.getElementById("categorias-contenido");
   if (!section || !contenido) return;
   
-  // Scroll suave al inicio de la sección
   const top = section.offsetTop - contenido.offsetTop - 10;
   contenido.scrollTo({
     top: top,
     behavior: "smooth"
   });
   
-  // Actualizar pestaña activa inmediatamente
   document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
   const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
   if (tab) tab.classList.add("active");
@@ -66,7 +64,7 @@ function actualizarPestanaActiva() {
   
   const sections = document.querySelectorAll(".categoria-section");
   const contenidoRect = contenido.getBoundingClientRect();
-  const puntoReferencia = contenidoRect.top + 80; // 80px desde el top del contenedor
+  const puntoReferencia = contenidoRect.top + 80;
   
   let activeCat = "pan";
   let minDistancia = Infinity;
@@ -75,14 +73,12 @@ function actualizarPestanaActiva() {
     const secRect = sec.getBoundingClientRect();
     const distancia = Math.abs(secRect.top - puntoReferencia);
     
-    // Si la sección está visible y más cerca del punto de referencia
     if (secRect.top <= puntoReferencia && distancia < minDistancia) {
       minDistancia = distancia;
       activeCat = sec.dataset.cat;
     }
   });
   
-  // Si aún no hemos encontrado ninguna con distancia, usar la primera visible
   if (activeCat === "pan") {
     for (const sec of sections) {
       const secRect = sec.getBoundingClientRect();
@@ -310,7 +306,6 @@ function abrirSandwich() {
   startAnimation();
   actualizarResumenPan();
   
-  // Resetear pestaña activa a "Pan" y hacer scroll al inicio
   setTimeout(() => {
     const contenido = document.getElementById("categorias-contenido");
     if (contenido) contenido.scrollTop = 0;
@@ -1170,7 +1165,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape" && modal && modal.classList.contains("active")) closeOrderModal();
   });
   
-  // Detectar scroll para actualizar la pestaña activa automáticamente
   const contenido = document.getElementById("categorias-contenido");
   if (contenido) {
     contenido.addEventListener("scroll", actualizarPestanaActiva);
