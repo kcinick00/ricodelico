@@ -531,8 +531,6 @@
     overflow: hidden;
   }
   
-  /* ⬇️⬇️⬇️ AQUÍ ESTÁ EL CAMBIO CLAVE ⬇️⬇️⬇️ */
-  /* Ahora las 3 columnas se activan desde 700px (antes era 1100px) */
   .layout {
     display: grid;
     grid-template-columns: 1.8fr 1fr 1fr;
@@ -545,7 +543,6 @@
     min-height: 0;
   }
   
-  /* En pantallas muy pequeñas (celular), sí se apila */
   @media (max-width: 700px) {
     .layout {
       grid-template-columns: 1fr;
