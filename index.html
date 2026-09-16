@@ -671,10 +671,10 @@
   .btn-cancelar-pan:hover { border-color: var(--orange); color: var(--orange); }
 
   /* =========================================================
-     PANTALLA 5: RESUMEN GENERAL (ahora incluye las opciones)
+     PANTALLA 5: RESUMEN GENERAL (con 3 opciones arriba)
      ========================================================= */
   #pantalla-resumen {
-    padding: 24px;
+    padding: 20px 24px;
     overflow-y: auto;
   }
   .resumen-container {
@@ -683,25 +683,78 @@
   }
   .resumen-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .resumen-header h2 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
+    font-size: 40px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--accent);
   }
   .resumen-header p {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     color: var(--text-muted);
-    font-size: 15px;
+    font-size: 14px;
   }
 
-  /* Barra de progreso en el resumen */
+  /* ⬇️ 3 OPCIONES ARRIBA DEL RESUMEN ⬇️ */
+  .resumen-opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 700px) {
+    .resumen-opciones { grid-template-columns: 1fr; }
+  }
+  .opcion-card {
+    background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 20px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .opcion-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--orange) 100%);
+  }
+  .opcion-card:hover:not(.disabled) { border-color: var(--accent); transform: translateY(-4px); }
+  .opcion-card:active:not(.disabled) { transform: translateY(-2px) scale(0.98); }
+  .opcion-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .opcion-emoji { font-size: 40px; line-height: 1; }
+  .opcion-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .opcion-titulo span { color: var(--accent); display: block; }
+  .opcion-desc { font-size: 11px; color: var(--text-muted); }
+
+  /* Barra de progreso */
   .progreso-bar {
-    margin: 0 auto 20px;
+    margin: 0 auto 18px;
     background: var(--card);
     border: 1.5px solid var(--border);
     border-radius: 14px;
@@ -745,7 +798,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
   .resumen-item {
     background: var(--card);
@@ -805,7 +858,7 @@
     border: 2px solid var(--accent);
     border-radius: 16px;
     padding: 20px 24px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
   .resumen-totales .fila {
     display: flex;
@@ -824,98 +877,6 @@
     padding-top: 14px;
     font-family: 'JetBrains Mono', monospace;
   }
-
-  /* Opciones en el resumen (mismas que antes en el menú) */
-  .resumen-opciones {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-  .opcion-card {
-    background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
-    border: 2px solid var(--border);
-    border-radius: 20px;
-    padding: 22px 18px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: var(--shadow-md);
-    position: relative;
-    overflow: hidden;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .opcion-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--orange) 100%);
-  }
-  .opcion-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-  .opcion-card:active { transform: translateY(-2px) scale(0.98); }
-  .opcion-emoji { font-size: 44px; line-height: 1; }
-  .opcion-titulo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text);
-  }
-  .opcion-titulo span { color: var(--accent); display: block; }
-  .opcion-desc { font-size: 12px; color: var(--text-muted); }
-
-  .btn-repetir {
-    width: 100%;
-    background: transparent;
-    border: 2px dashed var(--border);
-    color: var(--text-muted);
-    padding: 16px;
-    border-radius: 16px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-    margin-bottom: 14px;
-  }
-  .btn-repetir:hover:not(:disabled) {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(180, 255, 57, 0.05);
-  }
-  .btn-repetir:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .resumen-botones {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .resumen-botones button {
-    flex: 1;
-    padding: 16px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 900;
-    cursor: pointer;
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: none;
-  }
-  .btn-confirmar-resumen {
-    background: var(--accent);
-    color: #0F0F0F;
-    box-shadow: 0 4px 16px rgba(180, 255, 57, 0.3);
-  }
-  .btn-confirmar-resumen:hover { background: var(--accent-dark); }
 
   /* ===== BARRA TOTAL ===== */
   .total-bar {
@@ -982,6 +943,11 @@
   .btn-reimprimir:hover {
     border-color: var(--accent) !important;
     color: var(--accent) !important;
+  }
+  .total-bar .acciones-derecha {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
 
   .toast-container {
@@ -1280,12 +1246,33 @@
   </div>
 </div>
 
-<!-- ===== PANTALLA 5: RESUMEN GENERAL (fusionada) ===== -->
+<!-- ===== PANTALLA 5: RESUMEN GENERAL ===== -->
 <div id="pantalla-resumen" class="pantalla">
   <div class="resumen-container">
     <div class="resumen-header">
       <h2>RESUMEN DEL PEDIDO</h2>
       <p id="resumen-subtitulo">Revisa antes de confirmar</p>
+    </div>
+
+    <!-- ⬇️ 3 OPCIONES ARRIBA ⬇️ -->
+    <div class="resumen-opciones">
+      <div class="opcion-card" onclick="abrirSandwich()">
+        <div class="opcion-emoji">🥪</div>
+        <div class="opcion-titulo">ARMA TU <span>SÁNDWICH</span></div>
+        <div class="opcion-desc">Elige cada ingrediente</div>
+      </div>
+      
+      <div class="opcion-card" onclick="abrirCombos()">
+        <div class="opcion-emoji">🎁</div>
+        <div class="opcion-titulo">COMBOS <span>PREARMADOS</span></div>
+        <div class="opcion-desc">Los favoritos de la casa</div>
+      </div>
+
+      <div class="opcion-card" id="opcion-repetir" onclick="repetirUltimoPan()">
+        <div class="opcion-emoji">🔄</div>
+        <div class="opcion-titulo">REPETIR ÚLTIMO <span>PAN ARMADO</span></div>
+        <div class="opcion-desc">Duplica el anterior</div>
+      </div>
     </div>
 
     <!-- Barra de progreso -->
@@ -1313,30 +1300,6 @@
         <span id="resumen-total">$0.00</span>
       </div>
     </div>
-
-    <!-- Opciones de abajo (Arma tu sándwich, Combos, Repetir) -->
-    <div class="resumen-opciones">
-      <div class="opcion-card" onclick="abrirSandwich()">
-        <div class="opcion-emoji">🥪</div>
-        <div class="opcion-titulo">ARMA TU <span>SÁNDWICH</span></div>
-        <div class="opcion-desc">Elige cada ingrediente</div>
-      </div>
-      
-      <div class="opcion-card" onclick="abrirCombos()">
-        <div class="opcion-emoji">🎁</div>
-        <div class="opcion-titulo">COMBOS <span>PREARMADOS</span></div>
-        <div class="opcion-desc">Los favoritos de la casa</div>
-      </div>
-    </div>
-
-    <button id="btn-repetir" class="btn-repetir" onclick="repetirUltimoPan()" disabled>
-      🔄 Repetir último pan armado
-    </button>
-
-    <!-- Botón confirmar -->
-    <div class="resumen-botones">
-      <button class="btn-confirmar-resumen" onclick="openOrderModal()">Confirmar e imprimir →</button>
-    </div>
   </div>
 </div>
 
@@ -1346,7 +1309,10 @@
     <div class="label">Total</div>
     <div class="amount" id="total-out">$0.00</div>
   </div>
-  <button id="btn-reimprimir" class="btn-reimprimir" onclick="reimprimirUltimoPedido()" style="display: none;">🖨 Reimprimir</button>
+  <div class="acciones-derecha">
+    <button id="btn-reimprimir" class="btn-reimprimir" onclick="reimprimirUltimoPedido()" style="display: none;">🖨 Reimprimir</button>
+    <button id="btn-confirmar" onclick="openOrderModal()" style="display: none;">CONFIRMAR E IMPRIMIR →</button>
+  </div>
 </div>
 
 <!-- ===== MODAL ===== -->
