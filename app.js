@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con botón volver en resumen y sándwich abajo en celular
+// app.js - Versión con botón volver corregido
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -50,17 +50,22 @@ function mostrarPantalla(id) {
 
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
+  if (!btn) return;
   
   // Mostrar el botón volver en:
   // - pantalla-combos
   // - pantalla-sandwich
-  // - pantalla-resumen (si ya hay panes armados)
+  // - pantalla-resumen (SIEMPRE, con texto diferente según haya panes o no)
   if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich") {
     btn.style.display = "flex";
     btn.innerHTML = "← Volver";
-  } else if (pantallaActual === "pantalla-resumen" && panesArmados.length > 0) {
+  } else if (pantallaActual === "pantalla-resumen") {
     btn.style.display = "flex";
-    btn.innerHTML = "← Empezar de nuevo";
+    if (panesArmados.length > 0) {
+      btn.innerHTML = "← Empezar de nuevo";
+    } else {
+      btn.innerHTML = "← Volver a cantidad";
+    }
   } else {
     btn.style.display = "none";
   }
@@ -109,6 +114,15 @@ function volverAtras() {
         limpiarEditor();
         mostrarPantalla("pantalla-cantidad");
       }
+    } else {
+      // No hay panes, volver directo a cantidad
+      panesArmados = [];
+      panEnEdicion = null;
+      ultimoPanArmado = null;
+      cantidadTotalPanes = 1;
+      document.getElementById("cantidad-inicial-display").textContent = "1";
+      limpiarEditor();
+      mostrarPantalla("pantalla-cantidad");
     }
   }
 }
