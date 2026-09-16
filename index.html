@@ -346,14 +346,16 @@
     min-height: 0;
   }
   
+  /* 👇 EN CELULAR: el sándwich va ABAJO */
   @media (max-width: 700px) {
     .layout {
       grid-template-columns: 1fr;
       overflow-y: auto;
     }
-    .col-sandwich { order: 1; margin-bottom: 12px; }
-    .col-ingredientes { order: 2; margin-bottom: 12px; }
-    .col-resumen { order: 3; }
+    /* Orden en celular: ingredientes → resumen → sándwich (abajo) */
+    .col-ingredientes { order: 1; margin-bottom: 12px; }
+    .col-resumen { order: 2; margin-bottom: 12px; }
+    .col-sandwich { order: 3; }
   }
 
   .col-ingredientes {
@@ -671,7 +673,7 @@
   .btn-cancelar-pan:hover { border-color: var(--orange); color: var(--orange); }
 
   /* =========================================================
-     PANTALLA 5: RESUMEN GENERAL (con 3 opciones arriba)
+     PANTALLA 5: RESUMEN GENERAL
      ========================================================= */
   #pantalla-resumen {
     padding: 20px 24px;
@@ -699,7 +701,7 @@
     font-size: 14px;
   }
 
-  /* ⬇️ 3 OPCIONES ARRIBA DEL RESUMEN ⬇️ */
+  /* 3 OPCIONES ARRIBA DEL RESUMEN */
   .resumen-opciones {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -1254,7 +1256,7 @@
       <p id="resumen-subtitulo">Revisa antes de confirmar</p>
     </div>
 
-    <!-- ⬇️ 3 OPCIONES ARRIBA ⬇️ -->
+    <!-- 3 OPCIONES ARRIBA -->
     <div class="resumen-opciones">
       <div class="opcion-card" onclick="abrirSandwich()">
         <div class="opcion-emoji">🥪</div>
