@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con 3 opciones grandes (incluye repetir)
+// app.js - Versión con botón volver en resumen y sándwich abajo en celular
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -50,8 +50,17 @@ function mostrarPantalla(id) {
 
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
-  if (["pantalla-combos", "pantalla-sandwich"].includes(pantallaActual)) {
+  
+  // Mostrar el botón volver en:
+  // - pantalla-combos
+  // - pantalla-sandwich
+  // - pantalla-resumen (si ya hay panes armados)
+  if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich") {
     btn.style.display = "flex";
+    btn.innerHTML = "← Volver";
+  } else if (pantallaActual === "pantalla-resumen" && panesArmados.length > 0) {
+    btn.style.display = "flex";
+    btn.innerHTML = "← Empezar de nuevo";
   } else {
     btn.style.display = "none";
   }
@@ -86,6 +95,20 @@ function volverAtras() {
     } else {
       mostrarPantalla("pantalla-resumen");
       renderResumenGeneral();
+    }
+  } else if (pantallaActual === "pantalla-resumen") {
+    // Volver a empezar de nuevo
+    if (panesArmados.length > 0) {
+      const confirmar = confirm("¿Empezar de nuevo? Se borrará el pedido actual.");
+      if (confirmar) {
+        panesArmados = [];
+        panEnEdicion = null;
+        ultimoPanArmado = null;
+        cantidadTotalPanes = 1;
+        document.getElementById("cantidad-inicial-display").textContent = "1";
+        limpiarEditor();
+        mostrarPantalla("pantalla-cantidad");
+      }
     }
   }
 }
@@ -176,30 +199,26 @@ function renderResumenGeneral() {
     items.innerHTML = `<div class="resumen-item" style="justify-content: center; color: var(--text-muted); font-style: italic; font-size: 14px;">Aún no has armado ningún pan</div>`;
   }
   
-  // Actualizar totales
   cantidadEl.textContent = cantidadPanes;
   combosEl.textContent = cantidadCombos;
   totalEl.textContent = fmt(total);
   
-  // Actualizar barra de progreso
   const totalActual = panesArmados.length;
   const porcentaje = (totalActual / cantidadTotalPanes) * 100;
   progresoEl.style.width = porcentaje + "%";
   contadorEl.textContent = `${totalActual} / ${cantidadTotalPanes}`;
   
-  // Actualizar subtítulo
   subtitulo.innerHTML = `Vas a pedir <em>${cantidadTotalPanes} sándwich${cantidadTotalPanes > 1 ? "es" : ""}</em>`;
   
-  // Habilitar/deshabilitar la tarjeta de repetir
   if (ultimoPanArmado && panesArmados.length < cantidadTotalPanes) {
     opcionRepetir.classList.remove("disabled");
   } else {
     opcionRepetir.classList.add("disabled");
   }
   
-  // Actualizar total en la barra inferior y botón confirmar
   document.getElementById("total-out").textContent = fmt(total);
   actualizarBotonConfirmar();
+  actualizarBotonVolver();
 }
 
 // =========================================================
@@ -373,8 +392,6 @@ function eliminarPan(idx) {
 }
 
 function repetirUltimoPan() {
-  const opcionRepetir = document.getElementById("opcion-repetir");
-  
   if (!ultimoPanArmado) {
     showToast("No hay pan para repetir", "remove");
     return;
