@@ -31,14 +31,12 @@
   }
   * { box-sizing: border-box; }
 
-  /* 👇 CAMBIO CLAVE: Permitimos scroll vertical general */
   html, body {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    overflow-y: auto; /* ✅ Ahora sí permite scroll vertical */
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
   
   body {
@@ -48,8 +46,8 @@
     -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
   }
 
   body.con-fondo::before {
@@ -72,7 +70,7 @@
   }
 
   header {
-    padding: 18px 24px 14px;
+    padding: 12px 20px 10px;
     background: rgba(15, 15, 15, 0.85);
     border-bottom: 1px solid var(--border);
     position: relative;
@@ -94,7 +92,7 @@
   header h1 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 400;
     letter-spacing: 2px;
     line-height: 1;
@@ -106,16 +104,16 @@
   }
   header h1 span { color: var(--accent); }
   header p {
-    margin: 6px 0 0;
+    margin: 4px 0 0;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
   }
   header p em {
     font-family: 'Caveat', cursive;
     font-style: normal;
     color: var(--accent);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
   }
 
@@ -141,13 +139,11 @@
     color: var(--accent);
   }
 
-  /* 👇 CAMBIO: Las pantallas ahora pueden scrollear */
   .pantalla {
     display: none;
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
   }
   .pantalla.activa {
     display: flex;
@@ -168,7 +164,7 @@
   .cantidad-titulo h1 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 56px;
+    font-size: 48px;
     font-weight: 400;
     letter-spacing: 3px;
     line-height: 0.95;
@@ -180,14 +176,14 @@
   .cantidad-titulo p {
     margin: 12px 0 0;
     color: var(--text-muted);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
   }
   .cantidad-titulo p em {
     font-family: 'Caveat', cursive;
     font-style: normal;
     color: var(--accent);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
   }
   .cantidad-control {
@@ -198,18 +194,18 @@
     background: var(--card);
     border: 2px solid var(--border);
     border-radius: 24px;
-    padding: 30px 50px;
+    padding: 24px 44px;
     margin-bottom: 30px;
     box-shadow: var(--shadow-md);
   }
   .cantidad-control .btn-cant {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: var(--accent);
     color: #0F0F0F;
     border: none;
-    font-size: 44px;
+    font-size: 40px;
     font-weight: 900;
     cursor: pointer;
     display: flex;
@@ -222,10 +218,10 @@
   .cantidad-control .btn-cant:active { transform: scale(0.95); }
   .cantidad-control .numero-grande {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 96px;
+    font-size: 80px;
     font-weight: 800;
     color: var(--accent);
-    min-width: 140px;
+    min-width: 120px;
     text-align: center;
     line-height: 1;
   }
@@ -233,9 +229,9 @@
     background: var(--accent);
     color: #0F0F0F;
     border: none;
-    padding: 20px 60px;
+    padding: 18px 54px;
     border-radius: 16px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;
@@ -258,7 +254,7 @@
   .menu-header h2 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
+    font-size: 38px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--text);
@@ -381,24 +377,23 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
-  @media (max-width: 700px) { .menu-opciones { grid-template-columns: 1fr; } }
   .opcion-card {
     background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
     border: 2px solid var(--border);
     border-radius: 20px;
-    padding: 28px 22px;
+    padding: 24px 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: var(--shadow-md);
     position: relative;
     overflow: hidden;
-    min-height: 180px;
+    min-height: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
   }
   .opcion-card::before {
     content: "";
@@ -409,10 +404,10 @@
   }
   .opcion-card:hover { border-color: var(--accent); transform: translateY(-4px); }
   .opcion-card:active { transform: translateY(-2px) scale(0.98); }
-  .opcion-emoji { font-size: 56px; line-height: 1; }
+  .opcion-emoji { font-size: 48px; line-height: 1; }
   .opcion-titulo {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
+    font-size: 24px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text);
@@ -447,8 +442,7 @@
   /* ===== PANTALLA 3: COMBOS ===== */
   #pantalla-combos {
     padding: 24px;
-    overflow-y: auto; /* ✅ Ahora sí scrollea */
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
   }
   .combos-titulo {
     text-align: center;
@@ -457,7 +451,7 @@
   .combos-titulo h2 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
+    font-size: 38px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--text);
@@ -470,30 +464,30 @@
   }
   .combos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
     max-width: 1400px;
     margin: 0 auto;
-    padding-bottom: 40px; /* ✅ Espacio extra abajo para que el último combo no quede pegado */
+    padding-bottom: 40px;
   }
   .combo-card {
     background: var(--card);
     border: 2px solid var(--border);
     border-radius: 20px;
-    padding: 24px;
+    padding: 20px;
     transition: all 0.3s;
     box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     position: relative;
     overflow: hidden;
   }
   .combo-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-  .combo-emoji { font-size: 56px; line-height: 1; text-align: center; }
+  .combo-emoji { font-size: 48px; line-height: 1; text-align: center; }
   .combo-nombre {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
@@ -502,18 +496,18 @@
   .combo-ingredientes {
     font-size: 13px;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.4;
     text-align: center;
     flex: 1;
     min-height: 50px;
   }
   .combo-precio {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     color: var(--accent);
     text-align: center;
-    padding: 8px 0;
+    padding: 6px 0;
     border-top: 2px solid var(--border);
     margin-top: 4px;
   }
@@ -521,9 +515,9 @@
     background: var(--accent);
     color: #0F0F0F;
     border: none;
-    padding: 14px;
+    padding: 12px;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;
@@ -534,59 +528,61 @@
 
   /* ===== PANTALLA 4: ARMA SÁNDWICH ===== */
   #pantalla-sandwich {
-    overflow-y: auto;
+    overflow: hidden;
   }
+  
+  /* ⬇️⬇️⬇️ AQUÍ ESTÁ EL CAMBIO CLAVE ⬇️⬇️⬇️ */
+  /* Ahora las 3 columnas se activan desde 700px (antes era 1100px) */
   .layout {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 14px 16px;
+    grid-template-columns: 1.8fr 1fr 1fr;
+    gap: 12px;
+    padding: 12px 14px;
     max-width: 1600px;
     margin: 0 auto;
     width: 100%;
     flex: 1;
     min-height: 0;
   }
-  @media (min-width: 1100px) {
-    .layout { grid-template-columns: 2fr 1fr 1fr; gap: 14px; }
-    .col-ingredientes { order: 1; }
-    .col-resumen { order: 2; }
-    .col-sandwich { order: 3; }
-  }
-  @media (max-width: 1099px) {
-    .layout { display: block; padding: 16px; }
-    .col-sandwich { order: 1; margin-bottom: 16px; }
-    .col-ingredientes { order: 2; margin-bottom: 16px; }
+  
+  /* En pantallas muy pequeñas (celular), sí se apila */
+  @media (max-width: 700px) {
+    .layout {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+    }
+    .col-sandwich { order: 1; margin-bottom: 12px; }
+    .col-ingredientes { order: 2; margin-bottom: 12px; }
     .col-resumen { order: 3; }
   }
+
   .col-ingredientes {
     overflow-y: auto;
-    padding-right: 8px;
+    padding-right: 6px;
     min-height: 0;
-    height: 100%;
   }
-  .col-ingredientes::-webkit-scrollbar { width: 6px; }
+  .col-ingredientes::-webkit-scrollbar { width: 5px; }
   .col-ingredientes::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  @media (max-width: 1099px) {
-    .col-ingredientes { overflow-y: visible; height: auto; padding-right: 0; }
+
+  .col-resumen, .col-sandwich {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
-  .col-resumen, .col-sandwich { min-height: 0; height: 100%; }
-  @media (max-width: 1099px) { .col-resumen, .col-sandwich { height: auto; } }
-  .col-sandwich { max-width: 320px; width: 100%; margin: 0 auto; }
 
   .preview-card {
     background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 10px 14px;
+    padding: 10px 8px 12px;
     box-shadow: var(--shadow-md);
-    position: sticky;
-    top: 14px;
+    position: relative;
     overflow: hidden;
-    max-height: calc(100vh - 120px);
+    flex: 1;
   }
   .preview-card::before {
     content: "";
@@ -597,11 +593,11 @@
   }
   .preview-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -616,27 +612,29 @@
   }
   #sandwich-canvas {
     width: 100%;
-    max-width: 220px;
+    max-width: 100%;
     height: auto;
     display: block;
     margin: 0 auto;
+    flex: 1;
+    object-fit: contain;
   }
 
   .summary-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 16px 16px;
+    border-radius: 18px;
+    padding: 12px 14px;
     box-shadow: var(--shadow-sm);
-    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex: 1;
   }
   .summary-card h2 {
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -652,24 +650,24 @@
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    padding: 7px 0;
-    font-size: 14px;
+    padding: 5px 0;
+    font-size: 13px;
     border-bottom: 1px solid var(--border);
     align-items: center;
   }
   #summary-list li:last-child { border-bottom: none; }
-  #summary-list li .item-name { color: var(--text); font-weight: 500; font-size: 14px; }
+  #summary-list li .item-name { color: var(--text); font-weight: 500; font-size: 13px; }
   #summary-list li .item-price {
     color: var(--accent);
     font-weight: 700;
     white-space: nowrap;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+    font-size: 13px;
   }
   #summary-list .empty-msg {
     color: var(--text-muted);
-    font-size: 13px;
-    padding: 14px 0;
+    font-size: 12px;
+    padding: 12px 0;
     text-align: center;
     font-style: italic;
   }
@@ -677,7 +675,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 12px;
+    padding-top: 10px;
     margin-top: 6px;
     border-top: 2px solid var(--border);
     font-size: 12px;
@@ -690,16 +688,16 @@
   .subtotal-row span:last-child {
     color: var(--accent);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
   }
   .clear-btn {
     width: 100%;
-    margin-top: 10px;
-    padding: 10px;
+    margin-top: 8px;
+    padding: 8px;
     background: transparent;
     border: 1.5px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     color: var(--text-muted);
     font-size: 11px;
     font-weight: 700;
@@ -710,22 +708,22 @@
   }
   .clear-btn:active { transform: scale(0.98); }
 
-  .col-ingredientes section { margin-bottom: 24px; }
+  .col-ingredientes section { margin-bottom: 18px; }
   .col-ingredientes h2 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    margin: 0 0 12px;
+    font-size: 20px;
+    margin: 0 0 8px;
     color: var(--text);
     letter-spacing: 2px;
     text-transform: uppercase;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .col-ingredientes h2::before {
     content: "";
-    width: 5px;
-    height: 20px;
+    width: 4px;
+    height: 16px;
     background: var(--accent);
     border-radius: 2px;
   }
@@ -737,19 +735,19 @@
   }
   .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
   }
   .option {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 6px;
-    padding: 10px 8px 12px;
+    gap: 4px;
+    padding: 8px 6px 10px;
     background: var(--card);
     border: 2px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     box-shadow: var(--shadow-sm);
@@ -763,49 +761,49 @@
   .option:has(input:checked)::after {
     content: "✓";
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 20px;
-    height: 20px;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
     background: var(--accent);
     color: #0F0F0F;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
   }
   .option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .option-img {
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 8px;
+    border-radius: 6px;
     object-fit: cover;
     background: var(--bg-soft);
   }
-  .option-name { font-size: 12px; font-weight: 600; line-height: 1.2; color: var(--text); }
-  .price { font-size: 12px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  .option-name { font-size: 11px; font-weight: 600; line-height: 1.2; color: var(--text); }
+  .price { font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
   .qty-controls {
     display: none;
     align-items: center;
     gap: 4px;
     margin-top: 4px;
-    padding: 3px 5px;
+    padding: 2px 4px;
     background: var(--bg);
     border-radius: 20px;
     border: 1px solid var(--border);
   }
   .qty-controls.visible { display: flex; }
   .qty-btn {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border: none;
     border-radius: 50%;
     background: var(--accent);
     color: #0F0F0F;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
     cursor: pointer;
     display: flex;
@@ -815,27 +813,25 @@
   }
   .qty-btn.qty-minus { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
   .qty-display {
-    min-width: 18px;
+    min-width: 16px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--accent);
     font-family: 'JetBrains Mono', monospace;
   }
 
   .barra-acciones-sandwich {
-    padding: 14px 24px;
+    padding: 10px 16px;
     background: rgba(15, 15, 15, 0.98);
     border-top: 1px solid var(--border);
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     position: relative;
     z-index: 5;
-    position: sticky;
-    bottom: 0;
   }
   .barra-acciones-sandwich::before {
     content: "";
@@ -848,9 +844,9 @@
     background: var(--accent);
     color: #0F0F0F;
     border: none;
-    padding: 14px 32px;
+    padding: 12px 28px;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 900;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;
@@ -863,9 +859,9 @@
     background: transparent;
     color: var(--text-muted);
     border: 1.5px solid var(--border);
-    padding: 14px 24px;
+    padding: 12px 20px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;
@@ -890,7 +886,7 @@
   .resumen-header h2 {
     margin: 0;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
+    font-size: 42px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--accent);
@@ -998,13 +994,12 @@
   .total-bar {
     background: rgba(15, 15, 15, 0.98);
     border-top: 1px solid var(--border);
-    padding: 14px 24px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 10;
-    position: sticky;
-    bottom: 0;
+    position: relative;
     gap: 12px;
     flex-shrink: 0;
   }
@@ -1016,27 +1011,27 @@
     background: linear-gradient(90deg, var(--accent) 0%, var(--orange) 100%);
   }
   .total-bar .label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
   .total-bar .amount {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--accent);
     font-family: 'JetBrains Mono', monospace;
     line-height: 1;
-    margin-top: 3px;
+    margin-top: 2px;
   }
   .total-bar button {
     background: var(--accent);
     color: #0F0F0F;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;
@@ -1052,7 +1047,7 @@
     background: transparent !important;
     color: var(--text-muted) !important;
     border: 1.5px solid var(--border) !important;
-    padding: 12px 18px !important;
+    padding: 10px 14px !important;
     display: flex;
     align-items: center;
     gap: 6px;
