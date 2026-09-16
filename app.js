@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con pestañas de categorías y scroll
+// app.js - Versión con vista móvil por pestañas y todas las funciones
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -34,6 +34,22 @@ function showToast(message, type = "success") {
     toast.classList.add("toast-hiding");
     setTimeout(() => toast.remove(), 300);
   }, 2000);
+}
+
+// =========================================================
+// CAMBIAR VISTA EN MÓVIL (Ingredientes / Resumen / Sándwich)
+// =========================================================
+function cambiarVistaMovil(vista, boton) {
+  if (window.innerWidth > 900) return;
+  
+  document.querySelectorAll('.col-ingredientes, .col-resumen, .col-sandwich')
+    .forEach(c => c.classList.remove('movil-activa'));
+  
+  const col = document.getElementById('col-' + vista);
+  if (col) col.classList.add('movil-activa');
+  
+  document.querySelectorAll('.movil-tab').forEach(t => t.classList.remove('active'));
+  if (boton) boton.classList.add('active');
 }
 
 // =========================================================
@@ -305,6 +321,12 @@ function abrirSandwich() {
   renderSandwich();
   startAnimation();
   actualizarResumenPan();
+  
+  // En móvil, resetear a la vista de ingredientes
+  if (window.innerWidth <= 900) {
+    const tabIng = document.querySelector('.movil-tab');
+    cambiarVistaMovil('ingredientes', tabIng);
+  }
   
   setTimeout(() => {
     const contenido = document.getElementById("categorias-contenido");
@@ -1146,7 +1168,20 @@ if (typeof ingredientsData === "undefined") {
   let resizeTimeout;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => renderSandwich(), 250);
+    resizeTimeout = setTimeout(() => {
+      renderSandwich();
+      // Si cambiamos a escritorio, restaurar todas las columnas
+      if (window.innerWidth > 900) {
+        document.querySelectorAll('.col-ingredientes, .col-resumen, .col-sandwich')
+          .forEach(c => c.classList.remove('movil-activa'));
+      } else {
+        // Si cambiamos a móvil, activar ingredientes por defecto
+        if (!document.querySelector('.movil-activa')) {
+          const tabIng = document.querySelector('.movil-tab');
+          cambiarVistaMovil('ingredientes', tabIng);
+        }
+      }
+    }, 250);
   });
 }
 
@@ -1165,9 +1200,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape" && modal && modal.classList.contains("active")) closeOrderModal();
   });
   
+  // Listener de scroll para pestañas de categorías
   const contenido = document.getElementById("categorias-contenido");
   if (contenido) {
     contenido.addEventListener("scroll", actualizarPestanaActiva);
+  }
+  
+  // En móvil, activar vista de ingredientes al inicio
+  if (window.innerWidth <= 900) {
+    const tabIng = document.querySelector('.movil-tab');
+    cambiarVistaMovil('ingredientes', tabIng);
   }
 });
 
