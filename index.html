@@ -357,27 +357,24 @@
   /* ===== CELULAR (pestañas inferiores) ===== */
   @media (max-width: 900px) {
     .layout {
-      display: block;
+      display: block !important;
       padding: 10px;
       gap: 0;
     }
     .col-ingredientes,
     .col-resumen,
     .col-sandwich {
-      display: none;
+      display: none !important;
       width: 100%;
     }
     .col-ingredientes.movil-activa,
     .col-resumen.movil-activa,
     .col-sandwich.movil-activa {
-      display: flex;
+      display: flex !important;
       flex-direction: column;
+      height: 100%;
     }
-    .col-ingredientes.movil-activa { height: 100%; }
-    .col-resumen.movil-activa { height: 100%; }
-    .col-sandwich.movil-activa { height: 100%; }
     
-    /* Pestañas inferiores solo visibles en móvil */
     .movil-tabs {
       display: flex !important;
     }
