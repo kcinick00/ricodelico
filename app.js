@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con resumen general fusionado (eliminado el menú intermedio)
+// app.js - Versión con 3 opciones grandes (incluye repetir)
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -45,12 +45,35 @@ function mostrarPantalla(id) {
   if (pantalla) pantalla.classList.add("activa");
   pantallaActual = id;
   actualizarBotonVolver();
+  actualizarBotonConfirmar();
 }
 
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
-  if (["pantalla-combos", "pantalla-sandwich", "pantalla-resumen"].includes(pantallaActual)) {
+  if (["pantalla-combos", "pantalla-sandwich"].includes(pantallaActual)) {
     btn.style.display = "flex";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+function actualizarBotonConfirmar() {
+  const btn = document.getElementById("btn-confirmar");
+  if (!btn) return;
+  
+  if (pantallaActual === "pantalla-resumen") {
+    btn.style.display = "block";
+    if (panesArmados.length >= cantidadTotalPanes) {
+      btn.disabled = false;
+      btn.textContent = "CONFIRMAR E IMPRIMIR →";
+      btn.style.background = "var(--accent)";
+      btn.style.color = "#0F0F0F";
+    } else {
+      btn.disabled = true;
+      btn.textContent = `FALTAN ${cantidadTotalPanes - panesArmados.length}`;
+      btn.style.background = "var(--border)";
+      btn.style.color = "#555";
+    }
   } else {
     btn.style.display = "none";
   }
@@ -63,10 +86,6 @@ function volverAtras() {
     } else {
       mostrarPantalla("pantalla-resumen");
       renderResumenGeneral();
-    }
-  } else if (pantallaActual === "pantalla-resumen") {
-    if (panesArmados.length === 0) {
-      mostrarPantalla("pantalla-cantidad");
     }
   }
 }
@@ -90,7 +109,7 @@ function confirmarCantidadInicial() {
 }
 
 // =========================================================
-// PANTALLA 5: RESUMEN GENERAL (fusionada con las opciones)
+// PANTALLA 5: RESUMEN GENERAL
 // =========================================================
 function renderResumenGeneral() {
   const items = document.getElementById("resumen-items");
@@ -100,7 +119,7 @@ function renderResumenGeneral() {
   const progresoEl = document.getElementById("progreso-relleno");
   const contadorEl = document.getElementById("progreso-contador");
   const subtitulo = document.getElementById("resumen-subtitulo");
-  const btnRepetir = document.getElementById("btn-repetir");
+  const opcionRepetir = document.getElementById("opcion-repetir");
   
   items.innerHTML = "";
   let total = 0;
@@ -171,11 +190,16 @@ function renderResumenGeneral() {
   // Actualizar subtítulo
   subtitulo.innerHTML = `Vas a pedir <em>${cantidadTotalPanes} sándwich${cantidadTotalPanes > 1 ? "es" : ""}</em>`;
   
-  // Habilitar/deshabilitar botón repetir
-  btnRepetir.disabled = !ultimoPanArmado;
+  // Habilitar/deshabilitar la tarjeta de repetir
+  if (ultimoPanArmado && panesArmados.length < cantidadTotalPanes) {
+    opcionRepetir.classList.remove("disabled");
+  } else {
+    opcionRepetir.classList.add("disabled");
+  }
   
-  // Actualizar total en la barra inferior
+  // Actualizar total en la barra inferior y botón confirmar
   document.getElementById("total-out").textContent = fmt(total);
+  actualizarBotonConfirmar();
 }
 
 // =========================================================
@@ -349,8 +373,17 @@ function eliminarPan(idx) {
 }
 
 function repetirUltimoPan() {
-  if (!ultimoPanArmado) { showToast("No hay pan para repetir", "remove"); return; }
-  if (panesArmados.length >= cantidadTotalPanes) { showToast("Ya completaste todos los panes", "remove"); return; }
+  const opcionRepetir = document.getElementById("opcion-repetir");
+  
+  if (!ultimoPanArmado) {
+    showToast("No hay pan para repetir", "remove");
+    return;
+  }
+  if (panesArmados.length >= cantidadTotalPanes) {
+    showToast("Ya completaste todos los panes", "remove");
+    return;
+  }
+  
   const copia = JSON.parse(JSON.stringify(ultimoPanArmado));
   panesArmados.push(copia);
   showToast("Pan repetido", "success");
