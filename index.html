@@ -28,11 +28,11 @@
     --blue: #60A5FA;
 
     /* 🎨 COLORES POR CATEGORÍA */
-    --cat-pan: #F4A261;         /* Naranja cálido */
-    --cat-salsas: #E63946;      /* Rojo */
-    --cat-embutidos: #E5A5A5;   /* Rosa */
-    --cat-proteinas: #6BBF59;   /* Verde */
-    --cat-verduras: #4CAF50;    /* Verde oscuro */
+    --cat-pan: #F4A261;          /* Naranja */
+    --cat-salsas: #E8B923;       /* Amarillo */
+    --cat-embutidos: #E5A5A5;    /* Rosa */
+    --cat-proteinas: #8B4513;    /* Marrón */
+    --cat-verduras: #4CAF50;     /* Verde */
 
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
     --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
@@ -390,6 +390,7 @@
   }
   .categorias-tabs::-webkit-scrollbar { display: none; }
 
+  /* 🎨 PESTAÑAS CON COLORES POR CATEGORÍA - SIEMPRE VISIBLES */
   .categoria-tab {
     background: var(--card);
     border: 2px solid var(--border);
@@ -408,41 +409,75 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    opacity: 0.85;
   }
   .categoria-tab:hover {
     transform: translateY(-2px);
-  }
-  .categoria-tab.active {
-    background: var(--accent);
-    color: #0F0F0F;
-    box-shadow: 0 4px 12px rgba(180, 255, 57, 0.3);
+    opacity: 1;
   }
 
-  /* Colores por categoría en la pestaña activa */
+  /* Colores por categoría - SIEMPRE VISIBLES */
+  .categoria-tab[data-cat="pan"] {
+    border-color: var(--cat-pan);
+    color: var(--cat-pan);
+    background: rgba(244, 162, 97, 0.1);
+  }
+  .categoria-tab[data-cat="salsas"] {
+    border-color: var(--cat-salsas);
+    color: var(--cat-salsas);
+    background: rgba(232, 185, 35, 0.15);
+  }
+  .categoria-tab[data-cat="embutidos"] {
+    border-color: var(--cat-embutidos);
+    color: var(--cat-embutidos);
+    background: rgba(229, 165, 165, 0.1);
+  }
+  .categoria-tab[data-cat="proteinas"] {
+    border-color: var(--cat-proteinas);
+    color: var(--cat-proteinas);
+    background: rgba(139, 69, 19, 0.15);
+  }
+  .categoria-tab[data-cat="verduras"] {
+    border-color: var(--cat-verduras);
+    color: var(--cat-verduras);
+    background: rgba(76, 175, 80, 0.1);
+  }
+
+  /* Cuando están ACTIVAS - color sólido */
   .categoria-tab[data-cat="pan"].active {
     background: var(--cat-pan);
     border-color: var(--cat-pan);
     color: #0F0F0F;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(244, 162, 97, 0.4);
   }
   .categoria-tab[data-cat="salsas"].active {
     background: var(--cat-salsas);
     border-color: var(--cat-salsas);
-    color: #FFFFFF;
+    color: #0F0F0F;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(232, 185, 35, 0.4);
   }
   .categoria-tab[data-cat="embutidos"].active {
     background: var(--cat-embutidos);
     border-color: var(--cat-embutidos);
     color: #0F0F0F;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(229, 165, 165, 0.4);
   }
   .categoria-tab[data-cat="proteinas"].active {
     background: var(--cat-proteinas);
     border-color: var(--cat-proteinas);
-    color: #0F0F0F;
+    color: #FFFFFF;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
   }
   .categoria-tab[data-cat="verduras"].active {
     background: var(--cat-verduras);
     border-color: var(--cat-verduras);
     color: #FFFFFF;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
   }
 
   /* Contenedor de todos los ingredientes con scroll */
@@ -1278,7 +1313,6 @@
 <div id="pantalla-sandwich" class="pantalla">
   <div class="layout">
     <div class="col-ingredientes">
-      <!-- Barra de pestañas -->
       <div class="categorias-tabs">
         <button class="categoria-tab active" data-cat="pan" onclick="scrollToCategoria('pan')">🥖 Pan</button>
         <button class="categoria-tab" data-cat="salsas" onclick="scrollToCategoria('salsas')">🥫 Salsas</button>
@@ -1287,7 +1321,6 @@
         <button class="categoria-tab" data-cat="verduras" onclick="scrollToCategoria('verduras')">🥬 Verduras</button>
       </div>
 
-      <!-- Contenido con todas las categorías -->
       <div class="categorias-contenido" id="categorias-contenido">
         <div class="categoria-section activa" data-cat="pan" id="section-pan">
           <div id="pan-group" class="category-grid"></div>
