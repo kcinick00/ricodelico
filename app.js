@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con tamaños equilibrados en el ticket
+// app.js - Versión con resumen general fusionado (eliminado el menú intermedio)
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -49,7 +49,7 @@ function mostrarPantalla(id) {
 
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
-  if (["pantalla-menu", "pantalla-combos", "pantalla-sandwich", "pantalla-resumen"].includes(pantallaActual)) {
+  if (["pantalla-combos", "pantalla-sandwich", "pantalla-resumen"].includes(pantallaActual)) {
     btn.style.display = "flex";
   } else {
     btn.style.display = "none";
@@ -61,12 +61,10 @@ function volverAtras() {
     if (panEnEdicion !== null) {
       cancelarPan();
     } else {
-      mostrarPantalla("pantalla-menu");
-      renderMenu();
+      mostrarPantalla("pantalla-resumen");
+      renderResumenGeneral();
     }
   } else if (pantallaActual === "pantalla-resumen") {
-    volverAlMenu();
-  } else if (pantallaActual === "pantalla-menu") {
     if (panesArmados.length === 0) {
       mostrarPantalla("pantalla-cantidad");
     }
@@ -87,142 +85,22 @@ function confirmarCantidadInicial() {
   panesArmados = [];
   panEnEdicion = null;
   ultimoPanArmado = null;
-  mostrarPantalla("pantalla-menu");
-  renderMenu();
-}
-
-// =========================================================
-// PANTALLA 2: MENÚ
-// =========================================================
-function renderMenu() {
-  const lista = document.getElementById("panes-lista");
-  const total = panesArmados.length;
-  
-  document.getElementById("menu-cantidad").textContent = `(${total} / ${cantidadTotalPanes})`;
-  document.getElementById("progreso-contador").textContent = `${total} / ${cantidadTotalPanes}`;
-  const porcentaje = (total / cantidadTotalPanes) * 100;
-  document.getElementById("progreso-relleno").style.width = porcentaje + "%";
-  
-  lista.innerHTML = "";
-  panesArmados.forEach((pan, idx) => {
-    const div = document.createElement("div");
-    div.className = "pan-guardado";
-    const esCombo = pan.tipo === "combo";
-    const detalle = esCombo ? pan.descripcion : resumirIngredientesPan(pan);
-    div.innerHTML = `
-      <div class="info">
-        <div class="numero">${esCombo ? "🎁" : "🥪"} ${esCombo ? pan.nombre : "Pan " + (idx + 1)}</div>
-        <div class="detalle">${detalle}</div>
-      </div>
-      <div class="precio">${fmt(pan.precio)}</div>
-      <div class="acciones">
-        <button class="btn-accion" onclick="editarPan(${idx})" title="Editar">✏️</button>
-        <button class="btn-accion eliminar" onclick="eliminarPan(${idx})" title="Eliminar">🗑</button>
-      </div>
-    `;
-    lista.appendChild(div);
-  });
-  
-  const btnRepetir = document.getElementById("btn-repetir");
-  btnRepetir.disabled = !ultimoPanArmado;
-  
-  actualizarTotales();
-}
-
-function resumirIngredientesPan(pan) {
-  const partes = [];
-  const getNombre = (item) => item.nombre || item.name || "Sin nombre";
-  
-  if (pan.pan) partes.push(getNombre(pan.pan));
-  
-  const agregarItems = (items) => {
-    if (!items || !items.length) return;
-    items.forEach(item => {
-      const qty = item.qty || 1;
-      partes.push(qty > 1 ? `${getNombre(item)} x${qty}` : getNombre(item));
-    });
-  };
-  agregarItems(pan.embutidos);
-  agregarItems(pan.proteinas);
-  agregarItems(pan.verduras);
-  agregarItems(pan.salsas);
-  return partes.length === 0 ? "Sin ingredientes" : partes.join(" · ");
-}
-
-function editarPan(idx) {
-  const pan = panesArmados[idx];
-  if (pan.tipo === "combo") {
-    showToast("Los combos no se pueden editar", "info");
-    return;
-  }
-  panEnEdicion = idx;
-  cargarPanEnEditor(pan);
-  mostrarPantalla("pantalla-sandwich");
-  document.getElementById("header-titulo").innerHTML = 'EDITAR <span>PAN</span>';
-  document.getElementById("header-subtitulo").innerHTML = `Modificando el pan ${idx + 1}`;
-  renderSandwich();
-  startAnimation();
-  actualizarResumenPan();
-}
-
-function eliminarPan(idx) {
-  const pan = panesArmados[idx];
-  if (!confirm(`¿Eliminar este ${pan.tipo === "combo" ? "combo" : "pan"}?`)) return;
-  panesArmados.splice(idx, 1);
-  showToast("Eliminado", "remove");
-  renderMenu();
-}
-
-function actualizarTotales() {
-  let total = 0;
-  panesArmados.forEach(pan => { total += pan.precio; });
-  document.getElementById("total-out").textContent = fmt(total);
-  
-  const btnOrdenar = document.getElementById("btn-ordenar");
-  if (panesArmados.length >= cantidadTotalPanes) {
-    btnOrdenar.disabled = false;
-    btnOrdenar.textContent = "Revisar pedido";
-  } else {
-    btnOrdenar.disabled = true;
-    btnOrdenar.textContent = `Faltan ${cantidadTotalPanes - panesArmados.length}`;
-  }
-}
-
-function repetirUltimoPan() {
-  if (!ultimoPanArmado) { showToast("No hay pan para repetir", "remove"); return; }
-  if (panesArmados.length >= cantidadTotalPanes) { showToast("Ya completaste todos los panes", "remove"); return; }
-  const copia = JSON.parse(JSON.stringify(ultimoPanArmado));
-  panesArmados.push(copia);
-  showToast("Pan repetido", "success");
-  renderMenu();
-}
-
-// =========================================================
-// PANTALLA 5: RESUMEN GENERAL
-// =========================================================
-function irAResumen() {
-  if (panesArmados.length < cantidadTotalPanes) {
-    showToast(`Faltan ${cantidadTotalPanes - panesArmados.length} panes por armar`, "remove");
-    return;
-  }
   mostrarPantalla("pantalla-resumen");
-  document.getElementById("header-titulo").innerHTML = 'RESUMEN DEL <span>PEDIDO</span>';
-  document.getElementById("header-subtitulo").innerHTML = 'Revisa antes de confirmar';
   renderResumenGeneral();
 }
 
-function volverAlMenu() {
-  mostrarPantalla("pantalla-menu");
-  document.getElementById("header-titulo").innerHTML = 'ARMA TU <span>SÁNDWICH</span>';
-  document.getElementById("header-subtitulo").innerHTML = 'Elige tus ingredientes y mira el total <em>al instante</em>';
-  renderMenu();
-}
-
+// =========================================================
+// PANTALLA 5: RESUMEN GENERAL (fusionada con las opciones)
+// =========================================================
 function renderResumenGeneral() {
   const items = document.getElementById("resumen-items");
   const cantidadEl = document.getElementById("resumen-cantidad");
   const combosEl = document.getElementById("resumen-combos-cantidad");
   const totalEl = document.getElementById("resumen-total");
+  const progresoEl = document.getElementById("progreso-relleno");
+  const contadorEl = document.getElementById("progreso-contador");
+  const subtitulo = document.getElementById("resumen-subtitulo");
+  const btnRepetir = document.getElementById("btn-repetir");
   
   items.innerHTML = "";
   let total = 0;
@@ -268,13 +146,36 @@ function renderResumenGeneral() {
         ${detalleHTML}
       </div>
       <div class="precio">${fmt(pan.precio)}</div>
+      <div class="acciones">
+        <button class="btn-accion eliminar" onclick="eliminarPan(${idx})" title="Eliminar">🗑</button>
+      </div>
     `;
     items.appendChild(div);
   });
   
+  if (panesArmados.length === 0) {
+    items.innerHTML = `<div class="resumen-item" style="justify-content: center; color: var(--text-muted); font-style: italic; font-size: 14px;">Aún no has armado ningún pan</div>`;
+  }
+  
+  // Actualizar totales
   cantidadEl.textContent = cantidadPanes;
   combosEl.textContent = cantidadCombos;
   totalEl.textContent = fmt(total);
+  
+  // Actualizar barra de progreso
+  const totalActual = panesArmados.length;
+  const porcentaje = (totalActual / cantidadTotalPanes) * 100;
+  progresoEl.style.width = porcentaje + "%";
+  contadorEl.textContent = `${totalActual} / ${cantidadTotalPanes}`;
+  
+  // Actualizar subtítulo
+  subtitulo.innerHTML = `Vas a pedir <em>${cantidadTotalPanes} sándwich${cantidadTotalPanes > 1 ? "es" : ""}</em>`;
+  
+  // Habilitar/deshabilitar botón repetir
+  btnRepetir.disabled = !ultimoPanArmado;
+  
+  // Actualizar total en la barra inferior
+  document.getElementById("total-out").textContent = fmt(total);
 }
 
 // =========================================================
@@ -344,8 +245,8 @@ function agregarComboAlPedido(comboId) {
   panesArmados.push(panCombo);
   ultimoPanArmado = JSON.parse(JSON.stringify(panCombo));
   showToast(`${combo.emoji} ${combo.nombre} agregado`, "success");
-  mostrarPantalla("pantalla-menu");
-  renderMenu();
+  mostrarPantalla("pantalla-resumen");
+  renderResumenGeneral();
 }
 
 // =========================================================
@@ -400,15 +301,15 @@ function guardarPan() {
   
   ultimoPanArmado = JSON.parse(JSON.stringify(panData));
   limpiarEditor();
-  mostrarPantalla("pantalla-menu");
-  renderMenu();
+  mostrarPantalla("pantalla-resumen");
+  renderResumenGeneral();
 }
 
 function cancelarPan() {
   if (panEnEdicion !== null) panEnEdicion = null;
   limpiarEditor();
-  mostrarPantalla("pantalla-menu");
-  renderMenu();
+  mostrarPantalla("pantalla-resumen");
+  renderResumenGeneral();
 }
 
 function limpiarEditor() {
@@ -437,6 +338,23 @@ function cargarPanEnEditor(pan) {
       }
     });
   });
+}
+
+function eliminarPan(idx) {
+  const pan = panesArmados[idx];
+  if (!confirm(`¿Eliminar este ${pan.tipo === "combo" ? "combo" : "pan"}?`)) return;
+  panesArmados.splice(idx, 1);
+  showToast("Eliminado", "remove");
+  renderResumenGeneral();
+}
+
+function repetirUltimoPan() {
+  if (!ultimoPanArmado) { showToast("No hay pan para repetir", "remove"); return; }
+  if (panesArmados.length >= cantidadTotalPanes) { showToast("Ya completaste todos los panes", "remove"); return; }
+  const copia = JSON.parse(JSON.stringify(ultimoPanArmado));
+  panesArmados.push(copia);
+  showToast("Pan repetido", "success");
+  renderResumenGeneral();
 }
 
 // =========================================================
@@ -872,7 +790,7 @@ function animateLoop() {
 // =========================================================
 function openOrderModal() {
   if (panesArmados.length < cantidadTotalPanes) {
-    showToast(`Faltan ${cantidadTotalPanes - panesArmados.length} panes`, "remove");
+    showToast(`Faltan ${cantidadTotalPanes - panesArmados.length} panes por armar`, "remove");
     return;
   }
   const now = new Date();
@@ -909,7 +827,6 @@ function fillModalSummary() {
 function generarDetallePanHTML(pan, idx) {
   const esCombo = pan.tipo === "combo";
   let html = "";
-  
   const getNombre = (item) => item.nombre || item.name || "Sin nombre";
   
   if (esCombo) {
@@ -920,7 +837,6 @@ function generarDetallePanHTML(pan, idx) {
   } else {
     const partes = [];
     if (pan.pan) partes.push(getNombre(pan.pan));
-    
     const agregarItems = (items) => {
       if (!items || !items.length) return;
       items.forEach(item => {
@@ -932,15 +848,12 @@ function generarDetallePanHTML(pan, idx) {
     agregarItems(pan.proteinas);
     agregarItems(pan.verduras);
     agregarItems(pan.salsas);
-    
     const descripcion = partes.join(", ");
-    
     html += `<div class="pan-bloque">`;
     html += `<div class="pan-titulo"><span>🥪 PAN ${idx + 1}</span><span class="pan-precio">${fmt(pan.precio)}</span></div>`;
     html += `<div class="pan-detalle">${descripcion}</div>`;
     html += `</div>`;
   }
-  
   return html;
 }
 
@@ -965,15 +878,12 @@ function printTicket() {
 
 function imprimirPedido(pedido) {
   const { clientName, paymentMethod, dateFormatted, time, panes } = pedido;
-  
   let detalleHTML = "";
   let totalGeneral = 0;
-  
   panes.forEach((pan, idx) => {
     detalleHTML += generarDetallePanHTML(pan, idx);
     totalGeneral += pan.precio;
   });
-  
   const ticketHTML = `
     <!DOCTYPE html>
     <html lang="es">
@@ -996,53 +906,16 @@ function imprimirPedido(pedido) {
         }
         body { padding: 2mm 3mm; }
         .ticket { width: 100%; margin: 0 auto; }
-        
-        .header {
-          text-align: center;
-          border-bottom: 2px solid #000;
-          padding-bottom: 2mm;
-          margin-bottom: 2mm;
-        }
-        .header h1 {
-          font-size: 15pt;
-          font-weight: 900;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-        }
-        .header p {
-          font-size: 9pt;
-          font-weight: bold;
-          margin-top: 0.5mm;
-        }
-        
-        .info {
-          font-size: 10pt;
-          font-weight: bold;
-          margin-bottom: 2mm;
-        }
-        .info-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 0.3mm 0;
-        }
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 2mm; margin-bottom: 2mm; }
+        .header h1 { font-size: 15pt; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .header p { font-size: 9pt; font-weight: bold; margin-top: 0.5mm; }
+        .info { font-size: 10pt; font-weight: bold; margin-bottom: 2mm; }
+        .info-row { display: flex; justify-content: space-between; padding: 0.3mm 0; }
         .info-row .label { font-weight: 900; }
         .info-row .value { text-align: right; }
-        
-        .separator {
-          border-top: 1px dashed #000;
-          margin: 2mm 0;
-        }
-        
-        .pan-bloque {
-          margin-bottom: 3mm;
-          padding-bottom: 2mm;
-          border-bottom: 1px dashed #999;
-        }
-        .pan-bloque:last-child {
-          border-bottom: none;
-        }
-        
-        /* ⬇️ TÍTULO DEL PAN - TAMAÑO EQUILIBRADO ⬇️ */
+        .separator { border-top: 1px dashed #000; margin: 2mm 0; }
+        .pan-bloque { margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 1px dashed #999; }
+        .pan-bloque:last-child { border-bottom: none; }
         .pan-titulo {
           display: flex;
           justify-content: space-between;
@@ -1050,54 +923,22 @@ function imprimirPedido(pedido) {
           border-bottom: 1.5px solid #000;
           padding-bottom: 1mm;
           margin-bottom: 1.5mm;
-          font-size: 11pt;       /* 👈 Reducido de 13pt a 11pt */
+          font-size: 11pt;
           font-weight: 900;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
-        .pan-titulo .pan-precio {
-          font-size: 12pt;       /* 👈 Reducido de 15pt a 12pt */
-          font-weight: 900;
-        }
-        
-        .pan-detalle {
-          font-size: 9pt;         /* 👈 Reducido de 10pt a 9pt */
-          padding: 0.5mm 0;
-          line-height: 1.4;
-          font-weight: bold;
-        }
-        
+        .pan-titulo .pan-precio { font-size: 12pt; font-weight: 900; }
+        .pan-detalle { font-size: 9pt; padding: 0.5mm 0; line-height: 1.4; font-weight: bold; }
         .total-general {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 16pt;
-          font-weight: 900;
-          padding: 3mm 0;
-          margin-top: 3mm;
-          border-top: 3px solid #000;
-          border-bottom: 3px solid #000;
+          display: flex; justify-content: space-between; align-items: center;
+          font-size: 16pt; font-weight: 900; padding: 3mm 0;
+          margin-top: 3mm; border-top: 3px solid #000; border-bottom: 3px solid #000;
         }
-        .total-general span:first-child {
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-        
-        .footer {
-          text-align: center;
-          font-size: 9pt;
-          font-weight: bold;
-          margin-top: 4mm;
-          padding-top: 2mm;
-          border-top: 1px dashed #000;
-        }
+        .total-general span:first-child { text-transform: uppercase; letter-spacing: 1px; }
+        .footer { text-align: center; font-size: 9pt; font-weight: bold; margin-top: 4mm; padding-top: 2mm; border-top: 1px dashed #000; }
         .footer p { margin: 1mm 0; }
-        .gracias {
-          font-size: 12pt;
-          font-weight: 900;
-          margin-top: 1.5mm;
-          letter-spacing: 1px;
-        }
+        .gracias { font-size: 12pt; font-weight: 900; margin-top: 1.5mm; letter-spacing: 1px; }
       </style>
     </head>
     <body>
@@ -1106,23 +947,18 @@ function imprimirPedido(pedido) {
           <h1>ARMA TU SÁNDWICH</h1>
           <p>Ticket de pedido</p>
         </div>
-        
         <div class="info">
           <div class="info-row"><span class="label">Cliente:</span><span class="value">${clientName}</span></div>
           <div class="info-row"><span class="label">Fecha:</span><span class="value">${dateFormatted}</span></div>
           <div class="info-row"><span class="label">Hora:</span><span class="value">${time}</span></div>
           <div class="info-row"><span class="label">Pago:</span><span class="value">${paymentMethod}</span></div>
         </div>
-        
         <div class="separator"></div>
-        
         ${detalleHTML}
-        
         <div class="total-general">
           <span>TOTAL GENERAL</span>
           <span>${fmt(totalGeneral)}</span>
         </div>
-        
         <div class="footer">
           <p>¡Gracias por tu pedido!</p>
           <p class="gracias">*** VUELVE PRONTO ***</p>
@@ -1132,20 +968,16 @@ function imprimirPedido(pedido) {
     </body>
     </html>
   `;
-  
   const oldIframe = document.getElementById("print-iframe");
   if (oldIframe) oldIframe.remove();
-  
   const iframe = document.createElement("iframe");
   iframe.id = "print-iframe";
   iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;";
   document.body.appendChild(iframe);
-  
   const iframeDoc = iframe.contentWindow.document;
   iframeDoc.open();
   iframeDoc.write(ticketHTML);
   iframeDoc.close();
-  
   setTimeout(() => {
     iframe.contentWindow.focus();
     iframe.contentWindow.print();
