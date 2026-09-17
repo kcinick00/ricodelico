@@ -27,11 +27,12 @@
     --red: #FF3B30;
     --blue: #60A5FA;
 
-    --cat-pan: #F4A261;
-    --cat-salsas: #E8B923;
-    --cat-embutidos: #E5A5A5;
-    --cat-proteinas: #8B4513;
-    --cat-verduras: #4CAF50;
+    /* Paleta cálida para títulos verticales (Opción D) */
+    --cat-pan: #E8A05C;
+    --cat-salsas: #D9B340;
+    --cat-embutidos: #D97A5C;
+    --cat-proteinas: #C25A3A;
+    --cat-vegetales: #9BC53D;
 
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
     --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
@@ -341,7 +342,6 @@
     overflow: hidden;
   }
   
-  /* ===== ESCRITORIO (3 columnas) ===== */
   .layout {
     display: grid;
     grid-template-columns: 1.8fr 1fr 1fr;
@@ -354,7 +354,6 @@
     min-height: 0;
   }
 
-  /* ===== CELULAR (pestañas inferiores) ===== */
   @media (max-width: 900px) {
     .layout {
       display: block !important;
@@ -374,21 +373,13 @@
       flex-direction: column;
       height: 100%;
     }
-    
-    .movil-tabs {
-      display: flex !important;
-    }
-    .btn-ver-sandwich {
-      display: none !important;
-    }
+    .movil-tabs { display: flex !important; }
+    .btn-ver-sandwich { display: none !important; }
 
-    /* Ajuste del título vertical en móvil */
-    .categoria-section {
-      padding-left: 44px;
-    }
+    .categoria-section { padding-left: 32px; }
     .categoria-section::before {
-      font-size: 36px;
-      letter-spacing: 4px;
+      font-size: 22px;
+      letter-spacing: 2px;
       left: 4px;
     }
   }
@@ -398,7 +389,6 @@
     .btn-ver-sandwich { display: none !important; }
   }
 
-  /* ⬇️ COLUMNA DE INGREDIENTES CON PESTAÑAS ⬇️ */
   .col-ingredientes {
     min-height: 0;
     display: flex;
@@ -423,6 +413,9 @@
   }
   .categorias-tabs::-webkit-scrollbar { display: none; }
 
+  /* =========================================================
+     Opción D: pestañas neutras + verde neón solo en la activa
+     ========================================================= */
   .categoria-tab {
     background: var(--card);
     border: 2px solid var(--border);
@@ -446,68 +439,16 @@
   .categoria-tab:hover {
     transform: translateY(-2px);
     opacity: 1;
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
-  .categoria-tab[data-cat="pan"] {
-    border-color: var(--cat-pan);
-    color: var(--cat-pan);
-    background: rgba(244, 162, 97, 0.1);
-  }
-  .categoria-tab[data-cat="salsas"] {
-    border-color: var(--cat-salsas);
-    color: var(--cat-salsas);
-    background: rgba(232, 185, 35, 0.15);
-  }
-  .categoria-tab[data-cat="embutidos"] {
-    border-color: var(--cat-embutidos);
-    color: var(--cat-embutidos);
-    background: rgba(229, 165, 165, 0.1);
-  }
-  .categoria-tab[data-cat="proteinas"] {
-    border-color: var(--cat-proteinas);
-    color: var(--cat-proteinas);
-    background: rgba(139, 69, 19, 0.15);
-  }
-  .categoria-tab[data-cat="verduras"] {
-    border-color: var(--cat-verduras);
-    color: var(--cat-verduras);
-    background: rgba(76, 175, 80, 0.1);
-  }
-
-  .categoria-tab[data-cat="pan"].active {
-    background: var(--cat-pan);
-    border-color: var(--cat-pan);
+  .categoria-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
     color: #0F0F0F;
     opacity: 1;
-    box-shadow: 0 4px 12px rgba(244, 162, 97, 0.4);
-  }
-  .categoria-tab[data-cat="salsas"].active {
-    background: var(--cat-salsas);
-    border-color: var(--cat-salsas);
-    color: #0F0F0F;
-    opacity: 1;
-    box-shadow: 0 4px 12px rgba(232, 185, 35, 0.4);
-  }
-  .categoria-tab[data-cat="embutidos"].active {
-    background: var(--cat-embutidos);
-    border-color: var(--cat-embutidos);
-    color: #0F0F0F;
-    opacity: 1;
-    box-shadow: 0 4px 12px rgba(229, 165, 165, 0.4);
-  }
-  .categoria-tab[data-cat="proteinas"].active {
-    background: var(--cat-proteinas);
-    border-color: var(--cat-proteinas);
-    color: #FFFFFF;
-    opacity: 1;
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
-  }
-  .categoria-tab[data-cat="verduras"].active {
-    background: var(--cat-verduras);
-    border-color: var(--cat-verduras);
-    color: #FFFFFF;
-    opacity: 1;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 4px 12px var(--accent-glow);
   }
 
   .categorias-contenido {
@@ -521,11 +462,11 @@
   .categorias-contenido::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   /* =========================================================
-     SECCIONES DE CATEGORÍA CON TÍTULO VERTICAL
+     SECCIONES CON TÍTULO VERTICAL (paleta cálida Opción D)
      ========================================================= */
   .categoria-section {
     margin-bottom: 16px;
-    padding: 10px 10px 10px 60px;
+    padding: 10px 10px 10px 40px;
     border-radius: 12px;
     border-left: 4px solid var(--border);
     background: rgba(255,255,255,0.02);
@@ -534,41 +475,43 @@
     overflow: hidden;
   }
 
-  /* Título vertical a la izquierda (marca de agua) */
   .categoria-section::before {
     content: attr(data-label);
     position: absolute;
     top: 50%;
-    left: 8px;
+    left: 6px;
     transform: translateY(-50%) rotate(180deg);
     writing-mode: vertical-rl;
     text-orientation: mixed;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px;
+    font-size: 26px;
     font-weight: 400;
-    letter-spacing: 6px;
+    letter-spacing: 3px;
     line-height: 1;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.45);
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     white-space: nowrap;
+    max-height: calc(100% - 16px);
+    overflow: hidden;
   }
 
-  /* Color de marca de agua por categoría */
-  .categoria-section[data-cat="pan"]::before      { color: rgba(244, 162, 97, 0.18); }
-  .categoria-section[data-cat="salsas"]::before   { color: rgba(232, 185, 35, 0.18); }
-  .categoria-section[data-cat="embutidos"]::before{ color: rgba(229, 165, 165, 0.18); }
-  .categoria-section[data-cat="proteinas"]::before{ color: rgba(255, 140, 90, 0.18); }
-  .categoria-section[data-cat="verduras"]::before { color: rgba(76, 175, 80, 0.18); }
-
-  /* Bordes izquierdos por categoría */
   .categoria-section[data-cat="pan"] { border-left-color: var(--cat-pan); }
+  .categoria-section[data-cat="pan"]::before { color: rgba(232, 160, 92, 0.45); }
+
   .categoria-section[data-cat="salsas"] { border-left-color: var(--cat-salsas); }
+  .categoria-section[data-cat="salsas"]::before { color: rgba(217, 179, 64, 0.45); }
+
   .categoria-section[data-cat="embutidos"] { border-left-color: var(--cat-embutidos); }
+  .categoria-section[data-cat="embutidos"]::before { color: rgba(217, 122, 92, 0.45); }
+
   .categoria-section[data-cat="proteinas"] { border-left-color: var(--cat-proteinas); }
-  .categoria-section[data-cat="verduras"] { border-left-color: var(--cat-verduras); }
+  .categoria-section[data-cat="proteinas"]::before { color: rgba(194, 90, 58, 0.45); }
+
+  .categoria-section[data-cat="vegetales"] { border-left-color: var(--cat-vegetales); }
+  .categoria-section[data-cat="vegetales"]::before { color: rgba(155, 197, 61, 0.45); }
 
   .category-grid {
     display: grid;
@@ -622,6 +565,41 @@
   .option-name { font-size: 11px; font-weight: 600; line-height: 1.2; color: var(--text); }
   .price { font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
+  /* ===== Ingredientes AGOTADOS ===== */
+  .option.agotado {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.7);
+  }
+  .option.agotado .option-img {
+    filter: grayscale(1) brightness(0.6);
+  }
+  .option.agotado .option-name,
+  .option.agotado .price {
+    color: #666 !important;
+    text-decoration: line-through;
+  }
+  .option.agotado::after {
+    content: none !important;
+  }
+  .agotado-badge {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--red);
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 2;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+  }
+
   .qty-controls {
     display: none;
     align-items: center;
@@ -658,7 +636,6 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Resumen y sándwich */
   .col-resumen, .col-sandwich {
     min-height: 0;
     display: flex;
@@ -852,7 +829,6 @@
   }
   .btn-cancelar-pan:hover { border-color: var(--orange); color: var(--orange); }
 
-  /* ===== PESTAÑAS INFERIORES (SOLO MÓVIL) ===== */
   .movil-tabs {
     display: none;
     background: rgba(15, 15, 15, 0.98);
@@ -1068,25 +1044,44 @@
   }
   .resumen-item .acciones {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
+    align-items: center;
   }
   .resumen-item .btn-accion {
     background: transparent;
     border: 1.5px solid var(--border);
     color: var(--text-muted);
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 22px;
     padding: 0;
+    transition: all 0.2s;
+    line-height: 1;
   }
-  .resumen-item .btn-accion:hover { border-color: var(--accent); color: var(--accent); }
-  .resumen-item .btn-accion.eliminar:hover { border-color: var(--red); color: var(--red); }
+  .resumen-item .btn-accion:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(1.05);
+  }
+  .resumen-item .btn-accion.editar {
+    border-color: rgba(180, 255, 57, 0.4);
+    color: var(--accent);
+  }
+  .resumen-item .btn-accion.editar:hover {
+    background: rgba(180, 255, 57, 0.1);
+    border-color: var(--accent);
+  }
+  .resumen-item .btn-accion.eliminar:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(255, 59, 48, 0.1);
+  }
 
   .resumen-totales {
     background: var(--card);
@@ -1437,7 +1432,7 @@
         <button class="categoria-tab" data-cat="salsas" onclick="scrollToCategoria('salsas')">🥫 Salsas</button>
         <button class="categoria-tab" data-cat="embutidos" onclick="scrollToCategoria('embutidos')">🥓 Embutidos</button>
         <button class="categoria-tab" data-cat="proteinas" onclick="scrollToCategoria('proteinas')">🍖 Proteínas</button>
-        <button class="categoria-tab" data-cat="verduras" onclick="scrollToCategoria('verduras')">🥬 Verduras</button>
+        <button class="categoria-tab" data-cat="vegetales" onclick="scrollToCategoria('vegetales')">🥬 Vegetales</button>
       </div>
 
       <div class="categorias-contenido" id="categorias-contenido">
@@ -1453,8 +1448,8 @@
         <div class="categoria-section" data-cat="proteinas" data-label="PROTEÍNAS" id="section-proteinas">
           <div id="proteinas-group" class="category-grid"></div>
         </div>
-        <div class="categoria-section" data-cat="verduras" data-label="VERDURAS" id="section-verduras">
-          <div id="verduras-group" class="category-grid"></div>
+        <div class="categoria-section" data-cat="vegetales" data-label="VEGETALES" id="section-vegetales">
+          <div id="vegetales-group" class="category-grid"></div>
         </div>
       </div>
     </div>
@@ -1467,7 +1462,7 @@
           <span>Subtotal</span>
           <span id="subtotal-out">$0.00</span>
         </div>
-        <button id="clear-btn" class="clear-btn">🗑 Limpiar este pan</button>
+        <button id="clear-btn" class="clear-btn">🗑 Limpiar esta lista</button>
       </div>
     </div>
 
@@ -1497,7 +1492,7 @@
   
   <div class="barra-acciones-sandwich">
     <button type="button" class="btn-cancelar-pan" onclick="cancelarPan()">Cancelar</button>
-    <button type="button" class="btn-guardar" onclick="guardarPan()">✓ Guardar este pan</button>
+    <button type="button" class="btn-guardar" onclick="guardarPan()">✓ Ordenar este pan</button>
   </div>
 </div>
 
