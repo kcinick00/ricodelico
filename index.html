@@ -381,6 +381,16 @@
     .btn-ver-sandwich {
       display: none !important;
     }
+
+    /* Ajuste del título vertical en móvil */
+    .categoria-section {
+      padding-left: 44px;
+    }
+    .categoria-section::before {
+      font-size: 36px;
+      letter-spacing: 4px;
+      left: 4px;
+    }
   }
   
   @media (min-width: 901px) {
@@ -510,14 +520,50 @@
   .categorias-contenido::-webkit-scrollbar { width: 5px; }
   .categorias-contenido::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+  /* =========================================================
+     SECCIONES DE CATEGORÍA CON TÍTULO VERTICAL
+     ========================================================= */
   .categoria-section {
     margin-bottom: 16px;
-    padding: 10px;
+    padding: 10px 10px 10px 60px;
     border-radius: 12px;
     border-left: 4px solid var(--border);
     background: rgba(255,255,255,0.02);
     scroll-margin-top: 10px;
+    position: relative;
+    overflow: hidden;
   }
+
+  /* Título vertical a la izquierda (marca de agua) */
+  .categoria-section::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%) rotate(180deg);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    font-weight: 400;
+    letter-spacing: 6px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.10);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+  }
+
+  /* Color de marca de agua por categoría */
+  .categoria-section[data-cat="pan"]::before      { color: rgba(244, 162, 97, 0.18); }
+  .categoria-section[data-cat="salsas"]::before   { color: rgba(232, 185, 35, 0.18); }
+  .categoria-section[data-cat="embutidos"]::before{ color: rgba(229, 165, 165, 0.18); }
+  .categoria-section[data-cat="proteinas"]::before{ color: rgba(255, 140, 90, 0.18); }
+  .categoria-section[data-cat="verduras"]::before { color: rgba(76, 175, 80, 0.18); }
+
+  /* Bordes izquierdos por categoría */
   .categoria-section[data-cat="pan"] { border-left-color: var(--cat-pan); }
   .categoria-section[data-cat="salsas"] { border-left-color: var(--cat-salsas); }
   .categoria-section[data-cat="embutidos"] { border-left-color: var(--cat-embutidos); }
@@ -1395,19 +1441,19 @@
       </div>
 
       <div class="categorias-contenido" id="categorias-contenido">
-        <div class="categoria-section activa" data-cat="pan" id="section-pan">
+        <div class="categoria-section activa" data-cat="pan" data-label="PAN" id="section-pan">
           <div id="pan-group" class="category-grid"></div>
         </div>
-        <div class="categoria-section" data-cat="salsas" id="section-salsas">
+        <div class="categoria-section" data-cat="salsas" data-label="SALSAS" id="section-salsas">
           <div id="salsas-group" class="category-grid"></div>
         </div>
-        <div class="categoria-section" data-cat="embutidos" id="section-embutidos">
+        <div class="categoria-section" data-cat="embutidos" data-label="EMBUTIDOS" id="section-embutidos">
           <div id="embutidos-group" class="category-grid"></div>
         </div>
-        <div class="categoria-section" data-cat="proteinas" id="section-proteinas">
+        <div class="categoria-section" data-cat="proteinas" data-label="PROTEÍNAS" id="section-proteinas">
           <div id="proteinas-group" class="category-grid"></div>
         </div>
-        <div class="categoria-section" data-cat="verduras" id="section-verduras">
+        <div class="categoria-section" data-cat="verduras" data-label="VERDURAS" id="section-verduras">
           <div id="verduras-group" class="category-grid"></div>
         </div>
       </div>
