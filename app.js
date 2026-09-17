@@ -13,6 +13,15 @@ let ultimoPedido = null;
 let panEnEdicion = null;
 
 // =========================================================
+// DETECCIÓN DE MÓVIL (usar matchMedia, más confiable que innerWidth)
+// =========================================================
+const mqMovil = window.matchMedia("(max-width: 900px)");
+
+function esMovil() {
+  return mqMovil.matches;
+}
+
+// =========================================================
 // TOAST
 // =========================================================
 function showToast(message, type = "success") {
@@ -40,7 +49,7 @@ function showToast(message, type = "success") {
 // CAMBIAR VISTA EN MÓVIL (Ingredientes / Resumen / Sándwich)
 // =========================================================
 function cambiarVistaMovil(vista, boton) {
-  if (window.innerWidth > 900) return;
+  if (!esMovil()) return;
   
   document.querySelectorAll('.col-ingredientes, .col-resumen, .col-sandwich')
     .forEach(c => c.classList.remove('movil-activa'));
@@ -323,7 +332,7 @@ function abrirSandwich() {
   actualizarResumenPan();
   
   // En móvil, resetear a la vista de ingredientes
-  if (window.innerWidth <= 900) {
+  if (esMovil()) {
     const tabIng = document.querySelector('.movil-tab');
     cambiarVistaMovil('ingredientes', tabIng);
   }
@@ -1171,7 +1180,7 @@ if (typeof ingredientsData === "undefined") {
     resizeTimeout = setTimeout(() => {
       renderSandwich();
       // Si cambiamos a escritorio, restaurar todas las columnas
-      if (window.innerWidth > 900) {
+      if (!esMovil()) {
         document.querySelectorAll('.col-ingredientes, .col-resumen, .col-sandwich')
           .forEach(c => c.classList.remove('movil-activa'));
       } else {
@@ -1207,9 +1216,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   // En móvil, activar vista de ingredientes al inicio
-  if (window.innerWidth <= 900) {
+  if (esMovil()) {
     const tabIng = document.querySelector('.movil-tab');
     cambiarVistaMovil('ingredientes', tabIng);
+  }
+  
+  // Reaccionar a cambios del media query (rotar pantalla, etc.)
+  if (mqMovil.addEventListener) {
+    mqMovil.addEventListener("change", (e) => {
+      renderSandwich();
+      if (!e.matches) {
+        // Pasó a escritorio
+        document.querySelectorAll('.col-ingredientes, .col-resumen, .col-sandwich')
+          .forEach(c => c.classList.remove('movil-activa'));
+      } else {
+        // Pasó a móvil
+        const tabIng = document.querySelector('.movil-tab');
+        cambiarVistaMovil('ingredientes', tabIng);
+      }
+    });
   }
 });
 
