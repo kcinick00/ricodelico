@@ -441,7 +441,7 @@
   }
 
   /* =========================================================
-     COLUMNA DE INGREDIENTES - RESPONSIVE CON SCROLL FUNCIONAL
+     COLUMNA DE INGREDIENTES - SCROLL GARANTIZADO (Opción B)
      ========================================================= */
   .categorias-contenido {
     flex: 1;
@@ -461,54 +461,24 @@
   }
   .categorias-contenido::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-  /* 2 columnas en pantallas anchas y altas */
-  @media (min-width: 1001px) and (min-height: 700px) {
-    .categorias-contenido {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      align-content: start;
-      overflow-y: auto;
-    }
-    .categoria-section { margin-bottom: 0; }
+  /* ⬇️ TRUCO: espacio extra al final que fuerza la aparición del scroll */
+  .categorias-contenido::after {
+    content: "";
+    display: block;
+    height: 40px;
+    flex-shrink: 0;
   }
 
+  /* Secciones: crecen natural, sin scroll interno */
   .categoria-section {
     margin-bottom: 14px;
     padding: 10px 10px 10px 40px;
     border-radius: 12px;
     border-left: 4px solid var(--border);
     background: rgba(255,255,255,0.02);
-    scroll-margin-top: 10px;
+    scroll-margin-top: 60px;
     position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
     flex-shrink: 0;
-    max-height: 420px;
-  }
-
-  @media (max-width: 1400px) { .categoria-section { max-height: 380px; } }
-  @media (max-width: 1100px) { .categoria-section { max-height: 340px; } }
-  @media (max-width: 900px)  { .categoria-section { max-height: 300px; } }
-  @media (max-width: 600px)  { .categoria-section { max-height: 240px; } }
-
-  /* Gradiente sutil al pie de cada sección */
-  .categoria-section::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 40px;
-    right: 10px;
-    height: 20px;
-    background: linear-gradient(to top, rgba(15,15,15,0.85), transparent);
-    pointer-events: none;
-    opacity: 0.75;
-    border-radius: 0 0 12px 12px;
-    z-index: 3;
-  }
-  @media (max-width: 900px) {
-    .categoria-section::after { left: 32px; }
   }
 
   /* Título vertical a la izquierda */
@@ -521,84 +491,52 @@
     writing-mode: vertical-rl;
     text-orientation: mixed;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 400;
     letter-spacing: 3px;
     line-height: 1;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.5);
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     white-space: nowrap;
-    max-height: calc(100% - 16px);
-    overflow: hidden;
-    z-index: 2;
   }
 
   /* Colores por categoría */
   .categoria-section[data-cat="pan"] { border-left-color: var(--cat-pan); }
-  .categoria-section[data-cat="pan"]::before { color: rgba(232, 160, 92, 0.5); }
+  .categoria-section[data-cat="pan"]::before { color: rgba(232, 160, 92, 0.55); }
 
   .categoria-section[data-cat="salsas"] { border-left-color: var(--cat-salsas); }
-  .categoria-section[data-cat="salsas"]::before { color: rgba(217, 179, 64, 0.5); }
+  .categoria-section[data-cat="salsas"]::before { color: rgba(217, 179, 64, 0.55); }
 
   .categoria-section[data-cat="embutidos"] { border-left-color: var(--cat-embutidos); }
-  .categoria-section[data-cat="embutidos"]::before { color: rgba(217, 122, 92, 0.5); }
+  .categoria-section[data-cat="embutidos"]::before { color: rgba(217, 122, 92, 0.55); }
 
   .categoria-section[data-cat="proteinas"] { border-left-color: var(--cat-proteinas); }
-  .categoria-section[data-cat="proteinas"]::before { color: rgba(194, 90, 58, 0.5); }
+  .categoria-section[data-cat="proteinas"]::before { color: rgba(194, 90, 58, 0.55); }
 
   .categoria-section[data-cat="vegetales"] { border-left-color: var(--cat-vegetales); }
-  .categoria-section[data-cat="vegetales"]::before { color: rgba(155, 197, 61, 0.5); }
+  .categoria-section[data-cat="vegetales"]::before { color: rgba(155, 197, 61, 0.55); }
 
+  /* Grid compacto */
   .category-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
-    gap: 8px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1;
-    min-height: 0;
-    padding-right: 4px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-  .category-grid::-webkit-scrollbar { width: 6px; }
-  .category-grid::-webkit-scrollbar-track { background: transparent; }
-  .category-grid::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 3px;
-  }
-  .category-grid::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-  @media (max-width: 600px) {
-    .category-grid {
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 6px;
-    }
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 6px;
   }
 
-  /* Título vertical más chico en móvil */
-  @media (max-width: 900px) {
-    .categoria-section { padding-left: 32px; }
-    .categoria-section::before {
-      font-size: 22px;
-      letter-spacing: 2px;
-      left: 4px;
-    }
-  }
-
+  /* Tarjetas más compactas */
   .option {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 4px;
-    padding: 8px 6px 10px;
+    gap: 3px;
+    padding: 6px 4px 8px;
     background: var(--card);
     border: 2px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     box-shadow: var(--shadow-sm);
@@ -612,17 +550,17 @@
   .option:has(input:checked)::after {
     content: "✓";
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 18px;
-    height: 18px;
+    top: 3px;
+    right: 3px;
+    width: 16px;
+    height: 16px;
     background: var(--accent);
     color: #0F0F0F;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
     z-index: 4;
   }
@@ -630,14 +568,14 @@
   .option-img {
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 6px;
+    border-radius: 5px;
     object-fit: cover;
     background: var(--bg-soft);
   }
-  .option-name { font-size: 11px; font-weight: 600; line-height: 1.2; color: var(--text); }
-  .price { font-size: 11px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  .option-name { font-size: 10px; font-weight: 600; line-height: 1.15; color: var(--text); }
+  .price { font-size: 10px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
-  /* ===== Ingredientes AGOTADOS ===== */
+  /* Ingredientes agotados */
   .option.agotado {
     opacity: 0.45;
     cursor: not-allowed;
@@ -651,21 +589,19 @@
     color: #666 !important;
     text-decoration: line-through;
   }
-  .option.agotado::after {
-    content: none !important;
-  }
+  .option.agotado::after { content: none !important; }
   .agotado-badge {
     position: absolute;
-    top: 6px;
+    top: 4px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--red);
     color: #fff;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    padding: 3px 8px;
-    border-radius: 6px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 5px;
     z-index: 5;
     pointer-events: none;
     box-shadow: 0 2px 8px rgba(0,0,0,0.5);
@@ -675,22 +611,22 @@
   .qty-controls {
     display: none;
     align-items: center;
-    gap: 4px;
-    margin-top: 4px;
-    padding: 2px 4px;
+    gap: 3px;
+    margin-top: 3px;
+    padding: 1px 3px;
     background: var(--bg);
     border-radius: 20px;
     border: 1px solid var(--border);
   }
   .qty-controls.visible { display: flex; }
   .qty-btn {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: none;
     border-radius: 50%;
     background: var(--accent);
     color: #0F0F0F;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
     cursor: pointer;
     display: flex;
@@ -700,12 +636,31 @@
   }
   .qty-btn.qty-minus { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
   .qty-display {
-    min-width: 16px;
+    min-width: 14px;
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--accent);
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Título vertical más chico en móvil */
+  @media (max-width: 900px) {
+    .categoria-section { padding-left: 32px; }
+    .categoria-section::before {
+      font-size: 20px;
+      letter-spacing: 2px;
+      left: 4px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .category-grid {
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 5px;
+    }
+    .option-name { font-size: 9px; }
+    .price { font-size: 9px; }
   }
 
   .col-resumen, .col-sandwich {
