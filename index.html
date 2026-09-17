@@ -842,10 +842,18 @@
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .movil-tab .icono {
     font-size: 18px;
     line-height: 1;
+    pointer-events: none;
+  }
+  .movil-tab span:not(.icono) {
+    pointer-events: none;
   }
   .movil-tab.active {
     background: var(--accent);
@@ -1427,15 +1435,15 @@
   
   <!-- Pestañas inferiores (solo móvil) -->
   <div class="movil-tabs">
-    <button class="movil-tab active" onclick="cambiarVistaMovil('ingredientes', this)">
+    <button class="movil-tab active" data-vista="ingredientes" ontouchend="cambiarVistaMovil('ingredientes', this); event.preventDefault();" onclick="cambiarVistaMovil('ingredientes', this)">
       <span class="icono">🥖</span>
       <span>Ingredientes</span>
     </button>
-    <button class="movil-tab" onclick="cambiarVistaMovil('resumen', this)">
+    <button class="movil-tab" data-vista="resumen" ontouchend="cambiarVistaMovil('resumen', this); event.preventDefault();" onclick="cambiarVistaMovil('resumen', this)">
       <span class="icono">📋</span>
       <span>Resumen</span>
     </button>
-    <button class="movil-tab" onclick="cambiarVistaMovil('sandwich', this)">
+    <button class="movil-tab" data-vista="sandwich" ontouchend="cambiarVistaMovil('sandwich', this); event.preventDefault();" onclick="cambiarVistaMovil('sandwich', this)">
       <span class="icono">🥪</span>
       <span>Sándwich</span>
     </button>
