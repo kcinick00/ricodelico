@@ -1,12 +1,19 @@
-const CACHE_NAME = "sandwich-app-v28";
+// =========================================================
+// sw.js - Service Worker para "Arma tu sándwich"
+// =========================================================
+
+const CACHE_NAME = "sandwich-app-v31";
+
+// Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
   "index.html",
-  "app.js",4
+  "app.js",
   "combos.js",
   "ingredients.js",
   "manifest.json",
   "icon-192.png",
   "icon-512.png",
+  "fondo-sandwich.jpg",
   "images/aguacate.jpg",
   "images/baguette.jpg",
   "images/bbq.jpg",
@@ -29,24 +36,108 @@ const FILES_TO_CACHE = [
   "images/tocino.jpg"
 ];
 
+// =========================================================
+// INSTALL: precachear el app shell
+// =========================================================
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => {
+      // addAll falla si UNO falla, así que hacemos uno por uno
+      return Promise.all(
+        FILES_TO_CACHE.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn("[SW] No se pudo cachear:", url, err);
+          })
+        )
+      );
+    })
   );
   self.skipWaiting();
 });
 
+// =========================================================
+// ACTIVATE: limpiar cachés viejos
+// =========================================================
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE_NAME)
+          .map((k) => {
+            console.log("[SW] Eliminando caché viejo:", k);
+            return caches.delete(k);
+          })
+      )
     )
   );
   self.clients.claim();
 });
 
+// =========================================================
+// FETCH: estrategia cache-first con cacheo dinámico
+// =========================================================
 self.addEventListener("fetch", (event) => {
+  const url = event.request.url;
+
+  // 1) No cachear Google Sheets (siempre fresco)
+  if (url.includes("docs.google.com/spreadsheets")) {
+    return; // dejar que el navegador lo maneje normal
+  }
+
+  // 2) No cachear requests que no sean GET
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  // 3) No cachear extensiones de Chrome ni otros esquemas raros
+  if (!url.startsWith("http")) {
+    return;
+  }
+
+  // 4) Ignorar los iframes de impresión (no son requests reales)
+  if (url.includes("print-iframe")) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(event.request).then((cached) => {
+      // Si está en caché, devolverlo
+      if (cached) {
+        // Refrescar en background (opcional, tipo "stale-while-revalidate")
+        fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200 && response.type === "basic") {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, response.clone());
+              });
+            }
+          })
+          .catch(() => { /* offline, ignorar */ });
+        return cached;
+      }
+
+      // Si no está en caché, ir a la red
+      return fetch(event.request)
+        .then((response) => {
+          // Solo cachear respuestas válidas de mismo origen
+          if (!response || response.status !== 200 || response.type !== "basic") {
+            return response;
+          }
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch((err) => {
+          console.warn("[SW] Falló fetch y no está en caché:", event.request.url);
+          // Si es una navegación, devolver el index cacheado
+          if (event.request.mode === "navigate") {
+            return caches.match("index.html");
+          }
+          throw err;
+        });
+    })
   );
 });
