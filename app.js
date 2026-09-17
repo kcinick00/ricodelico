@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con Google Sheets como backend del menú
+// app.js - Versión con Google Sheets + normalización de categorías
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -17,8 +17,25 @@ let panEnEdicion = null;
 // =========================================================
 const MENU_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTecN7oPdkRiCCCUK-AjrKcPjODWFWPfzo_TSSVR0QansKwZW3bdFqwrNCqzdgqAkVXAYfygTJZug_G/pub?gid=0&single=true&output=csv";
 
-let menuData = null;    // { pan: {type, items}, salsas: {...}, ... }
+let menuData = null;
 let menuListo = false;
+
+// =========================================================
+// NORMALIZACIÓN DE CATEGORÍAS
+// Acepta cualquier variante y la reduce a la clave canónica
+// =========================================================
+function normalizarCategoria(cat) {
+  if (!cat) return "";
+  const c = String(cat).trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // quitar acentos
+
+  if (c === "pan" || c === "panes") return "pan";
+  if (c === "salsa" || c === "salsas") return "salsas";
+  if (c === "embutido" || c === "embutidos" || c === "frios") return "embutidos";
+  if (c === "proteina" || c === "proteinas" || c === "carnes") return "proteinas";
+  if (c === "verdura" || c === "verduras" || c === "vegetal" || c === "vegetales") return "vegetales";
+  return c; // devolver tal cual si no coincide
+}
 
 // =========================================================
 // DETECCIÓN DE MÓVIL
@@ -64,14 +81,15 @@ function cambiarVistaMovil(vista, boton) {
 }
 
 // =========================================================
-// SCROLL A CATEGORÍA
+// SCROLL A CATEGORÍA (usando scrollIntoView, más confiable)
 // =========================================================
 function scrollToCategoria(cat) {
   const section = document.getElementById("section-" + cat);
   const contenido = document.getElementById("categorias-contenido");
   if (!section || !contenido) return;
-  const top = section.offsetTop - contenido.offsetTop - 10;
-  contenido.scrollTo({ top: top, behavior: "smooth" });
+
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+
   document.querySelectorAll(".categoria-tab").forEach(t => t.classList.remove("active"));
   const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
   if (tab) tab.classList.add("active");
@@ -238,7 +256,7 @@ function renderResumenGeneral() {
       };
       agregarLinea(pan.embutidos, "🥓");
       agregarLinea(pan.proteinas, "🍖");
-      agregarLinea(pan.verduras, "🥬");
+      agregarLinea(pan.vegetales || pan.verduras, "🥬");
       agregarLinea(pan.salsas, "🥫");
       detalleHTML = `<div class="detalle" style="margin-top: 6px;">${lineas.join("<br>")}</div>`;
     }
@@ -378,18 +396,20 @@ function guardarPan() {
 
   const embutidos = simplificar(getSelectedItems("embutidos"));
   const proteinas = simplificar(getSelectedItems("proteinas"));
-  const verduras = simplificar(getSelectedItems("verduras"));
+  // Aceptar tanto "vegetales" como "verduras" según el sheet
+  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
+  const vegetales = simplificar(getSelectedItems(vegetalesKey));
   const salsas = simplificar(getSelectedItems("salsas"));
 
   let precio = panItem.price;
-  [...embutidos, ...proteinas, ...verduras, ...salsas].forEach(item => {
+  [...embutidos, ...proteinas, ...vegetales, ...salsas].forEach(item => {
     precio += item.price * item.qty;
   });
 
   const panData = {
     tipo: "personalizado",
     pan: { id: panItem.id, nombre: panItem.name || "Pan", price: panItem.price || 0, qty: 1 },
-    embutidos, proteinas, verduras, salsas, precio
+    embutidos, proteinas, vegetales, salsas, precio
   };
 
   if (panEnEdicion !== null) {
@@ -456,8 +476,9 @@ function editarPan(idx) {
       updateCardControls(pan.pan.id, true);
     }
   }
-  ["embutidos", "proteinas", "verduras", "salsas"].forEach(cat => {
-    (pan[cat] || []).forEach(item => {
+  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
+  ["embutidos", "proteinas", vegetalesKey, "salsas"].forEach(cat => {
+    (pan[cat] || pan[cat === "vegetales" ? "verduras" : cat] || []).forEach(item => {
       const input = document.querySelector(`input[value="${item.id}"]`);
       if (input) {
         input.checked = true;
@@ -664,7 +685,8 @@ function actualizarResumenPan() {
     }
   }
 
-  ["salsas", "embutidos", "proteinas", "verduras"].forEach(key => {
+  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
+  ["salsas", "embutidos", "proteinas", vegetalesKey].forEach(key => {
     getSelectedItems(key).forEach(item => {
       const qty = quantities[item.id] || 1;
       const itemTotal = item.price * qty;
@@ -749,7 +771,8 @@ function drawLayer(ctx, src, color, x, y, w, h, r, drawShadow = true) {
 function getDPR() { return Math.min(window.devicePixelRatio || 1, 1.5); }
 
 function getLayersWithQuantities() {
-  const baseLayers = [...getSelectedItems("embutidos"), ...getSelectedItems("proteinas"), ...getSelectedItems("verduras")];
+  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
+  const baseLayers = [...getSelectedItems("embutidos"), ...getSelectedItems("proteinas"), ...getSelectedItems(vegetalesKey)];
   const expandedLayers = [];
   baseLayers.forEach(item => {
     const qty = quantities[item.id] || 1;
@@ -1005,7 +1028,7 @@ function generarDetallePanHTML(pan, idx) {
     };
     agregarItems(pan.embutidos);
     agregarItems(pan.proteinas);
-    agregarItems(pan.verduras);
+    agregarItems(pan.vegetales || pan.verduras);
     agregarItems(pan.salsas);
     const descripcion = partes.join(", ");
     html += `<div class="pan-bloque">`;
@@ -1175,7 +1198,8 @@ async function cargarMenuDesdeSheets() {
 
     const agrupado = {};
     filas.forEach(fila => {
-      const cat = (fila.categoria || "").trim();
+      // AQUÍ usamos la normalización que acepta "verduras" o "vegetales"
+      const cat = normalizarCategoria(fila.categoria);
       const id = (fila.id || "").trim();
       if (!cat || !id) return;
       if (!agrupado[cat]) {
@@ -1222,12 +1246,12 @@ async function cargarMenuDesdeSheets() {
 }
 
 // Convierte menuData al formato que espera ingredientsData
+// (siempre usa "vegetales" como clave canónica)
 function menuToIngredientsData() {
   if (!menuData) return null;
   const out = {};
   Object.entries(menuData).forEach(([cat, cfg]) => {
-    // Normalizar "vegetales" → "verduras" (compatibilidad con el resto del código)
-    const key = cat === "vegetales" ? "verduras" : cat;
+    const key = normalizarCategoria(cat);
     out[key] = {
       type: cfg.type,
       items: cfg.items.map(i => ({
@@ -1241,7 +1265,7 @@ function menuToIngredientsData() {
   return out;
 }
 
-// Reconstruye todos los grupos (útil cuando llega el menú del Sheets)
+// Reconstruye todos los grupos
 function buildAllGroups() {
   Object.keys(ingredientsData).forEach(key => {
     const cont = document.getElementById(key + "-group");
