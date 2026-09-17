@@ -2,7 +2,7 @@
 // sw.js - Service Worker para "Arma tu sándwich"
 // =========================================================
 
-const CACHE_NAME = "sandwich-app-v35";
+const CACHE_NAME = "sandwich-app-v35.1";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
