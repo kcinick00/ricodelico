@@ -1,4 +1,4 @@
-const CACHE_NAME = "sandwich-app-v26";
+const CACHE_NAME = "sandwich-app-v27";
 const FILES_TO_CACHE = [
   "index.html",
   "app.js",4
