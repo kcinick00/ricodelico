@@ -441,7 +441,7 @@
   }
 
   /* =========================================================
-     COLUMNA DE INGREDIENTES - SCROLL GARANTIZADO (Opción B)
+     COLUMNA DE INGREDIENTES - SCROLL GARANTIZADO
      ========================================================= */
   .categorias-contenido {
     flex: 1;
@@ -461,7 +461,6 @@
   }
   .categorias-contenido::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-  /* ⬇️ TRUCO: espacio extra al final que fuerza la aparición del scroll */
   .categorias-contenido::after {
     content: "";
     display: block;
@@ -469,7 +468,6 @@
     flex-shrink: 0;
   }
 
-  /* Secciones: crecen natural, sin scroll interno */
   .categoria-section {
     margin-bottom: 14px;
     padding: 10px 10px 10px 40px;
@@ -481,7 +479,6 @@
     flex-shrink: 0;
   }
 
-  /* Título vertical a la izquierda */
   .categoria-section::before {
     content: attr(data-label);
     position: absolute;
@@ -503,7 +500,6 @@
     white-space: nowrap;
   }
 
-  /* Colores por categoría */
   .categoria-section[data-cat="pan"] { border-left-color: var(--cat-pan); }
   .categoria-section[data-cat="pan"]::before { color: rgba(232, 160, 92, 0.55); }
 
@@ -519,14 +515,13 @@
   .categoria-section[data-cat="vegetales"] { border-left-color: var(--cat-vegetales); }
   .categoria-section[data-cat="vegetales"]::before { color: rgba(155, 197, 61, 0.55); }
 
-  /* Grid compacto */
+  /* Grid por defecto (desktop / tablet grande) */
   .category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
     gap: 6px;
   }
 
-  /* Tarjetas más compactas */
   .option {
     display: flex;
     flex-direction: column;
@@ -575,7 +570,6 @@
   .option-name { font-size: 10px; font-weight: 600; line-height: 1.15; color: var(--text); }
   .price { font-size: 10px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
-  /* Ingredientes agotados */
   .option.agotado {
     opacity: 0.45;
     cursor: not-allowed;
@@ -654,7 +648,11 @@
     }
   }
 
-  /* Celulares medianos y grandes: 3 columnas */
+  /* =========================================================
+     SOLUCIÓN C: RESPONSIVE INTELIGENTE POR ANCHO (MÓVIL)
+     ========================================================= */
+
+  /* Celulares medianos y grandes: 3 columnas cómodas */
   @media (max-width: 600px) and (min-width: 400px) {
     .category-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -686,7 +684,7 @@
     }
   }
 
-  /* Celulares chicos (iPhone SE, etc): 2 columnas */
+  /* Celulares chicos (iPhone SE, etc): 2 columnas GRANDES */
   @media (max-width: 400px) {
     .category-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -706,6 +704,8 @@
       width: 22px;
       height: 22px;
       font-size: 13px;
+      top: 6px;
+      right: 6px;
     }
     .qty-btn {
       width: 26px;
@@ -720,6 +720,16 @@
       font-size: 11px;
       padding: 4px 10px;
     }
+  }
+
+  /* Tablets y pantallas medianas: 4 columnas */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .category-grid {
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 8px;
+    }
+    .option-name { font-size: 11px; }
+    .price { font-size: 11px; }
   }
 
   .col-resumen, .col-sandwich {
@@ -1558,7 +1568,6 @@
     </div>
   </div>
   
-  <!-- Pestañas inferiores (solo móvil) -->
   <div class="movil-tabs">
     <button class="movil-tab active" data-vista="ingredientes" ontouchend="cambiarVistaMovil('ingredientes', this); event.preventDefault();" onclick="cambiarVistaMovil('ingredientes', this)">
       <span class="icono">🥖</span>
