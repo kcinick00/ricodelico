@@ -2,7 +2,7 @@
 // sw.js - Service Worker para "Arma tu sándwich"
 // =========================================================
 
-const CACHE_NAME = "sandwich-app-v35.1";
+const CACHE_NAME = "sandwich-app-v36";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
@@ -42,7 +42,6 @@ const FILES_TO_CACHE = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // addAll falla si UNO falla, así que hacemos uno por uno
       return Promise.all(
         FILES_TO_CACHE.map((url) =>
           cache.add(url).catch((err) => {
@@ -80,31 +79,14 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
-  // 1) No cachear Google Sheets (siempre fresco)
-  if (url.includes("docs.google.com/spreadsheets")) {
-    return; // dejar que el navegador lo maneje normal
-  }
-
-  // 2) No cachear requests que no sean GET
-  if (event.request.method !== "GET") {
-    return;
-  }
-
-  // 3) No cachear extensiones de Chrome ni otros esquemas raros
-  if (!url.startsWith("http")) {
-    return;
-  }
-
-  // 4) Ignorar los iframes de impresión (no son requests reales)
-  if (url.includes("print-iframe")) {
-    return;
-  }
+  if (url.includes("docs.google.com/spreadsheets")) return;
+  if (event.request.method !== "GET") return;
+  if (!url.startsWith("http")) return;
+  if (url.includes("print-iframe")) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      // Si está en caché, devolverlo
       if (cached) {
-        // Refrescar en background (opcional, tipo "stale-while-revalidate")
         fetch(event.request)
           .then((response) => {
             if (response && response.status === 200 && response.type === "basic") {
@@ -113,14 +95,12 @@ self.addEventListener("fetch", (event) => {
               });
             }
           })
-          .catch(() => { /* offline, ignorar */ });
+          .catch(() => {});
         return cached;
       }
 
-      // Si no está en caché, ir a la red
       return fetch(event.request)
         .then((response) => {
-          // Solo cachear respuestas válidas de mismo origen
           if (!response || response.status !== 200 || response.type !== "basic") {
             return response;
           }
@@ -132,7 +112,6 @@ self.addEventListener("fetch", (event) => {
         })
         .catch((err) => {
           console.warn("[SW] Falló fetch y no está en caché:", event.request.url);
-          // Si es una navegación, devolver el index cacheado
           if (event.request.mode === "navigate") {
             return caches.match("index.html");
           }
