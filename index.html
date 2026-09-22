@@ -440,9 +440,6 @@
     box-shadow: 0 4px 12px var(--accent-glow);
   }
 
-  /* =========================================================
-     COLUMNA DE INGREDIENTES - SCROLL GARANTIZADO
-     ========================================================= */
   .categorias-contenido {
     flex: 1;
     overflow-y: auto;
@@ -515,7 +512,6 @@
   .categoria-section[data-cat="vegetales"] { border-left-color: var(--cat-vegetales); }
   .categoria-section[data-cat="vegetales"]::before { color: rgba(155, 197, 61, 0.55); }
 
-  /* Grid por defecto (desktop / tablet grande) */
   .category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
@@ -638,7 +634,6 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Título vertical más chico en móvil */
   @media (max-width: 900px) {
     .categoria-section { padding-left: 32px; }
     .categoria-section::before {
@@ -648,11 +643,6 @@
     }
   }
 
-  /* =========================================================
-     SOLUCIÓN C: RESPONSIVE INTELIGENTE POR ANCHO (MÓVIL)
-     ========================================================= */
-
-  /* Celulares medianos y grandes: 3 columnas cómodas */
   @media (max-width: 600px) and (min-width: 400px) {
     .category-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -684,7 +674,6 @@
     }
   }
 
-  /* Celulares chicos (iPhone SE, etc): 2 columnas GRANDES */
   @media (max-width: 400px) {
     .category-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -722,7 +711,6 @@
     }
   }
 
-  /* Tablets y pantallas medianas: 4 columnas */
   @media (min-width: 601px) and (max-width: 900px) {
     .category-grid {
       grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
@@ -977,9 +965,7 @@
     border-color: var(--accent);
   }
 
-  /* =========================================================
-     PANTALLA 5: RESUMEN GENERAL
-     ========================================================= */
+  /* ===== PANTALLA 5: RESUMEN GENERAL ===== */
   #pantalla-resumen {
     padding: 16px;
     overflow-y: auto;
@@ -1271,6 +1257,8 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .toast-container {
@@ -1478,6 +1466,74 @@
     background: var(--accent);
     color: #0F0F0F;
   }
+
+  /* ===== HISTORIAL ===== */
+  .historial-item {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .historial-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .historial-folio {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .historial-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .historial-item-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .historial-item-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .btn-hist-accion {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .btn-hist-reimprimir:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(180, 255, 57, 0.08);
+  }
+  .btn-hist-eliminar:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(255, 59, 48, 0.08);
+  }
 </style>
 </head>
 <body class="con-fondo">
@@ -1648,6 +1704,7 @@
     <div class="amount" id="total-out">$0.00</div>
   </div>
   <div class="acciones-derecha">
+    <button id="btn-abrir-historial" class="btn-reimprimir" title="Ver historial">📜 Historial</button>
     <button id="btn-reimprimir" class="btn-reimprimir" onclick="reimprimirUltimoPedido()" style="display: none;">🖨 Reimprimir</button>
     <button id="btn-confirmar" onclick="openOrderModal()" style="display: none;">CONFIRMAR E IMPRIMIR →</button>
   </div>
@@ -1702,6 +1759,35 @@
     <div class="modal-footer">
       <button id="btn-cancel" class="btn-secondary">Cancelar</button>
       <button id="btn-print" class="btn-primary">🖨 Imprimir ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL HISTORIAL ===== -->
+<div id="historial-modal" class="modal-overlay">
+  <div class="modal-content" style="max-width: 560px;">
+    <div class="modal-header">
+      <h2>📜 Historial de pedidos</h2>
+      <button id="historial-close" class="modal-close">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap;">
+        <span id="historial-folio-actual" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:700;"></span>
+        <button id="btn-reset-folio" class="btn-secondary" style="padding:6px 10px;font-size:11px;border-radius:8px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;cursor:pointer;">
+          🔄 Reiniciar folio
+        </button>
+      </div>
+
+      <div id="historial-lista" style="display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;padding-right:4px;"></div>
+
+      <div id="historial-vacio" style="display:none;text-align:center;color:var(--text-muted);font-size:13px;font-style:italic;padding:24px 0;">
+        Aún no hay pedidos en el historial
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="btn-borrar-historial" class="btn-secondary">🗑 Borrar todo</button>
     </div>
   </div>
 </div>
