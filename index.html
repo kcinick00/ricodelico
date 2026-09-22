@@ -1565,7 +1565,151 @@
   }
   .btn-admin-secreto:active {
     transform: scale(0.9);
+  }/* ===== PANTALLA 0: INICIO ===== */
+#pantalla-inicio {
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.inicio-container {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.inicio-titulo {
+  text-align: center;
+}
+.inicio-titulo h1 {
+  margin: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--text);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.inicio-titulo h1 span { color: var(--accent); display: block; }
+.inicio-titulo p {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+.inicio-titulo p em {
+  font-family: 'Caveat', cursive;
+  font-style: normal;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.inicio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  .inicio-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
+  .inicio-titulo h1 { font-size: 34px; letter-spacing: 3px; }
+  .inicio-titulo p { font-size: 13px; }
+  .inicio-card { padding: 22px 18px; min-height: auto; }
+  .inicio-emoji { font-size: 44px; }
+  .inicio-nombre { font-size: 22px; }
+}
+
+.inicio-card {
+  background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%);
+  border: 2px solid var(--border);
+  border-radius: 22px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 220px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.inicio-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent);
+}
+.inicio-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+}
+.inicio-card:active { transform: translateY(-2px) scale(0.98); }
+
+.inicio-card-eventos::before { background: var(--orange); }
+.inicio-card-eventos:hover { border-color: var(--orange); }
+
+.inicio-card-charcuteria::before { background: var(--cat-proteinas); }
+.inicio-card-charcuteria:hover { border-color: var(--cat-proteinas); }
+
+.inicio-card-sandwich::before { background: var(--accent); }
+.inicio-card-sandwich:hover { border-color: var(--accent); }
+
+.inicio-emoji {
+  font-size: 56px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+.inicio-nombre {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1.05;
+}
+.inicio-nombre span { display: block; color: var(--accent); }
+.inicio-card-eventos .inicio-nombre span { color: var(--orange); }
+.inicio-card-charcuteria .inicio-nombre span { color: var(--cat-proteinas); }
+
+.inicio-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.inicio-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--border);
+  color: var(--text-muted);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body class="con-fondo">
@@ -1578,8 +1722,40 @@
   <button id="btn-volver" class="btn-volver" style="display: none;" onclick="volverAtras()">← Volver</button>
 </header>
 
+<!-- ===== PANTALLA 0: INICIO ===== -->
+<div id="pantalla-inicio" class="pantalla activa">
+  <div class="inicio-container">
+    <div class="inicio-titulo">
+      <h1>¿QUÉ DESEA <span>HOY?</span></h1>
+      <p>Elige el servicio que buscas <em>para empezar</em></p>
+    </div>
+
+    <div class="inicio-grid">
+      <div class="inicio-card inicio-card-eventos" onclick="elegirServicio('eventos')">
+        <div class="inicio-emoji">🎉</div>
+        <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
+        <div class="inicio-desc">Surtidos y charolas para tu celebración</div>
+        <div class="inicio-badge">Próximamente</div>
+      </div>
+
+      <div class="inicio-card inicio-card-charcuteria" onclick="elegirServicio('charcuteria')">
+        <div class="inicio-emoji">🥩</div>
+        <div class="inicio-nombre">CHARCUTERÍA <span>PREMIUM AL VACÍO</span></div>
+        <div class="inicio-desc">Selección fina envasada al vacío</div>
+        <div class="inicio-badge">Próximamente</div>
+      </div>
+
+      <div class="inicio-card inicio-card-sandwich" onclick="elegirServicio('sandwich')">
+        <div class="inicio-emoji">🥪</div>
+        <div class="inicio-nombre">ÁRMATE UN <span>SÁNDWICH</span></div>
+        <div class="inicio-desc">Elige cada ingrediente a tu gusto</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== PANTALLA 1: CANTIDAD ===== -->
-<div id="pantalla-cantidad" class="pantalla activa">
+<div id="pantalla-cantidad" class="pantalla">
   <div class="cantidad-titulo">
     <h1>¿CUÁNTOS PANES <span>VA A LLEVAR?</span></h1>
     <p>Elige la cantidad de sándwiches <em>para empezar</em></p>

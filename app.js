@@ -149,6 +149,9 @@ function actualizarBotonVolver() {
   } else if (pantallaActual === "pantalla-resumen") {
     btn.style.display = "flex";
     btn.innerHTML = panesArmados.length > 0 ? "← Empezar de nuevo" : "← Volver a cantidad";
+  } else if (pantallaActual === "pantalla-cantidad") {
+    btn.style.display = "flex";
+    btn.innerHTML = "← Inicio";
   } else {
     btn.style.display = "none";
   }
@@ -179,7 +182,9 @@ function volverAtras() {
   if (pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-combos") {
     if (panEnEdicion !== null) cancelarPan();
     else { mostrarPantalla("pantalla-resumen"); renderResumenGeneral(); }
-  } else if (pantallaActual === "pantalla-resumen") {
+    return;
+  }
+  if (pantallaActual === "pantalla-resumen") {
     if (panesArmados.length > 0) {
       const confirmar = confirm("¿Empezar de nuevo? Se borrará el pedido actual.");
       if (confirmar) {
@@ -195,6 +200,15 @@ function volverAtras() {
       document.getElementById("cantidad-inicial-display").textContent = "1";
       limpiarEditor();
       mostrarPantalla("pantalla-cantidad");
+    }
+    return;
+  }
+  if (pantallaActual === "pantalla-cantidad") {
+    // Regresar al inicio si no hay pedido en curso
+    if (panesArmados.length === 0) {
+      mostrarPantalla("pantalla-inicio");
+      document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
+      document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
     }
   }
 }
@@ -213,6 +227,26 @@ function confirmarCantidadInicial() {
   panesArmados = []; panEnEdicion = null; ultimoPanArmado = null;
   mostrarPantalla("pantalla-resumen");
   renderResumenGeneral();
+}
+
+// =========================================================
+// PANTALLA 0: INICIO - ELEGIR SERVICIO
+// =========================================================
+function elegirServicio(servicio) {
+  if (servicio === "sandwich") {
+    mostrarPantalla("pantalla-cantidad");
+    document.getElementById("header-titulo").innerHTML = 'ARMA TU <span>SÁNDWICH</span>';
+    document.getElementById("header-subtitulo").innerHTML = 'Elige tus ingredientes y mira el total <em>al instante</em>';
+    return;
+  }
+  if (servicio === "eventos") {
+    showToast("🎉 Bandeja para eventos: próximamente", "info");
+    return;
+  }
+  if (servicio === "charcuteria") {
+    showToast("🥩 Charcutería premium: próximamente", "info");
+    return;
+  }
 }
 
 // =========================================================
