@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con Google Sheets + normalización de categorías
+// app.js - Versión con Google Sheets + normalización + folio + historial
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -22,19 +22,18 @@ let menuListo = false;
 
 // =========================================================
 // NORMALIZACIÓN DE CATEGORÍAS
-// Acepta cualquier variante y la reduce a la clave canónica
 // =========================================================
 function normalizarCategoria(cat) {
   if (!cat) return "";
   const c = String(cat).trim().toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // quitar acentos
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   if (c === "pan" || c === "panes") return "pan";
   if (c === "salsa" || c === "salsas") return "salsas";
   if (c === "embutido" || c === "embutidos" || c === "frios") return "embutidos";
   if (c === "proteina" || c === "proteinas" || c === "carnes") return "proteinas";
   if (c === "verdura" || c === "verduras" || c === "vegetal" || c === "vegetales") return "vegetales";
-  return c; // devolver tal cual si no coincide
+  return c;
 }
 
 // =========================================================
@@ -81,7 +80,7 @@ function cambiarVistaMovil(vista, boton) {
 }
 
 // =========================================================
-// SCROLL A CATEGORÍA (usando scrollIntoView, más confiable)
+// SCROLL A CATEGORÍA
 // =========================================================
 function scrollToCategoria(cat) {
   const section = document.getElementById("section-" + cat);
@@ -396,7 +395,6 @@ function guardarPan() {
 
   const embutidos = simplificar(getSelectedItems("embutidos"));
   const proteinas = simplificar(getSelectedItems("proteinas"));
-  // Aceptar tanto "vegetales" como "verduras" según el sheet
   const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
   const vegetales = simplificar(getSelectedItems(vegetalesKey));
   const salsas = simplificar(getSelectedItems("salsas"));
@@ -1004,6 +1002,151 @@ function fillModalSummary() {
 }
 
 // =========================================================
+// FOLIO SECUENCIAL
+// =========================================================
+const FOLIO_KEY = "folio_counter";
+const FOLIO_PREFIX = "A-";
+const FOLIO_PAD = 4;
+
+function obtenerSiguienteFolio() {
+  let actual = parseInt(localStorage.getItem(FOLIO_KEY) || "0", 10);
+  if (isNaN(actual)) actual = 0;
+  actual += 1;
+  localStorage.setItem(FOLIO_KEY, String(actual));
+  return FOLIO_PREFIX + String(actual).padStart(FOLIO_PAD, "0");
+}
+
+function verFolioActual() {
+  const actual = parseInt(localStorage.getItem(FOLIO_KEY) || "0", 10);
+  return FOLIO_PREFIX + String(actual).padStart(FOLIO_PAD, "0");
+}
+
+function resetearFolio() {
+  if (!confirm("¿Reiniciar el contador de folios a A-0001?\nEsto NO borra el historial.")) return;
+  localStorage.setItem(FOLIO_KEY, "0");
+  showToast("Folio reiniciado a " + verFolioActual(), "info");
+}
+
+// =========================================================
+// HISTORIAL DE PEDIDOS (localStorage)
+// =========================================================
+const HISTORIAL_KEY = "historial_pedidos";
+const HISTORIAL_MAX = 50;
+
+function leerHistorial() {
+  try {
+    const raw = localStorage.getItem(HISTORIAL_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    console.warn("[Historial] Error leyendo:", e);
+    return [];
+  }
+}
+
+function escribirHistorial(arr) {
+  try {
+    localStorage.setItem(HISTORIAL_KEY, JSON.stringify(arr.slice(0, HISTORIAL_MAX)));
+  } catch (e) {
+    console.warn("[Historial] Error escribiendo:", e);
+    showToast("No se pudo guardar el historial", "remove");
+  }
+}
+
+function guardarPedidoEnHistorial(pedido) {
+  const arr = leerHistorial();
+  arr.unshift(pedido);
+  escribirHistorial(arr);
+}
+
+function eliminarPedidoHistorial(folio) {
+  if (!confirm(`¿Eliminar el pedido ${folio} del historial?`)) return;
+  const arr = leerHistorial().filter(p => p.folio !== folio);
+  escribirHistorial(arr);
+  renderHistorial();
+  showToast("Pedido eliminado del historial", "remove");
+}
+
+function borrarTodoHistorial() {
+  if (!confirm("¿Borrar TODO el historial de pedidos?\nEsta acción no se puede deshacer.")) return;
+  localStorage.removeItem(HISTORIAL_KEY);
+  renderHistorial();
+  showToast("Historial borrado", "remove");
+}
+
+function abrirHistorial() {
+  const modal = document.getElementById("historial-modal");
+  if (!modal) return;
+  renderHistorial();
+  modal.classList.add("active");
+}
+
+function cerrarHistorial() {
+  const modal = document.getElementById("historial-modal");
+  if (modal) modal.classList.remove("active");
+}
+
+function renderHistorial() {
+  const cont = document.getElementById("historial-lista");
+  const vacio = document.getElementById("historial-vacio");
+  const infoFolio = document.getElementById("historial-folio-actual");
+  if (!cont) return;
+
+  if (infoFolio) infoFolio.textContent = "Próximo folio: " + verFolioActual();
+
+  const arr = leerHistorial();
+  cont.innerHTML = "";
+
+  if (!arr.length) {
+    if (vacio) vacio.style.display = "block";
+    return;
+  }
+  if (vacio) vacio.style.display = "none";
+
+  arr.forEach(pedido => {
+    const card = document.createElement("div");
+    card.className = "historial-item";
+
+    const total = (pedido.panes || []).reduce((s, p) => s + (p.precio || 0), 0);
+    const numPanes = (pedido.panes || []).length;
+
+    card.innerHTML = `
+      <div class="historial-item-header">
+        <span class="historial-folio">${pedido.folio || "S/F"}</span>
+        <span class="historial-total">${fmt(total)}</span>
+      </div>
+      <div class="historial-item-info">
+        <span>👤 ${pedido.clientName || "Sin nombre"}</span>
+        <span>💳 ${pedido.paymentMethod || "-"}</span>
+      </div>
+      <div class="historial-item-info">
+        <span>📅 ${pedido.dateFormatted || "-"} ${pedido.time || ""}</span>
+        <span>🥪 ${numPanes} pan${numPanes > 1 ? "es" : ""}</span>
+      </div>
+      <div class="historial-item-acciones">
+        <button class="btn-hist-accion btn-hist-reimprimir" data-folio="${pedido.folio}">🖨 Reimprimir</button>
+        <button class="btn-hist-accion btn-hist-eliminar" data-folio="${pedido.folio}">🗑 Eliminar</button>
+      </div>
+    `;
+    cont.appendChild(card);
+  });
+
+  cont.querySelectorAll(".btn-hist-reimprimir").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const folio = btn.dataset.folio;
+      const pedido = leerHistorial().find(p => p.folio === folio);
+      if (!pedido) { showToast("Pedido no encontrado", "remove"); return; }
+      showToast("Reimprimiendo " + folio + "...", "info");
+      imprimirPedido(pedido);
+    });
+  });
+  cont.querySelectorAll(".btn-hist-eliminar").forEach(btn => {
+    btn.addEventListener("click", () => eliminarPedidoHistorial(btn.dataset.folio));
+  });
+}
+
+// =========================================================
 // GENERAR HTML DE CADA PAN PARA EL TICKET
 // =========================================================
 function generarDetallePanHTML(pan, idx) {
@@ -1049,17 +1192,34 @@ function printTicket() {
   const time = document.getElementById("order-time").value;
   if (!clientName) { showToast("Escribe el nombre del cliente", "remove"); return; }
   if (!paymentMethod) { showToast("Selecciona un método de pago", "remove"); return; }
+
   const dateObj = new Date(date + "T" + time);
   const dateFormatted = dateObj.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const pedidoCompleto = { clientName, paymentMethod, dateFormatted, time, panes: JSON.parse(JSON.stringify(panesArmados)) };
+
+  // Folio secuencial (se genera al imprimir)
+  const folio = obtenerSiguienteFolio();
+
+  const pedidoCompleto = {
+    folio,
+    clientName,
+    paymentMethod,
+    dateFormatted,
+    time,
+    panes: JSON.parse(JSON.stringify(panesArmados))
+  };
+
   ultimoPedido = JSON.parse(JSON.stringify(pedidoCompleto));
+
+  // Guardar en historial
+  guardarPedidoEnHistorial(pedidoCompleto);
+
   imprimirPedido(pedidoCompleto);
   document.getElementById("btn-reimprimir").style.display = "flex";
   setTimeout(() => { limpiarTodoDespuesDeImprimir(); }, 1500);
 }
 
 function imprimirPedido(pedido) {
-  const { clientName, paymentMethod, dateFormatted, time, panes } = pedido;
+  const { folio, clientName, paymentMethod, dateFormatted, time, panes } = pedido;
   let detalleHTML = "";
   let totalGeneral = 0;
   panes.forEach((pan, idx) => {
@@ -1085,6 +1245,7 @@ function imprimirPedido(pedido) {
         .info-row { display: flex; justify-content: space-between; padding: 0.3mm 0; }
         .info-row .label { font-weight: 900; }
         .info-row .value { text-align: right; }
+        .folio-row { font-size: 14pt; font-weight: 900; border-bottom: 1.5px solid #000; padding-bottom: 1mm; margin-bottom: 1mm; }
         .separator { border-top: 1px dashed #000; margin: 2mm 0; }
         .pan-bloque { margin-bottom: 3mm; padding-bottom: 2mm; border-bottom: 1px dashed #999; }
         .pan-bloque:last-child { border-bottom: none; }
@@ -1102,6 +1263,7 @@ function imprimirPedido(pedido) {
       <div class="ticket">
         <div class="header"><h1>ARMA TU SÁNDWICH</h1><p>Ticket de pedido</p></div>
         <div class="info">
+          <div class="info-row folio-row"><span class="label">FOLIO:</span><span class="value">${folio || "S/F"}</span></div>
           <div class="info-row"><span class="label">Cliente:</span><span class="value">${clientName}</span></div>
           <div class="info-row"><span class="label">Fecha:</span><span class="value">${dateFormatted}</span></div>
           <div class="info-row"><span class="label">Hora:</span><span class="value">${time}</span></div>
@@ -1198,7 +1360,6 @@ async function cargarMenuDesdeSheets() {
 
     const agrupado = {};
     filas.forEach(fila => {
-      // AQUÍ usamos la normalización que acepta "verduras" o "vegetales"
       const cat = normalizarCategoria(fila.categoria);
       const id = (fila.id || "").trim();
       if (!cat || !id) return;
@@ -1245,8 +1406,6 @@ async function cargarMenuDesdeSheets() {
   }
 }
 
-// Convierte menuData al formato que espera ingredientsData
-// (siempre usa "vegetales" como clave canónica)
 function menuToIngredientsData() {
   if (!menuData) return null;
   const out = {};
@@ -1265,7 +1424,6 @@ function menuToIngredientsData() {
   return out;
 }
 
-// Reconstruye todos los grupos
 function buildAllGroups() {
   Object.keys(ingredientsData).forEach(key => {
     const cont = document.getElementById(key + "-group");
@@ -1289,15 +1447,12 @@ async function iniciarApp() {
     return;
   }
 
-  // 1) Render rápido con datos locales
   Object.entries(ingredientsData).forEach(([key, cfg]) => buildGroup(key, cfg));
 
-  // 2) En paralelo, cargar el menú real desde Google Sheets
   cargarMenuDesdeSheets().then(ok => {
     if (ok) console.log("[Menu] Actualizado desde Google Sheets");
   });
 
-  // 3) Resto de la inicialización
   document.getElementById("total-out").textContent = "$0.00";
   const clearBtn = document.getElementById("clear-btn");
   if (clearBtn) clearBtn.addEventListener("click", () => {
@@ -1363,6 +1518,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // === HISTORIAL ===
+  const historialModal = document.getElementById("historial-modal");
+  const btnAbrirHistorial = document.getElementById("btn-abrir-historial");
+  const btnCerrarHistorial = document.getElementById("historial-close");
+  const btnBorrarHistorial = document.getElementById("btn-borrar-historial");
+  const btnResetFolio = document.getElementById("btn-reset-folio");
+
+  if (btnAbrirHistorial) btnAbrirHistorial.addEventListener("click", abrirHistorial);
+  if (btnCerrarHistorial) btnCerrarHistorial.addEventListener("click", cerrarHistorial);
+  if (btnBorrarHistorial) btnBorrarHistorial.addEventListener("click", borrarTodoHistorial);
+  if (btnResetFolio) btnResetFolio.addEventListener("click", resetearFolio);
+  if (historialModal) {
+    historialModal.addEventListener("click", (e) => {
+      if (e.target === historialModal) cerrarHistorial();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && historialModal && historialModal.classList.contains("active")) {
+      cerrarHistorial();
+    }
+  });
 });
 
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
