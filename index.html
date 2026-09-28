@@ -1731,11 +1731,11 @@
     </div>
 
     <div class="inicio-grid">
-      <div class="inicio-card inicio-card-eventos" onclick="elegirServicio('eventos')">
+      <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
         <div class="inicio-emoji">🎉</div>
         <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
         <div class="inicio-desc">Exquisitas bandejas de fiambres para tu evento</div>
-        <div class="inicio-badge">Próximamente</div>
+        <!-- Se eliminó el badge de "Próximamente" -->
       </div>
 
       <div class="inicio-card inicio-card-charcuteria" onclick="elegirServicio('charcuteria')">
@@ -1753,6 +1753,138 @@
     </div>
   </div>
 </div>
+
+<!-- ===== PANTALLA 6: BANDEJAS PARA EVENTOS ===== -->
+<div id="pantalla-bandejas" class="pantalla">
+  <div class="platters-section">
+    <div class="section-header">
+      <h2>Bandejas para Eventos</h2>
+      <p>Elegí el tamaño, la base y los extras. Precios finales en el momento.</p>
+    </div>
+
+    <div class="platters-grid">
+      <!-- PANEL 1: PEQUEÑA -->
+      <div class="platter-card" data-size="pequena" data-price="20">
+        <div class="platter-gallery">
+          <img src="BANDEJAS/PEQ1.jpg" alt="Bandeja Pequeña 1">
+          <img src="BANDEJAS/PEQ2.jpg" alt="Bandeja Pequeña 2">
+          <img src="BANDEJAS/PEQ3.jpg" alt="Bandeja Pequeña 3">
+          <img src="BANDEJAS/PEQ4.jpg" alt="Bandeja Pequeña 4">
+          <img src="BANDEJAS/PEQ5.jpg" alt="Bandeja Pequeña 5">
+          <img src="BANDEJAS/PEQ6.jpg" alt="Bandeja Pequeña 6">
+        </div>
+        <div class="platter-info">
+          <h3>Bandeja Pequeña</h3>
+          <p class="base-price">Precio base: <strong>$20.00</strong></p>
+          
+          <div class="option-group">
+            <span class="option-label">Elegí tu base:</span>
+            <div class="radio-group">
+              <label><input type="radio" name="base-pequena" value="Solo Quesos" checked> Solo Quesos</label>
+              <label><input type="radio" name="base-pequena" value="Solo Fiambres"> Solo Fiambres</label>
+              <label><input type="radio" name="base-pequena" value="Completa"> Completa (Fiambres y Quesos)</label>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <span class="option-label">Agregar Extras:</span>
+            <div class="checkbox-group">
+              <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
+              <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
+            </div>
+          </div>
+
+          <div class="total-price">
+            Total: <span class="total-amount">$20.00</span>
+          </div>
+          
+          <button class="btn-pedir" onclick="pedirBandeja('Pequeña')">Pedir por WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- PANEL 2: MEDIANA -->
+      <div class="platter-card" data-size="mediana" data-price="40">
+        <div class="platter-gallery">
+          <img src="BANDEJAS/MEDIANA1.jpg" alt="Bandeja Mediana 1">
+          <img src="BANDEJAS/MEDIANA2.jpg" alt="Bandeja Mediana 2">
+          <img src="BANDEJAS/MEDIANA3.jpg" alt="Bandeja Mediana 3">
+          <img src="BANDEJAS/MEDIANA4.jpg" alt="Bandeja Mediana 4">
+          <img src="BANDEJAS/MEDIANA5.jpg" alt="Bandeja Mediana 5">
+          <img src="BANDEJAS/MEDIANA6.jpg" alt="Bandeja Mediana 6">
+          <img src="BANDEJAS/MEDIANA7.jpg" alt="Bandeja Mediana 7">
+        </div>
+        <div class="platter-info">
+          <h3>Bandeja Mediana</h3>
+          <p class="base-price">Precio base: <strong>$40.00</strong></p>
+          
+          <div class="option-group">
+            <span class="option-label">Elegí tu base:</span>
+            <div class="radio-group">
+              <label><input type="radio" name="base-mediana" value="Solo Quesos" checked> Solo Quesos</label>
+              <label><input type="radio" name="base-mediana" value="Solo Fiambres"> Solo Fiambres</label>
+              <label><input type="radio" name="base-mediana" value="Completa"> Completa (Fiambres y Quesos)</label>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <span class="option-label">Agregar Extras:</span>
+            <div class="checkbox-group">
+              <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
+              <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
+            </div>
+          </div>
+
+          <div class="total-price">
+            Total: <span class="total-amount">$40.00</span>
+          </div>
+          
+          <button class="btn-pedir" onclick="pedirBandeja('Mediana')">Pedir por WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- PANEL 3: GRANDE -->
+      <div class="platter-card" data-size="grande" data-price="60">
+        <div class="platter-gallery">
+          <img src="BANDEJAS/GRANDE1.jpg" alt="Bandeja Grande 1">
+          <img src="BANDEJAS/GRANDE2.jpg" alt="Bandeja Grande 2">
+          <img src="BANDEJAS/GRANDE3.jpg" alt="Bandeja Grande 3">
+          <img src="BANDEJAS/GRANDE4.jpg" alt="Bandeja Grande 4">
+          <img src="BANDEJAS/GRANDE5.jpg" alt="Bandeja Grande 5">
+          <!-- GRANDE6.jpg no existe en tu carpeta, la omito -->
+          <img src="BANDEJAS/GRANDE7.jpg" alt="Bandeja Grande 7">
+        </div>
+        <div class="platter-info">
+          <h3>Bandeja Grande</h3>
+          <p class="base-price">Precio base: <strong>$60.00</strong></p>
+          
+          <div class="option-group">
+            <span class="option-label">Elegí tu base:</span>
+            <div class="radio-group">
+              <label><input type="radio" name="base-grande" value="Solo Quesos" checked> Solo Quesos</label>
+              <label><input type="radio" name="base-grande" value="Solo Fiambres"> Solo Fiambres</label>
+              <label><input type="radio" name="base-grande" value="Completa"> Completa (Fiambres y Quesos)</label>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <span class="option-label">Agregar Extras:</span>
+            <div class="checkbox-group">
+              <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
+              <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
+            </div>
+          </div>
+
+          <div class="total-price">
+            Total: <span class="total-amount">$60.00</span>
+          </div>
+          
+          <button class="btn-pedir" onclick="pedirBandeja('Grande')">Pedir por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- ===== PANTALLA 1: CANTIDAD ===== -->
 <div id="pantalla-cantidad" class="pantalla">
