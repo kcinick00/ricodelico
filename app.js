@@ -316,7 +316,7 @@ function pedirBandeja(tamano) {
     const mensajeCodificado = encodeURIComponent(mensaje);
     
     // ⚠️ REEMPLAZA ESTE NÚMERO POR EL TUYO (código de país + número, sin espacios ni guiones)
-    const telefono = "5491112345678"; 
+    const telefono = "584146774332"; 
     
     const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
     window.open(url, '_blank');
