@@ -1712,24 +1712,37 @@
     text-transform: uppercase;
   }
 
-  /* --- ESTILOS SECCIÓN BANDEJAS --- */
+  /* =========================================================
+     ESTILOS SECCIÓN BANDEJAS (HERO)
+     ========================================================= */
   .platters-section {
-      padding: 20px 16px;
-      max-width: 1200px;
+      padding: 20px 16px 40px;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
+      overflow-y: auto;
+      height: 100%;
+  }
+
+  #pantalla-bandejas {
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+  }
+  #pantalla-bandejas.activa {
+      display: flex;
   }
 
   .section-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
   }
 
   .section-header h2 {
       font-family: 'Bebas Neue', sans-serif;
       color: var(--accent);
-      font-size: 32px;
-      letter-spacing: 3px;
+      font-size: 36px;
+      letter-spacing: 4px;
       margin: 0 0 8px;
       text-transform: uppercase;
   }
@@ -1741,14 +1754,14 @@
 
   .platters-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 24px;
   }
 
   .platter-card {
       background-color: var(--card);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -1761,34 +1774,37 @@
       transform: translateY(-4px);
   }
 
-  /* Galería deslizable */
+  /* Galería HERO: ancho completo + fotos grandes sin recortes */
   .platter-gallery {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      gap: 8px;
-      padding: 10px;
-      background-color: #111;
+      gap: 10px;
+      padding: 12px;
+      background-color: #000;
       border-bottom: 1px solid var(--border);
       scrollbar-width: thin;
-      scrollbar-color: var(--accent) var(--bg);
+      scrollbar-color: var(--accent) #000;
+      -webkit-overflow-scrolling: touch;
   }
 
-  .platter-gallery::-webkit-scrollbar { height: 6px; }
-  .platter-gallery::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+  .platter-gallery::-webkit-scrollbar { height: 8px; }
+  .platter-gallery::-webkit-scrollbar-track { background: #000; }
+  .platter-gallery::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
 
   .platter-gallery img {
       width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      scroll-snap-align: start;
+      height: 400px;
+      object-fit: contain;
+      background: #000;
+      border-radius: 12px;
+      scroll-snap-align: center;
       flex-shrink: 0;
   }
 
   /* Información y opciones */
   .platter-info {
-      padding: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -1798,7 +1814,7 @@
   .platter-info h3 {
       font-family: 'Bebas Neue', sans-serif;
       color: #fff;
-      font-size: 24px;
+      font-size: 26px;
       margin: 0;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -1811,7 +1827,7 @@
   }
   .base-price strong {
       color: var(--accent);
-      font-size: 18px;
+      font-size: 20px;
       font-family: 'JetBrains Mono', monospace;
   }
 
@@ -1842,7 +1858,7 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      padding: 6px 8px;
+      padding: 8px 10px;
       background: rgba(255,255,255,0.03);
       border-radius: 8px;
       border: 1px solid transparent;
@@ -1876,7 +1892,7 @@
   .total-amount {
       color: var(--accent);
       font-weight: bold;
-      font-size: 24px;
+      font-size: 26px;
       font-family: 'Bebas Neue', sans-serif;
       letter-spacing: 1px;
   }
@@ -1900,6 +1916,61 @@
   .btn-pedir:hover {
       background-color: var(--accent-dark);
       transform: scale(1.02);
+  }
+
+  /* =========================================================
+     RESPONSIVE PARA BANDEJAS
+     ========================================================= */
+  @media (max-width: 900px) {
+      .platters-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+      }
+      .platter-gallery img {
+          height: 320px;
+      }
+      .section-header h2 {
+          font-size: 28px;
+          letter-spacing: 3px;
+      }
+  }
+
+  @media (max-width: 600px) {
+      .platters-section {
+          padding: 14px 10px 30px;
+      }
+      .platter-gallery {
+          padding: 8px;
+          gap: 8px;
+      }
+      .platter-gallery img {
+          height: 240px;
+      }
+      .platter-info {
+          padding: 14px;
+      }
+      .platter-info h3 {
+          font-size: 22px;
+      }
+      .base-price strong {
+          font-size: 18px;
+      }
+      .total-amount {
+          font-size: 22px;
+      }
+      .section-header h2 {
+          font-size: 24px;
+          letter-spacing: 2px;
+      }
+      .section-header p {
+          font-size: 12px;
+      }
+  }
+
+  @media (max-width: 400px) {
+      .platter-gallery img {
+          height: 200px;
+      }
   }
 </style>
 </head>
@@ -2040,7 +2111,6 @@
           <img src="BANDEJAS/GRANDE3.jpg" alt="Bandeja Grande 3">
           <img src="BANDEJAS/GRANDE4.jpg" alt="Bandeja Grande 4">
           <img src="BANDEJAS/GRANDE5.jpg" alt="Bandeja Grande 5">
-          <!-- GRANDE6.jpg no existe en tu carpeta, la omito -->
           <img src="BANDEJAS/GRANDE7.jpg" alt="Bandeja Grande 7">
         </div>
         <div class="platter-info">
