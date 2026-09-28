@@ -269,15 +269,42 @@ function abrirBandejas() {
 }
 
 // Función para calcular el precio total de una bandeja
-function calcularPrecioBandeja(card) {
-    const basePrice = parseFloat(card.getAttribute('data-price'));
-    let total = basePrice;
+// Estado de las cantidades de bandejas
+const cantidadesBandejas = {
+    pequena: 1,
+    mediana: 1,
+    grande: 1
+};
 
-    // Sumar extras
+// Función para cambiar la cantidad de bandejas
+function cambiarCantidadBandeja(tamano, delta) {
+    const nueva = cantidadesBandejas[tamano] + delta;
+    if (nueva < 1 || nueva > 20) return;
+    cantidadesBandejas[tamano] = nueva;
+    
+    // Actualizar el DOM
+    document.getElementById(`qty-${tamano}`).textContent = nueva;
+    
+    // Recalcular el precio del panel
+    const card = document.querySelector(`.platter-card[data-size="${tamano}"]`);
+    if (card) calcularPrecioBandeja(card);
+}
+
+// Función para calcular el precio total de una bandeja (con cantidad)
+function calcularPrecioBandeja(card) {
+    const tamano = card.getAttribute('data-size');
+    const basePrice = parseFloat(card.getAttribute('data-price'));
+    const cantidad = cantidadesBandejas[tamano] || 1;
+    
+    // Precio unitario con extras
+    let precioUnitario = basePrice;
     const extras = card.querySelectorAll('input[type="checkbox"]:checked');
     extras.forEach(extra => {
-        total += parseFloat(extra.value);
+        precioUnitario += parseFloat(extra.value);
     });
+    
+    // Total = precio unitario × cantidad
+    const total = precioUnitario * cantidad;
 
     // Actualizar el DOM
     const totalSpan = card.querySelector('.total-amount');
@@ -290,7 +317,8 @@ function calcularPrecioBandeja(card) {
 
 // Función para enviar el pedido por WhatsApp
 function pedirBandeja(tamano) {
-    const card = document.querySelector(`.platter-card[data-size="${tamano.toLowerCase()}"]`);
+    const tamanoKey = tamano.toLowerCase();
+    const card = document.querySelector(`.platter-card[data-size="${tamanoKey}"]`);
     if (!card) return;
 
     const baseSeleccionada = card.querySelector('input[type="radio"]:checked').value;
@@ -301,9 +329,10 @@ function pedirBandeja(tamano) {
         extrasSeleccionados.push(labelText);
     });
 
+    const cantidad = cantidadesBandejas[tamanoKey] || 1;
     const total = calcularPrecioBandeja(card);
     
-    let mensaje = `¡Hola! Quiero pedir una *Bandeja ${tamano}*:\n`;
+    let mensaje = `¡Hola! Quiero pedir *${cantidad} Bandeja${cantidad > 1 ? 's' : ''} ${tamano}*:\n`;
     mensaje += `- Base: ${baseSeleccionada}\n`;
     if (extrasSeleccionados.length > 0) {
         mensaje += `- Extras: ${extrasSeleccionados.join(', ')}\n`;
@@ -311,11 +340,12 @@ function pedirBandeja(tamano) {
         mensaje += `- Extras: Ninguno\n`;
     }
     mensaje += `- Total: $${total.toFixed(2)}\n\n`;
+    mensaje += `⏰ Recuerda que se requiere 1 día de anticipo.\n\n`;
     mensaje += `¿Me confirman disponibilidad?`;
 
     const mensajeCodificado = encodeURIComponent(mensaje);
     
-    // ⚠️ REEMPLAZA ESTE NÚMERO POR EL TUYO (código de país + número, sin espacios ni guiones)
+    // ⚠️ REEMPLAZA ESTE NÚMERO POR EL TUYO
     const telefono = "584146774332"; 
     
     const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
