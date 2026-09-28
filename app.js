@@ -1678,3 +1678,57 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
+
+// ==========================================
+// GALERÍA DE FOTOS - BANDEJAS
+// ==========================================
+
+const galleryState = {
+    'gallery-pequena': { current: 0, total: 6, images: ['BANDEJAS/PEQ1.jpg','BANDEJAS/PEQ2.jpg','BANDEJAS/PEQ3.jpg','BANDEJAS/PEQ4.jpg','BANDEJAS/PEQ5.jpg','BANDEJAS/PEQ6.jpg'] },
+    'gallery-mediana': { current: 0, total: 7, images: ['BANDEJAS/MEDIANA1.jpg','BANDEJAS/MEDIANA2.jpg','BANDEJAS/MEDIANA3.jpg','BANDEJAS/MEDIANA4.jpg','BANDEJAS/MEDIANA5.jpg','BANDEJAS/MEDIANA6.jpg','BANDEJAS/MEDIANA7.jpg'] },
+    'gallery-grande': { current: 0, total: 6, images: ['BANDEJAS/GRANDE1.jpg','BANDEJAS/GRANDE2.jpg','BANDEJAS/GRANDE3.jpg','BANDEJAS/GRANDE4.jpg','BANDEJAS/GRANDE5.jpg','BANDEJAS/GRANDE7.jpg'] }
+};
+
+function cambiarFoto(galleryId, direction) {
+    const state = galleryState[galleryId];
+    if (!state) return;
+    
+    state.current = (state.current + direction + state.total) % state.total;
+    actualizarGaleria(galleryId);
+}
+
+function seleccionarFoto(galleryId, index) {
+    const state = galleryState[galleryId];
+    if (!state) return;
+    
+    state.current = index;
+    actualizarGaleria(galleryId);
+}
+
+function actualizarGaleria(galleryId) {
+    const state = galleryState[galleryId];
+    if (!state) return;
+    
+    // Actualizar foto principal
+    const card = document.querySelector(`[data-gallery-id="${galleryId}"]`);
+    if (!card) return;
+    
+    const mainPhoto = card.querySelector('.main-photo');
+    if (mainPhoto) {
+        mainPhoto.style.opacity = '0';
+        setTimeout(() => {
+            mainPhoto.src = state.images[state.current];
+            mainPhoto.style.opacity = '1';
+        }, 150);
+    }
+    
+    // Actualizar contador
+    const counter = card.querySelector('.gallery-counter .current');
+    if (counter) counter.textContent = state.current + 1;
+    
+    // Actualizar miniaturas activas
+    const thumbs = card.querySelectorAll('.platter-thumbs img');
+    thumbs.forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === state.current);
+    });
+}
