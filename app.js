@@ -143,7 +143,7 @@ function mostrarPantalla(id) {
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
   if (!btn) return;
-  if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich") {
+  if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-bandejas") {
     btn.style.display = "flex";
     btn.innerHTML = "← Volver";
   } else if (pantallaActual === "pantalla-resumen") {
@@ -179,6 +179,15 @@ function actualizarBotonConfirmar() {
 }
 
 function volverAtras() {
+  // Si estamos en bandejas, volver al inicio
+  if (pantallaActual === "pantalla-bandejas") {
+    mostrarPantalla("pantalla-inicio");
+    document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
+    document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
+    document.querySelector('.total-bar').style.display = 'flex'; // Mostrar barra de total
+    return;
+  }
+
   if (pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-combos") {
     if (panEnEdicion !== null) cancelarPan();
     else { mostrarPantalla("pantalla-resumen"); renderResumenGeneral(); }
@@ -247,6 +256,70 @@ function elegirServicio(servicio) {
     showToast("🥩 Charcutería premium: próximamente", "info");
     return;
   }
+}
+
+// =========================================================
+// PANTALLA 6: BANDEJAS PARA EVENTOS
+// =========================================================
+function abrirBandejas() {
+    mostrarPantalla('pantalla-bandejas');
+    document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
+    document.getElementById('header-subtitulo').innerHTML = 'Elegí el tamaño y la opción <em>a tu gusto</em>';
+    document.querySelector('.total-bar').style.display = 'none'; // Ocultar barra de total de sándwiches
+}
+
+// Función para calcular el precio total de una bandeja
+function calcularPrecioBandeja(card) {
+    const basePrice = parseFloat(card.getAttribute('data-price'));
+    let total = basePrice;
+
+    // Sumar extras
+    const extras = card.querySelectorAll('input[type="checkbox"]:checked');
+    extras.forEach(extra => {
+        total += parseFloat(extra.value);
+    });
+
+    // Actualizar el DOM
+    const totalSpan = card.querySelector('.total-amount');
+    if (totalSpan) {
+        totalSpan.textContent = `$${total.toFixed(2)}`;
+    }
+    
+    return total;
+}
+
+// Función para enviar el pedido por WhatsApp
+function pedirBandeja(tamano) {
+    const card = document.querySelector(`.platter-card[data-size="${tamano.toLowerCase()}"]`);
+    if (!card) return;
+
+    const baseSeleccionada = card.querySelector('input[type="radio"]:checked').value;
+    
+    const extrasSeleccionados = [];
+    card.querySelectorAll('input[type="checkbox"]:checked').forEach(extra => {
+        const labelText = extra.parentElement.textContent.trim();
+        extrasSeleccionados.push(labelText);
+    });
+
+    const total = calcularPrecioBandeja(card);
+    
+    let mensaje = `¡Hola! Quiero pedir una *Bandeja ${tamano}*:\n`;
+    mensaje += `- Base: ${baseSeleccionada}\n`;
+    if (extrasSeleccionados.length > 0) {
+        mensaje += `- Extras: ${extrasSeleccionados.join(', ')}\n`;
+    } else {
+        mensaje += `- Extras: Ninguno\n`;
+    }
+    mensaje += `- Total: $${total.toFixed(2)}\n\n`;
+    mensaje += `¿Me confirman disponibilidad?`;
+
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    
+    // ⚠️ REEMPLAZA ESTE NÚMERO POR EL TUYO (código de país + número, sin espacios ni guiones)
+    const telefono = "5491112345678"; 
+    
+    const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
+    window.open(url, '_blank');
 }
 
 // =========================================================
@@ -1590,6 +1663,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Inicializar listeners de las bandejas
+  document.querySelectorAll('.platter-card').forEach(card => {
+    const inputs = card.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('change', () => calcularPrecioBandeja(card));
+    });
+  });
 });
 
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
