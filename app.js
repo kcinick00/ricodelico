@@ -1744,11 +1744,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
   }
 
-  // Hacer clicables las imágenes de las bandejas
-  document.querySelectorAll('.platter-gallery img').forEach(img => {
-    img.addEventListener('click', function() {
-      abrirLightbox(this.src);
-    });
+  // Delegación de eventos - funciona para imágenes cargadas dinámicamente
+  document.addEventListener('click', function(e) {
+    if (e.target.matches('.platter-gallery img')) {
+      e.preventDefault();
+      e.stopPropagation();
+      abrirLightbox(e.target.src);
+    }
   });
 });
 
