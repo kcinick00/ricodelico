@@ -256,73 +256,65 @@ function elegirServicio(servicio) {
 }
 
 // =========================================================
-// BANDEJAS PARA EVENTOS
+// BANDEJAS PARA EVENTOS - PANEL ÚNICO
 // =========================================================
 
-const cantidadesBandejas = {
-    pequena: 1,
-    mediana: 1,
-    grande: 1
-};
+let cantidadPanel = 1;
 
 function abrirBandejas() {
     mostrarPantalla('pantalla-bandejas');
     document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
-    document.getElementById('header-subtitulo').innerHTML = 'Elegí el tamaño y la opción <em>a tu gusto</em>';
+    document.getElementById('header-subtitulo').innerHTML = 'Mira nuestras opciones y armá tu pedido <em>al final</em>';
     document.querySelector('.total-bar').style.display = 'none';
+    actualizarPanelPedido();
 }
 
-function cambiarCantidadBandeja(tamano, delta) {
-    const nueva = cantidadesBandejas[tamano] + delta;
+function cambiarCantidadPanel(delta) {
+    const nueva = cantidadPanel + delta;
     if (nueva < 1 || nueva > 20) return;
-    cantidadesBandejas[tamano] = nueva;
-    document.getElementById(`qty-${tamano}`).textContent = nueva;
-    const card = document.querySelector(`.platter-card[data-size="${tamano}"]`);
-    if (card) calcularPrecioBandeja(card);
+    cantidadPanel = nueva;
+    document.getElementById('qty-panel').textContent = nueva;
+    actualizarPanelPedido();
 }
 
-function calcularPrecioBandeja(card) {
-    const tamano = card.getAttribute('data-size');
-    const basePrice = parseFloat(card.getAttribute('data-price'));
-    const cantidad = cantidadesBandejas[tamano] || 1;
-    
-    let precioUnitario = basePrice;
-    card.querySelectorAll('input[type="checkbox"]:checked').forEach(extra => {
-        precioUnitario += parseFloat(extra.value);
-    });
-    
-    const total = precioUnitario * cantidad;
-    const totalSpan = card.querySelector('.total-amount');
-    if (totalSpan) totalSpan.textContent = `$${total.toFixed(2)}`;
-    return total;
+function obtenerPrecioTamano() {
+    const s = document.querySelector('input[name="tamano-bandeja"]:checked');
+    return s ? parseFloat(s.getAttribute('data-price')) : 60;
 }
 
-function pedirBandeja(tamano) {
-    const tamanoKey = tamano.toLowerCase();
-    const card = document.querySelector(`.platter-card[data-size="${tamanoKey}"]`);
-    if (!card) return;
+function obtenerNombreTamano() {
+    const s = document.querySelector('input[name="tamano-bandeja"]:checked');
+    const map = { grande: 'Grande', mediana: 'Mediana', pequena: 'Pequeña' };
+    return s ? (map[s.value] || 'Grande') : 'Grande';
+}
 
-    const baseSeleccionada = card.querySelector('input[type="radio"]:checked').value;
-    const extrasSeleccionados = [];
-    card.querySelectorAll('input[type="checkbox"]:checked').forEach(extra => {
-        extrasSeleccionados.push(extra.parentElement.textContent.trim());
-    });
+function calcularTotalPanel() {
+    let unitario = obtenerPrecioTamano();
+    document.querySelectorAll('.extra-panel:checked').forEach(e => { unitario += parseFloat(e.value); });
+    return unitario * cantidadPanel;
+}
 
-    const cantidad = cantidadesBandejas[tamanoKey] || 1;
-    const total = calcularPrecioBandeja(card);
-    
-    let mensaje = `¡Hola! Quiero pedir *${cantidad} Bandeja${cantidad > 1 ? 's' : ''} ${tamano}*:\n`;
-    mensaje += `- Base: ${baseSeleccionada}\n`;
-    mensaje += extrasSeleccionados.length > 0 
-        ? `- Extras: ${extrasSeleccionados.join(', ')}\n`
-        : `- Extras: Ninguno\n`;
+function actualizarPanelPedido() {
+    const totalEl = document.getElementById('panel-total');
+    if (totalEl) totalEl.textContent = `$${calcularTotalPanel().toFixed(2)}`;
+}
+
+function pedirBandejaPanel() {
+    const tamano = obtenerNombreTamano();
+    const base = document.querySelector('input[name="base-panel"]:checked').value;
+    const extras = [];
+    document.querySelectorAll('.extra-panel:checked').forEach(e => extras.push(e.parentElement.textContent.trim()));
+    const total = calcularTotalPanel();
+
+    let mensaje = `¡Hola! Quiero pedir *${cantidadPanel} Bandeja${cantidadPanel > 1 ? 's' : ''} ${tamano}*:\n`;
+    mensaje += `- Base: ${base}\n`;
+    mensaje += extras.length > 0 ? `- Extras: ${extras.join(', ')}\n` : `- Extras: Ninguno\n`;
     mensaje += `- Total: $${total.toFixed(2)}\n\n`;
     mensaje += `⏰ Recuerda que se requiere 1 día de anticipo.\n\n`;
     mensaje += `¿Me confirman disponibilidad?`;
 
     const telefono = "584146774332"; // ⚠️ CAMBIA POR TU NÚMERO
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
 // =========================================================
@@ -1727,13 +1719,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
-  // Listeners para inputs de bandejas
-  document.querySelectorAll('.platter-card').forEach(card => {
-    card.querySelectorAll('input').forEach(input => {
-      input.addEventListener('change', () => calcularPrecioBandeja(card));
-    });
-  });
 
   // ===== LIGHTBOX =====
   const lightbox = document.getElementById('lightbox');
