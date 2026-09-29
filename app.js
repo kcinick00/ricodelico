@@ -320,7 +320,7 @@ function pedirBandeja(tamano) {
     mensaje += `⏰ Recuerda que se requiere 1 día de anticipo.\n\n`;
     mensaje += `¿Me confirman disponibilidad?`;
 
-    const telefono = "5491112345678"; // ⚠️ CAMBIA POR TU NÚMERO
+    const telefono = "584146774332"; // ⚠️ CAMBIA POR TU NÚMERO
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
