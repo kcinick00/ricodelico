@@ -1080,7 +1080,7 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
 
 <script>
 /* === CONFIGURA AQUÍ TU WHATSAPP (código de país + número, solo dígitos). Ej. México: 521234567890 === */
-const NEGOCIO = { whatsapp: "52XXXXXXXXXX", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
+const NEGOCIO = { whatsapp: "584146774332", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
 document.querySelectorAll('.js-wa').forEach(function(a){
   var ok = /^\d{10,15}$/.test(NEGOCIO.whatsapp);
   a.href = ok ? 'https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(NEGOCIO.mensaje) : '#';
