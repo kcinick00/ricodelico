@@ -1545,21 +1545,41 @@ function renderHistorial() {
 let lightboxImages = [];
 let lightboxIndex = 0;
 
-function abrirLightbox(src) {
-    const img = document.querySelector(`.platter-gallery img[src="${src}"]`);
-    if (!img) return;
-    const gallery = img.closest('.platter-gallery');
-    if (!gallery) return;
+function abrirLightbox(imgElement) {
+    // Aceptar tanto un elemento img como una URL (por retrocompatibilidad)
+    let img;
+    if (typeof imgElement === 'string') {
+        // Buscar por src absoluto o relativo
+        img = Array.from(document.querySelectorAll('.platter-gallery img'))
+                  .find(i => i.src === imgElement || i.getAttribute('src') === imgElement);
+    } else {
+        img = imgElement;
+    }
     
+    if (!img) {
+        console.warn('[Lightbox] Imagen no encontrada:', imgElement);
+        return;
+    }
+    
+    const gallery = img.closest('.platter-gallery');
+    if (!gallery) {
+        console.warn('[Lightbox] No está dentro de .platter-gallery');
+        return;
+    }
+    
+    // Recolectar todas las imágenes del mismo panel
     lightboxImages = Array.from(gallery.querySelectorAll('img')).map(i => i.src);
     lightboxIndex = lightboxImages.indexOf(img.src);
     if (lightboxIndex === -1) lightboxIndex = 0;
     
+    // Actualizar y mostrar
     actualizarLightbox();
     const lightbox = document.getElementById('lightbox');
     if (lightbox) {
         lightbox.classList.add('active');
         document.body.classList.add('lightbox-open');
+    } else {
+        console.warn('[Lightbox] No se encontró el elemento #lightbox en el DOM');
     }
 }
 
@@ -1749,7 +1769,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.matches('.platter-gallery img')) {
       e.preventDefault();
       e.stopPropagation();
-      abrirLightbox(e.target.src);
+      abrirLightbox(e.target);
     }
   });
 });
