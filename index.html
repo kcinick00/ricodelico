@@ -4,7 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Arma tu sándwich</title>
-<meta name="theme-color" content="#F5F0DC">
+<meta name="theme-color" content="#1F3A25">
+<meta name="description" content="Ricodélico · Charcutería artesanal. Bandejas para eventos y sándwiches armados a tu gusto. Rico, delicioso y auténtico.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ricodélico · Charcutería artesanal">
+<meta property="og:description" content="Bandejas para eventos y sándwiches armados a tu gusto. Pide por WhatsApp.">
+<meta property="og:image" content="https://kcinick00.github.io/ricodelico/images/og-image.jpg">
+<meta property="og:url" content="https://kcinick00.github.io/ricodelico/">
+<meta property="og:locale" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kcinick00.github.io/ricodelico/images/og-image.jpg">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -495,14 +504,98 @@ body.con-fondo::after{background:linear-gradient(180deg,rgba(245,240,220,.88) 0%
 .lightbox-nav:hover,.lightbox-close:hover{color:#fff}
 .total-bar button:disabled{background:var(--border);color:#8a8567}
 .btn-admin-secreto{color:var(--text-muted)}
+
+.header-texto{flex:1;min-width:0;text-align:right}
+.header-texto p{margin:0;color:var(--text-muted);font-size:13px;font-weight:500}
+.header-texto p em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);font-size:20px;font-weight:700}
+@media (max-width:700px){header{gap:10px;padding:10px 14px}.logo-header{height:36px}.header-texto p{font-size:10px;line-height:1.25}.header-texto p em{font-size:15px}}
+
+/* ===== PORTADA REDISEÑADA ===== */
+body:has(#pantalla-inicio.activa) header{display:none}
+body:has(#pantalla-inicio.activa) .total-bar{position:fixed;right:0;bottom:0;left:auto;background:transparent;border:0;padding:6px 8px;z-index:50}
+body:has(#pantalla-inicio.activa) .total-bar::before{display:none}
+body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
+#pantalla-inicio{padding:0;display:none;align-items:stretch;justify-content:flex-start;overflow-y:auto;background:var(--bg)}
+#pantalla-inicio.activa{display:block}
+.home{width:100%;min-height:100%;background:var(--bg)}
+.hero{position:relative;color:var(--bg);padding:44px 22px 110px;background:radial-gradient(circle at 15% 20%,rgba(229,165,46,.16) 0,transparent 42%),radial-gradient(circle at 90% 80%,rgba(245,240,220,.10) 0,transparent 40%),linear-gradient(160deg,#1F3A25 0%,#2A6B40 100%);overflow:hidden}
+.hero::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-1px;height:56px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0}
+.hero-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;position:relative;z-index:1}
+.hero-logo{width:min(240px,60vw);height:auto;flex-shrink:0;filter:drop-shadow(0 8px 24px rgba(0,0,0,.35))}
+.hero-texto{text-align:left;max-width:520px}
+.hero-title{margin:0;font-family:'Bevan',serif;font-weight:400;font-size:52px;line-height:1.02;letter-spacing:1px;color:var(--bg);text-transform:uppercase}
+.hero-title span{color:var(--gold);display:block}
+.hero-sub{margin:16px 0 0;font-size:16px;color:rgba(245,240,220,.85);font-weight:500}
+.hero-sub em{font-family:'Caveat',cursive;font-style:normal;color:var(--gold);font-size:24px;font-weight:700}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;cursor:pointer;border:2px solid transparent;transition:transform .2s,box-shadow .2s,background .2s;line-height:1}
+.hero-btn:hover{transform:translateY(-2px)}
+.hero-btn-primary{background:var(--gold);color:#2b1d00;box-shadow:0 8px 22px rgba(229,165,46,.4)}
+.hero-btn-primary:hover{background:#F0B43F;box-shadow:0 12px 28px rgba(229,165,46,.55)}
+.hero-btn-wa{background:transparent;color:var(--bg);border-color:rgba(245,240,220,.6)}
+.hero-btn-wa:hover{background:rgba(245,240,220,.12);border-color:var(--bg)}
+.home-cards{position:relative;z-index:2;max-width:1100px;margin:-64px auto 0;padding:0 20px}
+.home .inicio-grid{grid-template-columns:1fr 1fr .8fr;gap:20px}
+.home .inicio-card{background:var(--card);min-height:0;justify-content:flex-start;gap:6px;border:1px solid var(--border);box-shadow:0 14px 34px rgba(31,58,37,.18)}
+.home .inicio-card-eventos{order:1}
+.home .inicio-card-sandwich{order:2}
+.home .inicio-card-charcuteria{order:3}
+.home .inicio-img{height:210px}
+.home .inicio-card-charcuteria .inicio-img{height:150px;filter:grayscale(.6) brightness(.95)}
+.home .inicio-card-charcuteria{opacity:.9;cursor:default}
+.home .inicio-card .inicio-nombre{font-size:26px;margin-top:18px}
+.home .inicio-card .inicio-desc{padding-bottom:6px;font-size:13px}
+.home .inicio-card-charcuteria .inicio-desc{padding-bottom:22px}
+.inicio-cta{margin:8px 0 22px;padding:11px 22px;border-radius:12px;background:var(--accent);color:#FFFBEE;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;text-transform:uppercase;transition:background .2s}
+.inicio-card:hover .inicio-cta{background:var(--accent-dark)}
+.home .inicio-badge{top:10px;right:10px;background:var(--gold);color:#3a2a00}
+.confianza{max-width:1100px;margin:44px auto 0;padding:0 20px}
+.confianza-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.confianza-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:20px 14px;background:rgba(46,125,70,.07);border:1px solid var(--border);border-radius:16px}
+.ci-icon{font-size:30px;line-height:1;margin-bottom:4px}
+.confianza-item strong{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);font-weight:400;line-height:1.1}
+.confianza-item small{font-size:12px;color:var(--text-muted);line-height:1.35}
+.contacto{max-width:1100px;margin:34px auto 0;padding:0 20px}
+.contacto-card{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:30px 34px;border-radius:24px;color:var(--bg);background:radial-gradient(circle at 90% 10%,rgba(229,165,46,.2) 0,transparent 45%),linear-gradient(160deg,#1F3A25,#2A6B40);box-shadow:0 14px 34px rgba(31,58,37,.25)}
+.contacto-texto h2{margin:0;font-family:'Bevan',serif;font-weight:400;font-size:26px;line-height:1.15}
+.contacto-texto p{margin:8px 0 0;color:rgba(245,240,220,.85);font-size:14px}
+.contacto-datos{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;color:rgba(245,240,220,.92)}
+.home-footer{text-align:center;padding:40px 20px 70px}
+.footer-logo{height:44px;width:auto;opacity:.9}
+.home-footer p{margin:10px 0 0;font-family:'Caveat',cursive;font-size:22px;color:var(--accent);font-weight:700}
+@media (max-width:900px){
+.hero-inner{flex-direction:column;gap:22px;text-align:center}
+.hero-texto{text-align:center}
+.hero-actions{justify-content:center}
+.hero-title{font-size:38px}
+.home .inicio-grid{grid-template-columns:1fr;gap:16px}
+.home .inicio-card-sandwich{order:1}
+.home .inicio-card-eventos{order:2}
+.home .inicio-img{height:190px}
+.confianza-grid{grid-template-columns:1fr 1fr}
+.contacto-card{padding:24px 22px;flex-direction:column;align-items:stretch;text-align:center}
+.contacto-card .hero-btn{width:100%}
+.contacto-datos{align-items:center}
+}
+@media (max-width:480px){
+.hero{padding:34px 18px 100px}
+.hero-title{font-size:32px}
+.hero-btn{width:100%}
+.hero-actions{flex-direction:column}
+.confianza-grid{gap:10px}
+.confianza-item{padding:16px 10px}
+.confianza-item strong{font-size:16px}
+}
+@media (max-width:900px){.hero-logo{width:min(150px,40vw)}.hero-sub{font-size:14px;margin-top:12px}.hero-actions{margin-top:20px}}
+@media (max-width:480px){.hero{padding:26px 18px 96px}.hero-btn{font-size:16px;padding:14px 16px;letter-spacing:1.5px}}
 </style>
 </head>
 <body class="con-fondo">
 
 <header id="header-app">
   <img src="images/logo-horizontal.png" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
-  <div class="sr-only">
-    <h1 id="header-titulo">RICODÉLICO <span>CHARCUTERÍA ARTESANAL</span></h1>
+  <div class="header-texto">
+    <h1 id="header-titulo" class="sr-only">RICODÉLICO <span>CHARCUTERÍA ARTESANAL</span></h1>
     <p id="header-subtitulo">Sabor autentico elaborado con dedicación <em>para USTED</em></p>
   </div>
   <button id="btn-volver" class="btn-volver" style="display: none;" onclick="volverAtras()">← Volver</button>
@@ -510,33 +603,75 @@ body.con-fondo::after{background:linear-gradient(180deg,rgba(245,240,220,.88) 0%
 
 <!-- ===== PANTALLA 0: INICIO ===== -->
 <div id="pantalla-inicio" class="pantalla activa">
-  <div class="inicio-container">
-    <div class="inicio-titulo">
-      <img src="images/logo.png" alt="Ricodélico" class="logo-hero">
-      <h1>¿QUÉ DESEA <span>HOY?</span></h1>
-      <p>Elige el servicio que buscas <em>para empezar</em></p>
-    </div>
+  <div class="home">
 
-    <div class="inicio-grid">
-      <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
-        <img class="inicio-img" src="images/bandeja-evento.jpg" alt="Bandeja para eventos">
-        <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
-        <div class="inicio-desc">Exquisitas bandejas de fiambres para tu evento</div>
+    <section class="hero">
+      <div class="hero-inner">
+        <img class="hero-logo" src="images/logo-claro.png" alt="Ricodélico Charcutería Artesanal">
+        <div class="hero-texto">
+          <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
+          <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
+          <div class="hero-actions">
+            <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 Armar mi sándwich</button>
+            <a class="hero-btn hero-btn-wa js-wa" href="#">💬 Escribirnos por WhatsApp</a>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="inicio-card inicio-card-charcuteria" onclick="elegirServicio('charcuteria')">
-        <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería premium">
-        <div class="inicio-nombre">CHARCUTERÍA <span>PREMIUM AL VACÍO</span></div>
-        <div class="inicio-desc">Selección fina envasada al vacío</div>
-        <div class="inicio-badge">Próximamente</div>
-      </div>
+    <section class="home-cards">
+      <div class="inicio-grid">
+        <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
+          <img class="inicio-img" src="images/bandeja-evento.jpg" alt="Bandeja para eventos">
+          <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
+          <div class="inicio-desc">Exquisitas bandejas de fiambres para tu evento</div>
+          <span class="inicio-cta">Ver bandejas →</span>
+        </div>
 
-      <div class="inicio-card inicio-card-sandwich" onclick="elegirServicio('sandwich')">
-        <img class="inicio-img" src="images/sandwich.jpg" alt="Arma tu sándwich">
-        <div class="inicio-nombre">ÁRMATE UN <span>SÁNDWICH</span></div>
-        <div class="inicio-desc">Elige cada ingrediente a tu gusto</div>
+        <div class="inicio-card inicio-card-sandwich" onclick="elegirServicio('sandwich')">
+          <img class="inicio-img" src="images/sandwich.jpg" alt="Arma tu sándwich">
+          <div class="inicio-nombre">ÁRMATE UN <span>SÁNDWICH</span></div>
+          <div class="inicio-desc">Elige cada ingrediente a tu gusto</div>
+          <span class="inicio-cta">Armar mi sándwich →</span>
+        </div>
+
+        <div class="inicio-card inicio-card-charcuteria" onclick="elegirServicio('charcuteria')">
+          <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería premium">
+          <div class="inicio-nombre">CHARCUTERÍA <span>PREMIUM AL VACÍO</span></div>
+          <div class="inicio-desc">Selección fina envasada al vacío</div>
+          <div class="inicio-badge">Próximamente</div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="confianza">
+      <div class="confianza-grid">
+        <div class="confianza-item"><span class="ci-icon">🔪</span><strong>Hecho con dedicación</strong><small>Charcutería artesanal, rica y auténtica</small></div>
+        <div class="confianza-item"><span class="ci-icon">⏰</span><strong>Bandejas con 24 h de anticipo</strong><small>Para asegurar tu fecha y disponibilidad</small></div>
+        <div class="confianza-item"><span class="ci-icon">🥪</span><strong>Sándwich a tu gusto</strong><small>Tú eliges pan, salsas, embutidos y más</small></div>
+        <div class="confianza-item"><span class="ci-icon">💬</span><strong>Pedido directo por WhatsApp</strong><small>Sin intermediarios, hablas con nosotros</small></div>
+      </div>
+    </section>
+
+    <section class="contacto">
+      <div class="contacto-card">
+        <div class="contacto-texto">
+          <h2>¿Tienes un evento o un pedido especial?</h2>
+          <p>Cuéntanos qué necesitas y te armamos una propuesta.</p>
+          <ul class="contacto-datos">
+            <li>🕒 <span id="dato-horario">Consulta nuestros horarios por WhatsApp</span></li>
+            <li>📍 <span id="dato-zona">Escríbenos y confirmamos entrega o retiro en tu zona</span></li>
+          </ul>
+        </div>
+        <a class="hero-btn hero-btn-primary js-wa" href="#">💬 Pedir por WhatsApp</a>
+      </div>
+    </section>
+
+    <footer class="home-footer">
+      <img src="images/logo-horizontal.png" alt="Ricodélico" class="footer-logo">
+      <p>Rico, delicioso y auténtico</p>
+    </footer>
+
   </div>
 </div>
 
@@ -943,6 +1078,16 @@ body.con-fondo::after{background:linear-gradient(180deg,rgba(245,240,220,.88) 0%
     <div class="lightbox-hint">📱 Desliza o usa las flechas ← → para navegar</div>
 </div>
 
+<script>
+/* === CONFIGURA AQUÍ TU WHATSAPP (código de país + número, solo dígitos). Ej. México: 521234567890 === */
+const NEGOCIO = { whatsapp: "52XXXXXXXXXX", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
+document.querySelectorAll('.js-wa').forEach(function(a){
+  var ok = /^\d{10,15}$/.test(NEGOCIO.whatsapp);
+  a.href = ok ? 'https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(NEGOCIO.mensaje) : '#';
+  a.target = '_blank'; a.rel = 'noopener';
+  a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
+});
+</script>
 <script src="ingredients.js"></script>
 <script src="combos.js"></script>
 <script src="app.js"></script>
