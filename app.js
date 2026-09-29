@@ -1,5 +1,5 @@
 // =========================================================
-// app.js - Versión con Google Sheets + normalización de categorías
+// app.js - Versión con Google Sheets + Bandejas + Lightbox
 // =========================================================
 
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -22,19 +22,18 @@ let menuListo = false;
 
 // =========================================================
 // NORMALIZACIÓN DE CATEGORÍAS
-// Acepta cualquier variante y la reduce a la clave canónica
 // =========================================================
 function normalizarCategoria(cat) {
   if (!cat) return "";
   const c = String(cat).trim().toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // quitar acentos
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   if (c === "pan" || c === "panes") return "pan";
   if (c === "salsa" || c === "salsas") return "salsas";
   if (c === "embutido" || c === "embutidos" || c === "frios") return "embutidos";
   if (c === "proteina" || c === "proteinas" || c === "carnes") return "proteinas";
   if (c === "verdura" || c === "verduras" || c === "vegetal" || c === "vegetales") return "vegetales";
-  return c; // devolver tal cual si no coincide
+  return c;
 }
 
 // =========================================================
@@ -81,7 +80,7 @@ function cambiarVistaMovil(vista, boton) {
 }
 
 // =========================================================
-// SCROLL A CATEGORÍA (usando scrollIntoView, más confiable)
+// SCROLL A CATEGORÍA
 // =========================================================
 function scrollToCategoria(cat) {
   const section = document.getElementById("section-" + cat);
@@ -179,12 +178,11 @@ function actualizarBotonConfirmar() {
 }
 
 function volverAtras() {
-  // Si estamos en bandejas, volver al inicio
   if (pantallaActual === "pantalla-bandejas") {
     mostrarPantalla("pantalla-inicio");
     document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
     document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
-    document.querySelector('.total-bar').style.display = 'flex'; // Mostrar barra de total
+    document.querySelector('.total-bar').style.display = 'flex';
     return;
   }
 
@@ -213,7 +211,6 @@ function volverAtras() {
     return;
   }
   if (pantallaActual === "pantalla-cantidad") {
-    // Regresar al inicio si no hay pedido en curso
     if (panesArmados.length === 0) {
       mostrarPantalla("pantalla-inicio");
       document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
@@ -239,7 +236,7 @@ function confirmarCantidadInicial() {
 }
 
 // =========================================================
-// PANTALLA 0: INICIO - ELEGIR SERVICIO
+// PANTALLA 0: INICIO
 // =========================================================
 function elegirServicio(servicio) {
   if (servicio === "sandwich") {
@@ -259,74 +256,56 @@ function elegirServicio(servicio) {
 }
 
 // =========================================================
-// PANTALLA 6: BANDEJAS PARA EVENTOS
+// BANDEJAS PARA EVENTOS
 // =========================================================
-function abrirBandejas() {
-    mostrarPantalla('pantalla-bandejas');
-    document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
-    document.getElementById('header-subtitulo').innerHTML = 'Elegí el tamaño y la opción <em>a tu gusto</em>';
-    document.querySelector('.total-bar').style.display = 'none'; // Ocultar barra de total de sándwiches
-}
 
-// Función para calcular el precio total de una bandeja
-// Estado de las cantidades de bandejas
 const cantidadesBandejas = {
     pequena: 1,
     mediana: 1,
     grande: 1
 };
 
-// Función para cambiar la cantidad de bandejas
+function abrirBandejas() {
+    mostrarPantalla('pantalla-bandejas');
+    document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
+    document.getElementById('header-subtitulo').innerHTML = 'Elegí el tamaño y la opción <em>a tu gusto</em>';
+    document.querySelector('.total-bar').style.display = 'none';
+}
+
 function cambiarCantidadBandeja(tamano, delta) {
     const nueva = cantidadesBandejas[tamano] + delta;
     if (nueva < 1 || nueva > 20) return;
     cantidadesBandejas[tamano] = nueva;
-    
-    // Actualizar el DOM
     document.getElementById(`qty-${tamano}`).textContent = nueva;
-    
-    // Recalcular el precio del panel
     const card = document.querySelector(`.platter-card[data-size="${tamano}"]`);
     if (card) calcularPrecioBandeja(card);
 }
 
-// Función para calcular el precio total de una bandeja (con cantidad)
 function calcularPrecioBandeja(card) {
     const tamano = card.getAttribute('data-size');
     const basePrice = parseFloat(card.getAttribute('data-price'));
     const cantidad = cantidadesBandejas[tamano] || 1;
     
-    // Precio unitario con extras
     let precioUnitario = basePrice;
-    const extras = card.querySelectorAll('input[type="checkbox"]:checked');
-    extras.forEach(extra => {
+    card.querySelectorAll('input[type="checkbox"]:checked').forEach(extra => {
         precioUnitario += parseFloat(extra.value);
     });
     
-    // Total = precio unitario × cantidad
     const total = precioUnitario * cantidad;
-
-    // Actualizar el DOM
     const totalSpan = card.querySelector('.total-amount');
-    if (totalSpan) {
-        totalSpan.textContent = `$${total.toFixed(2)}`;
-    }
-    
+    if (totalSpan) totalSpan.textContent = `$${total.toFixed(2)}`;
     return total;
 }
 
-// Función para enviar el pedido por WhatsApp
 function pedirBandeja(tamano) {
     const tamanoKey = tamano.toLowerCase();
     const card = document.querySelector(`.platter-card[data-size="${tamanoKey}"]`);
     if (!card) return;
 
     const baseSeleccionada = card.querySelector('input[type="radio"]:checked').value;
-    
     const extrasSeleccionados = [];
     card.querySelectorAll('input[type="checkbox"]:checked').forEach(extra => {
-        const labelText = extra.parentElement.textContent.trim();
-        extrasSeleccionados.push(labelText);
+        extrasSeleccionados.push(extra.parentElement.textContent.trim());
     });
 
     const cantidad = cantidadesBandejas[tamanoKey] || 1;
@@ -334,21 +313,15 @@ function pedirBandeja(tamano) {
     
     let mensaje = `¡Hola! Quiero pedir *${cantidad} Bandeja${cantidad > 1 ? 's' : ''} ${tamano}*:\n`;
     mensaje += `- Base: ${baseSeleccionada}\n`;
-    if (extrasSeleccionados.length > 0) {
-        mensaje += `- Extras: ${extrasSeleccionados.join(', ')}\n`;
-    } else {
-        mensaje += `- Extras: Ninguno\n`;
-    }
+    mensaje += extrasSeleccionados.length > 0 
+        ? `- Extras: ${extrasSeleccionados.join(', ')}\n`
+        : `- Extras: Ninguno\n`;
     mensaje += `- Total: $${total.toFixed(2)}\n\n`;
     mensaje += `⏰ Recuerda que se requiere 1 día de anticipo.\n\n`;
     mensaje += `¿Me confirman disponibilidad?`;
 
-    const mensajeCodificado = encodeURIComponent(mensaje);
-    
-    // ⚠️ REEMPLAZA ESTE NÚMERO POR EL TUYO
-    const telefono = "584146774332"; 
-    
-    const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
+    const telefono = "5491112345678"; // ⚠️ CAMBIA POR TU NÚMERO
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
 
@@ -533,7 +506,6 @@ function guardarPan() {
 
   const embutidos = simplificar(getSelectedItems("embutidos"));
   const proteinas = simplificar(getSelectedItems("proteinas"));
-  // Aceptar tanto "vegetales" como "verduras" según el sheet
   const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
   const vegetales = simplificar(getSelectedItems(vegetalesKey));
   const salsas = simplificar(getSelectedItems("salsas"));
@@ -662,9 +634,7 @@ function buildGroup(key, cfg) {
   cfg.items.forEach((item, idx) => {
     const row = document.createElement("label");
     row.className = "option";
-    if (item._agotado) {
-      row.classList.add("agotado");
-    }
+    if (item._agotado) row.classList.add("agotado");
 
     const input = document.createElement("input");
     input.type = cfg.type;
@@ -1189,13 +1159,11 @@ function printTicket() {
   const dateObj = new Date(date + "T" + time);
   const dateFormatted = dateObj.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
 
-  // Folio secuencial (se genera al imprimir, no al abrir el modal)
   const folio = obtenerSiguienteFolio();
 
   const pedidoCompleto = { folio, clientName, paymentMethod, dateFormatted, time, panes: JSON.parse(JSON.stringify(panesArmados)) };
   ultimoPedido = JSON.parse(JSON.stringify(pedidoCompleto));
 
-  // Guardar en historial
   guardarPedidoEnHistorial(pedidoCompleto);
 
   imprimirPedido(pedidoCompleto);
@@ -1346,7 +1314,6 @@ async function cargarMenuDesdeSheets() {
 
     const agrupado = {};
     filas.forEach(fila => {
-      // AQUÍ usamos la normalización que acepta "verduras" o "vegetales"
       const cat = normalizarCategoria(fila.categoria);
       const id = (fila.id || "").trim();
       if (!cat || !id) return;
@@ -1393,8 +1360,6 @@ async function cargarMenuDesdeSheets() {
   }
 }
 
-// Convierte menuData al formato que espera ingredientsData
-// (siempre usa "vegetales" como clave canónica)
 function menuToIngredientsData() {
   if (!menuData) return null;
   const out = {};
@@ -1413,7 +1378,6 @@ function menuToIngredientsData() {
   return out;
 }
 
-// Reconstruye todos los grupos
 function buildAllGroups() {
   Object.keys(ingredientsData).forEach(key => {
     const cont = document.getElementById(key + "-group");
@@ -1456,7 +1420,7 @@ function resetearFolio() {
 }
 
 // =========================================================
-// HISTORIAL DE PEDIDOS (localStorage)
+// HISTORIAL DE PEDIDOS
 // =========================================================
 const HISTORIAL_KEY = "historial_pedidos";
 const HISTORIAL_MAX = 50;
@@ -1484,7 +1448,7 @@ function escribirHistorial(arr) {
 
 function guardarPedidoEnHistorial(pedido) {
   const arr = leerHistorial();
-  arr.unshift(pedido); // más reciente primero
+  arr.unshift(pedido);
   escribirHistorial(arr);
 }
 
@@ -1560,7 +1524,6 @@ function renderHistorial() {
     cont.appendChild(card);
   });
 
-  // Listeners
   cont.querySelectorAll(".btn-hist-reimprimir").forEach(btn => {
     btn.addEventListener("click", () => {
       const folio = btn.dataset.folio;
@@ -1576,6 +1539,61 @@ function renderHistorial() {
 }
 
 // =========================================================
+// LIGHTBOX - VISOR DE IMÁGENES EN GRANDE
+// =========================================================
+
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function abrirLightbox(src) {
+    const img = document.querySelector(`.platter-gallery img[src="${src}"]`);
+    if (!img) return;
+    const gallery = img.closest('.platter-gallery');
+    if (!gallery) return;
+    
+    lightboxImages = Array.from(gallery.querySelectorAll('img')).map(i => i.src);
+    lightboxIndex = lightboxImages.indexOf(img.src);
+    if (lightboxIndex === -1) lightboxIndex = 0;
+    
+    actualizarLightbox();
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.classList.add('active');
+        document.body.classList.add('lightbox-open');
+    }
+}
+
+function actualizarLightbox() {
+    const img = document.getElementById('lightbox-img');
+    const current = document.getElementById('lightbox-current');
+    const total = document.getElementById('lightbox-total');
+    if (!img) return;
+    
+    img.style.opacity = '0';
+    setTimeout(() => {
+        img.src = lightboxImages[lightboxIndex];
+        img.style.opacity = '1';
+    }, 150);
+    
+    if (current) current.textContent = lightboxIndex + 1;
+    if (total) total.textContent = lightboxImages.length;
+}
+
+function navegarLightbox(direccion) {
+    if (lightboxImages.length === 0) return;
+    lightboxIndex = (lightboxIndex + direccion + lightboxImages.length) % lightboxImages.length;
+    actualizarLightbox();
+}
+
+function cerrarLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.classList.remove('active');
+        document.body.classList.remove('lightbox-open');
+    }
+}
+
+// =========================================================
 // INICIALIZACIÓN
 // =========================================================
 async function iniciarApp() {
@@ -1584,15 +1602,12 @@ async function iniciarApp() {
     return;
   }
 
-  // 1) Render rápido con datos locales
   Object.entries(ingredientsData).forEach(([key, cfg]) => buildGroup(key, cfg));
 
-  // 2) En paralelo, cargar el menú real desde Google Sheets
   cargarMenuDesdeSheets().then(ok => {
     if (ok) console.log("[Menu] Actualizado desde Google Sheets");
   });
 
-  // 3) Resto de la inicialización
   document.getElementById("total-out").textContent = "$0.00";
   const clearBtn = document.getElementById("clear-btn");
   if (clearBtn) clearBtn.addEventListener("click", () => {
@@ -1639,19 +1654,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape" && modal && modal.classList.contains("active")) closeOrderModal();
   });
 
-  // Historial (acceso con clave)
+  // Historial
   const historialModal = document.getElementById("historial-modal");
   const btnAbrirHistorial = document.getElementById("btn-abrir-historial");
   const btnCerrarHistorial = document.getElementById("historial-close");
   const btnBorrarHistorial = document.getElementById("btn-borrar-historial");
   const btnResetFolio = document.getElementById("btn-reset-folio");
 
-  // Clave de acceso al historial
   const CLAVE_HISTORIAL = "ricokeso";
 
   function pedirClaveYAbrirHistorial() {
     const clave = prompt("🔒 Clave de administrador:");
-    if (clave === null) return; // canceló
+    if (clave === null) return;
     if (clave.trim().toLowerCase() === CLAVE_HISTORIAL) {
       abrirHistorial();
     } else {
@@ -1694,11 +1708,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Inicializar listeners de las bandejas
+  // Listeners para inputs de bandejas
   document.querySelectorAll('.platter-card').forEach(card => {
-    const inputs = card.querySelectorAll('input');
-    inputs.forEach(input => {
+    card.querySelectorAll('input').forEach(input => {
       input.addEventListener('change', () => calcularPrecioBandeja(card));
+    });
+  });
+
+  // ===== LIGHTBOX =====
+  const lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
+        cerrarLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') cerrarLightbox();
+      if (e.key === 'ArrowLeft') navegarLightbox(-1);
+      if (e.key === 'ArrowRight') navegarLightbox(1);
+    });
+
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) {
+        navegarLightbox(diff > 0 ? 1 : -1);
+      }
+    }, { passive: true });
+  }
+
+  // Hacer clicables las imágenes de las bandejas
+  document.querySelectorAll('.platter-gallery img').forEach(img => {
+    img.addEventListener('click', function() {
+      abrirLightbox(this.src);
     });
   });
 });
@@ -1708,173 +1757,3 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
-
-// ==========================================
-// GALERÍA DE FOTOS - BANDEJAS
-// ==========================================
-
-const galleryState = {
-    'gallery-pequena': { current: 0, total: 6, images: ['BANDEJAS/PEQ1.jpg','BANDEJAS/PEQ2.jpg','BANDEJAS/PEQ3.jpg','BANDEJAS/PEQ4.jpg','BANDEJAS/PEQ5.jpg','BANDEJAS/PEQ6.jpg'] },
-    'gallery-mediana': { current: 0, total: 7, images: ['BANDEJAS/MEDIANA1.jpg','BANDEJAS/MEDIANA2.jpg','BANDEJAS/MEDIANA3.jpg','BANDEJAS/MEDIANA4.jpg','BANDEJAS/MEDIANA5.jpg','BANDEJAS/MEDIANA6.jpg','BANDEJAS/MEDIANA7.jpg'] },
-    'gallery-grande': { current: 0, total: 6, images: ['BANDEJAS/GRANDE1.jpg','BANDEJAS/GRANDE2.jpg','BANDEJAS/GRANDE3.jpg','BANDEJAS/GRANDE4.jpg','BANDEJAS/GRANDE5.jpg','BANDEJAS/GRANDE7.jpg'] }
-};
-
-function cambiarFoto(galleryId, direction) {
-    const state = galleryState[galleryId];
-    if (!state) return;
-    
-    state.current = (state.current + direction + state.total) % state.total;
-    actualizarGaleria(galleryId);
-}
-
-function seleccionarFoto(galleryId, index) {
-    const state = galleryState[galleryId];
-    if (!state) return;
-    
-    state.current = index;
-    actualizarGaleria(galleryId);
-}
-
-function actualizarGaleria(galleryId) {
-    const state = galleryState[galleryId];
-    if (!state) return;
-    
-    // Actualizar foto principal
-    const card = document.querySelector(`[data-gallery-id="${galleryId}"]`);
-    if (!card) return;
-    
-    const mainPhoto = card.querySelector('.main-photo');
-    if (mainPhoto) {
-        mainPhoto.style.opacity = '0';
-        setTimeout(() => {
-            mainPhoto.src = state.images[state.current];
-            mainPhoto.style.opacity = '1';
-        }, 150);
-    }
-    
-    // Actualizar contador
-    const counter = card.querySelector('.gallery-counter .current');
-    if (counter) counter.textContent = state.current + 1;
-    
-    // Actualizar miniaturas activas
-    const thumbs = card.querySelectorAll('.platter-thumbs img');
-    thumbs.forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === state.current);
-    });
-}
-// ==========================================
-// LIGHTBOX - VISOR DE IMÁGENES EN GRANDE
-// ==========================================
-
-let lightboxImages = [];
-let lightboxIndex = 0;
-
-// Función para abrir el lightbox
-function abrirLightbox(src) {
-    // Recolectar todas las imágenes del mismo panel
-    const img = document.querySelector(`.platter-gallery img[src="${src}"]`);
-    if (!img) return;
-    
-    const gallery = img.closest('.platter-gallery');
-    if (!gallery) return;
-    
-    lightboxImages = Array.from(gallery.querySelectorAll('img')).map(i => i.src);
-    lightboxIndex = lightboxImages.indexOf(img.src);
-    
-    if (lightboxIndex === -1) lightboxIndex = 0;
-    
-    // Actualizar el DOM
-    actualizarLightbox();
-    
-    // Mostrar el lightbox
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.classList.add('active');
-        document.body.classList.add('lightbox-open');
-    }
-}
-
-// Función para actualizar la imagen y el contador
-function actualizarLightbox() {
-    const img = document.getElementById('lightbox-img');
-    const current = document.getElementById('lightbox-current');
-    const total = document.getElementById('lightbox-total');
-    
-    if (!img) return;
-    
-    img.style.opacity = '0';
-    setTimeout(() => {
-        img.src = lightboxImages[lightboxIndex];
-        img.style.opacity = '1';
-    }, 150);
-    
-    if (current) current.textContent = lightboxIndex + 1;
-    if (total) total.textContent = lightboxImages.length;
-}
-
-// Función para navegar entre imágenes
-function navegarLightbox(direccion) {
-    if (lightboxImages.length === 0) return;
-    lightboxIndex = (lightboxIndex + direccion + lightboxImages.length) % lightboxImages.length;
-    actualizarLightbox();
-}
-
-// Función para cerrar el lightbox
-function cerrarLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.classList.remove('active');
-        document.body.classList.remove('lightbox-open');
-    }
-}
-
-// Inicializar eventos del lightbox
-document.addEventListener('DOMContentLoaded', () => {
-    const lightbox = document.getElementById('lightbox');
-    if (!lightbox) return;
-    
-    // Cerrar al hacer clic fuera de la imagen
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
-            cerrarLightbox();
-        }
-    });
-    
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('active')) return;
-        if (e.key === 'Escape') cerrarLightbox();
-        if (e.key === 'ArrowLeft') navegarLightbox(-1);
-        if (e.key === 'ArrowRight') navegarLightbox(1);
-    });
-    
-    // Navegación con swipe en móvil
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    lightbox.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    lightbox.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        const diff = touchStartX - touchEndX;
-        const threshold = 50;
-        
-        if (Math.abs(diff) > threshold) {
-            if (diff > 0) {
-                navegarLightbox(1); // Swipe izquierda → siguiente
-            } else {
-                navegarLightbox(-1); // Swipe derecha → anterior
-            }
-        }
-    }, { passive: true });
-    
-    // Hacer clicables todas las imágenes de las bandejas
-    document.querySelectorAll('.platter-gallery img').forEach(img => {
-        img.style.cursor = 'zoom-in';
-        img.addEventListener('click', function() {
-            abrirLightbox(this.src);
-        });
-    });
-});
