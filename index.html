@@ -1915,6 +1915,55 @@
       .section-header h2 { font-size: 26px; }
   }
 
+  /* ===== BANDEJAS: caption + PANEL ÚNICO DE PEDIDO ===== */
+  .platter-caption { padding: 20px 28px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .platter-caption h3 { font-family: 'Bebas Neue', sans-serif; color: #fff; font-size: 26px; margin: 0; letter-spacing: 3px; text-transform: uppercase; line-height: 1; }
+  .platter-caption p { margin: 0; color: var(--text-muted); font-size: 13px; font-weight: 500; }
+  .order-panel { background: linear-gradient(180deg, #1A1A1A 0%, #0F0F0F 100%); border: 2px solid var(--accent); border-radius: 24px; padding: 28px; box-shadow: 0 12px 40px rgba(180,255,57,0.15); position: relative; overflow: hidden; }
+  .order-panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent), var(--orange)); }
+  .order-panel-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid var(--border); }
+  .order-panel-icon { font-size: 36px; line-height: 1; }
+  .order-panel-header h2 { margin: 0; font-family: 'Bebas Neue', sans-serif; color: var(--accent); font-size: 28px; letter-spacing: 3px; text-transform: uppercase; line-height: 1; }
+  .order-panel-header p { margin: 4px 0 0; color: var(--text-muted); font-size: 13px; }
+  .order-block { margin-bottom: 22px; }
+  .order-block-label { display: block; font-family: 'Bebas Neue', sans-serif; color: var(--accent); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .size-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .size-option { position: relative; cursor: pointer; display: block; }
+  .size-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .size-option-content { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: rgba(255,255,255,0.03); border: 2px solid var(--border); border-radius: 14px; transition: all 0.2s; text-align: center; position: relative; }
+  .size-option:hover .size-option-content { border-color: rgba(180,255,57,0.5); background: rgba(180,255,57,0.05); }
+  .size-option input:checked + .size-option-content { border-color: var(--accent); background: rgba(180,255,57,0.1); box-shadow: 0 0 20px rgba(180,255,57,0.2); }
+  .size-option input:checked + .size-option-content::after { content: "✓"; position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: var(--accent); color: #0F0F0F; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; }
+  .size-option-nombre { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); line-height: 1; }
+  .size-option-precio { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .size-option-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .cantidad-bandeja-box { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; background: rgba(180,255,57,0.05); border: 1.5px solid rgba(180,255,57,0.3); border-radius: 14px; flex-wrap: wrap; }
+  .cantidad-control-inline { display: flex; align-items: center; gap: 16px; }
+  .cantidad-bandeja-box .btn-qty { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #0F0F0F; border: none; font-size: 26px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; }
+  .cantidad-bandeja-box .qty-number { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 800; color: var(--accent); min-width: 70px; text-align: center; line-height: 1; }
+  .qty-hint { font-size: 12px; color: var(--text-muted); font-style: italic; }
+  .order-panel .radio-group, .order-panel .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .order-panel .radio-group label, .order-panel .checkbox-group label { color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 14px 16px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1.5px solid var(--border); transition: all 0.2s; font-weight: 500; }
+  .order-panel .radio-group label:has(input:checked), .order-panel .checkbox-group label:has(input:checked) { background: rgba(180,255,57,0.08); border-color: var(--accent); }
+  .order-panel .radio-group input, .order-panel .checkbox-group input { accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+  .order-panel-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 24px; border-top: 2px solid var(--border); flex-wrap: wrap; }
+  .order-panel-footer .total-price { display: flex; flex-direction: column; gap: 4px; }
+  .order-panel-footer .total-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  .order-panel-footer .total-amount { color: var(--accent); font-size: 48px; font-family: 'Bebas Neue', sans-serif; line-height: 1; }
+  .order-panel-footer .btn-pedir { background: var(--accent); color: #0F0F0F; border: none; padding: 18px 44px; border-radius: 14px; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-family: 'Bebas Neue', sans-serif; display: flex; align-items: center; gap: 8px; }
+  @media (max-width: 600px) {
+    .size-selector, .order-panel .radio-group, .order-panel .checkbox-group { grid-template-columns: 1fr; }
+    .platter-caption { padding: 14px 16px; }
+    .platter-caption h3 { font-size: 20px; }
+    .order-panel { padding: 20px 16px; }
+    .order-panel-footer { flex-direction: column; align-items: stretch; }
+    .order-panel-footer .total-price { flex-direction: row; justify-content: space-between; align-items: center; }
+    .order-panel-footer .total-amount { font-size: 36px; }
+    .order-panel-footer .btn-pedir { justify-content: center; width: 100%; padding: 16px 24px; font-size: 14px; }
+    .cantidad-bandeja-box { flex-direction: column; align-items: stretch; }
+    .cantidad-control-inline { justify-content: center; }
+  }
+
   /* =========================================================
      LIGHTBOX - VISOR DE IMÁGENES EN GRANDE
      ========================================================= */
@@ -2121,7 +2170,7 @@
   <div class="platters-section">
     <div class="section-header">
       <h2>Bandejas para Eventos</h2>
-      <p>Elige el tamaño, la base y los extras. Precios finales en el momento.</p>
+      <p>Mira nuestras opciones y armá tu pedido al final.</p>
     </div>
 
     <div class="aviso-anticipo">
@@ -2133,8 +2182,7 @@
     </div>
 
     <div class="platters-grid">
-      <!-- ==================== PANEL 1: GRANDE ==================== -->
-      <div class="platter-card" data-size="grande" data-price="60">
+      <div class="platter-card">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Grande</span>
           <span class="platter-price-tag">$60</span>
@@ -2143,54 +2191,14 @@
           <img src="BANDEJAS/GRANDE3.jpg" alt="Bandeja Grande 3">
           <img src="BANDEJAS/GRANDE4.jpg" alt="Bandeja Grande 4">
           <img src="BANDEJAS/GRANDE5.jpg" alt="Bandeja Grande 5">
-          <img src="BANDEJAS/GRANDE7.jpg" alt="Bandeja Grande 7">
+          <img src="BANDEJAS/GRANDE7.jpg" alt="Bandeja Grande 6">
         </div>
-        <div class="platter-info">
-          <div class="platter-title-row">
-            <h3>Bandeja Grande (ideal para 20-30 personas)</h3>
-            <p class="platter-base-price">Precio base:<strong>$60.00</strong></p>
-          </div>
-
-          <div class="cantidad-bandeja-box">
-            <span class="cantidad-label">🔢 ¿Cuántas vas a querer?</span>
-            <div class="cantidad-control-inline">
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('grande', -1)">−</button>
-              <span class="qty-number" id="qty-grande">1</span>
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('grande', 1)">+</button>
-            </div>
-          </div>
-          
-          <div class="platter-options-row">
-            <div class="option-group">
-              <span class="option-label">Elige tu base</span>
-              <div class="radio-group">
-                <label><input type="radio" name="base-grande" value="Solo Quesos" checked> Solo Quesos</label>
-                <label><input type="radio" name="base-grande" value="Solo Fiambres"> Solo Fiambres</label>
-                <label><input type="radio" name="base-grande" value="Completa"> Completa (Fiambres y Quesos)</label>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <span class="option-label">Agregar extras</span>
-              <div class="checkbox-group">
-                <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
-                <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="platter-footer">
-            <div class="total-price">
-              <span class="total-label">Total</span>
-              <span class="total-amount">$60.00</span>
-            </div>
-            <button class="btn-pedir" onclick="pedirBandeja('Grande')">📱 Pedir por WhatsApp</button>
-          </div>
+        <div class="platter-caption">
+          <h3>Bandeja Grande</h3>
+          <p>Ideal para 20 - 30 personas · Precio base $60</p>
         </div>
       </div>
-
-      <!-- ==================== PANEL 2: MEDIANA ==================== -->
-      <div class="platter-card" data-size="mediana" data-price="40">
+      <div class="platter-card">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Mediana</span>
           <span class="platter-price-tag">$40</span>
@@ -2202,52 +2210,12 @@
           <img src="BANDEJAS/MEDIANA6.jpg" alt="Bandeja Mediana 6">
           <img src="BANDEJAS/MEDIANA7.jpg" alt="Bandeja Mediana 7">
         </div>
-        <div class="platter-info">
-          <div class="platter-title-row">
-            <h3>Bandeja Mediana (ideal para 10-15 personas) </h3>
-            <p class="platter-base-price">Precio base:<strong>$40.00</strong></p>
-          </div>
-
-          <div class="cantidad-bandeja-box">
-            <span class="cantidad-label">🔢 ¿Cuántas vas a querer?</span>
-            <div class="cantidad-control-inline">
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('mediana', -1)">−</button>
-              <span class="qty-number" id="qty-mediana">1</span>
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('mediana', 1)">+</button>
-            </div>
-          </div>
-          
-          <div class="platter-options-row">
-            <div class="option-group">
-              <span class="option-label">Elige tu base</span>
-              <div class="radio-group">
-                <label><input type="radio" name="base-mediana" value="Solo Quesos" checked> Solo Quesos</label>
-                <label><input type="radio" name="base-mediana" value="Solo Fiambres"> Solo Fiambres</label>
-                <label><input type="radio" name="base-mediana" value="Completa"> Completa (Fiambres y Quesos)</label>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <span class="option-label">Agregar extras</span>
-              <div class="checkbox-group">
-                <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
-                <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="platter-footer">
-            <div class="total-price">
-              <span class="total-label">Total</span>
-              <span class="total-amount">$40.00</span>
-            </div>
-            <button class="btn-pedir" onclick="pedirBandeja('Mediana')">📱 Pedir por WhatsApp</button>
-          </div>
+        <div class="platter-caption">
+          <h3>Bandeja Mediana</h3>
+          <p>Ideal para 10 - 15 personas · Precio base $40</p>
         </div>
       </div>
-
-      <!-- ==================== PANEL 3: PEQUEÑA ==================== -->
-      <div class="platter-card" data-size="pequena" data-price="20">
+      <div class="platter-card">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Pequeña</span>
           <span class="platter-price-tag">$20</span>
@@ -2258,48 +2226,84 @@
           <img src="BANDEJAS/PEQ5.jpg" alt="Bandeja Pequeña 5">
           <img src="BANDEJAS/PEQ6.jpg" alt="Bandeja Pequeña 6">
         </div>
-        <div class="platter-info">
-          <div class="platter-title-row">
-            <h3>Bandeja Pequeña (ideal para 2 - 5 personas) </h3>
-            <p class="platter-base-price">Precio base:<strong>$20.00</strong></p>
-          </div>
-
-          <div class="cantidad-bandeja-box">
-            <span class="cantidad-label">🔢 ¿Cuántas vas a querer?</span>
-            <div class="cantidad-control-inline">
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('pequena', -1)">−</button>
-              <span class="qty-number" id="qty-pequena">1</span>
-              <button type="button" class="btn-qty" onclick="cambiarCantidadBandeja('pequena', 1)">+</button>
-            </div>
-          </div>
-          
-          <div class="platter-options-row">
-            <div class="option-group">
-              <span class="option-label">Elige tu base</span>
-              <div class="radio-group">
-                <label><input type="radio" name="base-pequena" value="Solo Quesos" checked> Solo Quesos</label>
-                <label><input type="radio" name="base-pequena" value="Solo Fiambres"> Solo Fiambres</label>
-                <label><input type="radio" name="base-pequena" value="Completa"> Completa (Fiambres y Quesos)</label>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <span class="option-label">Agregar extras</span>
-              <div class="checkbox-group">
-                <label><input type="checkbox" class="extra-frutas" value="3.50"> + Frutas (+$3.50)</label>
-                <label><input type="checkbox" class="extra-frutos" value="4.00"> + Frutos Secos (+$4.00)</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="platter-footer">
-            <div class="total-price">
-              <span class="total-label">Total</span>
-              <span class="total-amount">$20.00</span>
-            </div>
-            <button class="btn-pedir" onclick="pedirBandeja('Pequeña')">📱 Pedir por WhatsApp</button>
-          </div>
+        <div class="platter-caption">
+          <h3>Bandeja Pequeña</h3>
+          <p>Ideal para 2 - 5 personas · Precio base $20</p>
         </div>
+      </div>
+    </div>
+
+    <div class="order-panel" id="order-panel">
+      <div class="order-panel-header">
+        <span class="order-panel-icon">🛒</span>
+        <div><h2>Armá tu pedido</h2><p>Elegí el tamaño, la base y los extras</p></div>
+      </div>
+
+      <div class="order-block">
+        <span class="order-block-label">1️⃣ Elegí el tamaño</span>
+        <div class="size-selector">
+          <label class="size-option">
+            <input type="radio" name="tamano-bandeja" value="grande" data-price="60" checked onchange="actualizarPanelPedido()">
+            <span class="size-option-content">
+              <span class="size-option-nombre">Grande</span>
+              <span class="size-option-precio">$60.00</span>
+              <span class="size-option-desc">20 - 30 personas</span>
+            </span>
+          </label>
+          <label class="size-option">
+            <input type="radio" name="tamano-bandeja" value="mediana" data-price="40" onchange="actualizarPanelPedido()">
+            <span class="size-option-content">
+              <span class="size-option-nombre">Mediana</span>
+              <span class="size-option-precio">$40.00</span>
+              <span class="size-option-desc">10 - 15 personas</span>
+            </span>
+          </label>
+          <label class="size-option">
+            <input type="radio" name="tamano-bandeja" value="pequena" data-price="20" onchange="actualizarPanelPedido()">
+            <span class="size-option-content">
+              <span class="size-option-nombre">Pequeña</span>
+              <span class="size-option-precio">$20.00</span>
+              <span class="size-option-desc">2 - 5 personas</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="order-block">
+        <span class="order-block-label">2️⃣ ¿Cuántas vas a querer?</span>
+        <div class="cantidad-bandeja-box">
+          <div class="cantidad-control-inline">
+            <button type="button" class="btn-qty" onclick="cambiarCantidadPanel(-1)">−</button>
+            <span class="qty-number" id="qty-panel">1</span>
+            <button type="button" class="btn-qty" onclick="cambiarCantidadPanel(1)">+</button>
+          </div>
+          <span class="qty-hint">Máximo 20 bandejas por pedido</span>
+        </div>
+      </div>
+
+      <div class="order-block">
+        <span class="order-block-label">3️⃣ Elegí la base</span>
+        <div class="radio-group">
+          <label><input type="radio" name="base-panel" value="Solo Quesos" checked> Solo Quesos</label>
+          <label><input type="radio" name="base-panel" value="Solo Fiambres"> Solo Fiambres</label>
+          <label><input type="radio" name="base-panel" value="Completa"> Completa (Fiambres y Quesos)</label>
+        </div>
+      </div>
+
+      <div class="order-block">
+        <span class="order-block-label">4️⃣ Agregá extras</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" class="extra-panel" value="3.50" onchange="actualizarPanelPedido()"> + Frutas (+$3.50)</label>
+          <label><input type="checkbox" class="extra-panel" value="4.00" onchange="actualizarPanelPedido()"> + Frutos Secos (+$4.00)</label>
+        </div>
+      </div>
+
+      <div class="order-panel-footer">
+        <div class="total-price">
+          <span class="total-label">Total</span>
+          <span class="total-amount" id="panel-total">$60.00</span>
+        </div>
+        <button class="btn-pedir" onclick="pedirBandejaPanel()">📱 Pedir por WhatsApp</button>
       </div>
     </div>
   </div>
