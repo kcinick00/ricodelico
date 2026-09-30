@@ -142,7 +142,7 @@ function mostrarPantalla(id) {
 function actualizarBotonVolver() {
   const btn = document.getElementById("btn-volver");
   if (!btn) return;
-  if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-bandejas") {
+  if (pantallaActual === "pantalla-combos" || pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-bandejas" || pantallaActual === "pantalla-charcuteria") {
     btn.style.display = "flex";
     btn.innerHTML = "← Volver";
   } else if (pantallaActual === "pantalla-resumen") {
@@ -178,6 +178,8 @@ function actualizarBotonConfirmar() {
 }
 
 function volverAtras() {
+  if (pantallaActual === "pantalla-charcuteria") { salirCharcuteria(); return; }
+
   if (pantallaActual === "pantalla-bandejas") {
     mostrarPantalla("pantalla-inicio");
     document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
@@ -250,7 +252,7 @@ function elegirServicio(servicio) {
     return;
   }
   if (servicio === "charcuteria") {
-    showToast("🥩 Charcutería premium: próximamente", "info");
+    abrirCharcuteria();
     return;
   }
 }
