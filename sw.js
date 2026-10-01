@@ -5,7 +5,7 @@
 //    sube también este número (v3.11 -> v3.11 ...) para que los clientes
 //    reciban la versión nueva enseguida.
 
-const CACHE_NAME = "sandwich-app-v3.11";
+const CACHE_NAME = "sandwich-app-v3.13";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
@@ -17,6 +17,8 @@ const FILES_TO_CACHE = [
   "manifest.json",
   "icon-192.png",
   "icon-512.png",
+  "images/logo-ricodelico.svg",
+  "images/logo-ricodelico-oscuro.svg",
   "fondo-sandwich.jpg",
   "images/aguacate.jpg",
   "images/baguette.jpg",
