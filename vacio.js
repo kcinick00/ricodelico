@@ -6,11 +6,14 @@
 //
 // CÓMO EDITAR:
 //  - Cada categoría: id, nombre, emoji, imagen (opcional) y productos.
-//  - "imagen": ruta de una foto, ej. "images/vacio/jamones.jpg".
+//  - "imagen": ruta de una foto, ej. "images/jamones.jpg".
 //    Si la dejas vacía "" se muestra el emoji.
 //  - Cada producto: id único, nombre y precio en $.
 //      · Sin tamaños: detalle + precio.
 //      · Con tamaños (categoría con "tamanos"): precio100 = precio por 100 g.
+//  - Imagen de cada producto: por defecto se busca en images/<id>.jpg
+//    (ej. images/roast-beef.jpg). Para otra ruta, agrega  imagen: "ruta.jpg"
+//    al producto. Si no existe la foto, se muestra el emoji de la categoría.
 //  ⚠️ Los productos y precios de abajo son EJEMPLOS: cámbialos por los tuyos.
 // =========================================================
 
@@ -155,22 +158,48 @@ function salirCharcuteria() {
   if (tb) tb.style.display = "flex";
 }
 
-// ---------- Categorías ----------
+// ---------- Imágenes ----------
+function vacImgTag(p, cat) {
+  const src = p.imagen || ("images/" + p.id + ".jpg");
+  return `<img src="${vacEsc(src)}" alt="${vacEsc(p.nombre)}" data-emoji="${vacEsc(cat.emoji || "🍽️")}" loading="lazy" onerror="vacImgError(this)">`;
+}
+// Si la foto no existe, se reemplaza por un cuadro con el emoji
+function vacImgError(img) {
+  const d = document.createElement("div");
+  d.className = "vac-ph-fb";
+  d.textContent = img.dataset.emoji || "🍽️";
+  img.replaceWith(d);
+}
+function vacDesde(cat, p) {
+  const g = (cat.tamanos && cat.tamanos[0]) || null;
+  return g ? vacEtiquetaTamano(g) + " · " + vacMoneda(vacPrecio(p, g)) : vacMoneda(p.precio);
+}
+
+// ---------- Categorías (tarjetas grandes con fotos deslizables) ----------
 function vacRenderCategorias() {
   const grid = document.getElementById("vac-grid");
   if (!grid) return;
   grid.innerHTML = charcuteriaVacio.map(cat => {
     const n = vacCantidadCategoria(cat);
-    const media = cat.imagen
-      ? `<img src="${vacEsc(cat.imagen)}" alt="${vacEsc(cat.nombre)}" loading="lazy">`
-      : `<span class="vac-emoji">${vacEsc(cat.emoji || "🍽️")}</span>`;
+    const total = cat.productos.length;
+    const fotos = cat.productos.map(p => `
+      <div class="vac-ph">
+        ${vacImgTag(p, cat)}
+        <div class="vac-ph-label"><b>${vacEsc(p.nombre)}</b><span>${vacDesde(cat, p)}</span></div>
+      </div>`).join("");
     return `
-      <button type="button" class="vac-cat" onclick="vacAbrirCategoria('${cat.id}')">
-        ${n > 0 ? `<span class="vac-cat-badge">${n}</span>` : ""}
-        <div class="vac-cat-media">${media}</div>
-        <div class="vac-cat-nombre">${vacEsc(cat.nombre)}</div>
-        <div class="vac-cat-sub">${cat.productos.length} producto${cat.productos.length !== 1 ? "s" : ""}</div>
-      </button>`;
+      <article class="platter-card vac-catcard">
+        <span class="vac-tag">${total} producto${total !== 1 ? "s" : ""}</span>
+        ${n > 0 ? `<span class="vac-cart-tag">🛒 ${n}</span>` : ""}
+        <div class="platter-gallery vac-gallery" style="--n3:${Math.min(total, 3)};--n2:${Math.min(total, 2)}">${fotos}</div>
+        <div class="vac-cap">
+          <div>
+            <h3>${vacEsc(cat.emoji || "")} ${vacEsc(cat.nombre)}</h3>
+            <p>${total > 2 ? "Desliza para ver todos · " : ""}toca una foto para verla en grande</p>
+          </div>
+          <button type="button" class="vac-btn-elegir" onclick="vacAbrirCategoria('${cat.id}')">Elegir productos →</button>
+        </div>
+      </article>`;
   }).join("");
 }
 
@@ -245,6 +274,7 @@ function vacRenderProductos() {
       return `
         <div class="vac-prod-accordion ${abierto ? "abierto" : ""}">
           <button type="button" class="vac-acc-header" onclick="vacToggleProducto('${p.id}')">
+            <div class="vac-thumb">${vacImgTag(p, cat)}</div>
             <div class="vac-acc-info">
               <div class="vac-acc-nombre">${vacEsc(p.nombre)}</div>
               <div class="vac-acc-desde">Desde <strong>${vacMoneda(precioMin)}</strong> / ${vacEtiquetaTamano(cat.tamanos[0])}</div>
@@ -263,6 +293,7 @@ function vacRenderProductos() {
     const q2 = vacCarrito[p.id] || 0;
     return `
       <div class="vac-prod">
+        <div class="vac-thumb">${vacImgTag(p, cat)}</div>
         <div class="vac-prod-info">
           <div class="vac-prod-nombre">${vacEsc(p.nombre)}</div>
           <div class="vac-prod-detalle">${vacEsc(p.detalle || "")}</div>
