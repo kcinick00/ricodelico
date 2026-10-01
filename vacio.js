@@ -41,6 +41,22 @@ const charcuteriaVacio = [
     ]
   },
   {
+    id: "quesos-frescos",
+    nombre: "Quesos frescos",
+    emoji: "🧀",
+    imagen: "",
+    // Tamaños en gramos (1000 = 1 kg). Precios por cada 100 g.
+    tamanos: [250, 500, 1000],
+    productos: [
+      { id: "queso-blanco",     nombre: "Queso blanco",       precio100: 0.90 },
+      { id: "queso-telita",     nombre: "Queso telita",       precio100: 1.00 },
+      { id: "queso-guayanes",   nombre: "Queso guayanés",     precio100: 1.10 },
+      { id: "queso-de-mano",    nombre: "Queso de mano",      precio100: 1.20 },
+      { id: "mozzarella-fresca",nombre: "Mozzarella fresca",  precio100: 1.50 },
+      { id: "ricotta",          nombre: "Ricotta",            precio100: 1.30 }
+    ]
+  },
+  {
     id: "quesos",
     nombre: "Quesos",
     emoji: "🧀",
