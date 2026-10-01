@@ -2,10 +2,10 @@
 // sw.js - Service Worker de Ricodélico
 // =========================================================
 // ⚠️ Cada vez que subas cambios a index.html, app.js, vacio.js, etc.
-//    sube también este número (v3.5 -> v3.6 ...) para que los clientes
+//    sube también este número (v3.6 -> v3.7 ...) para que los clientes
 //    reciban la versión nueva enseguida.
 
-const CACHE_NAME = "sandwich-app-v3.5";
+const CACHE_NAME = "sandwich-app-v3.6";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
