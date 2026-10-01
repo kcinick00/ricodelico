@@ -221,12 +221,12 @@ function vacRenderCategorias() {
         <span class="vac-tag">${total} producto${total !== 1 ? "s" : ""}</span>
         ${n > 0 ? `<span class="vac-cart-tag">🛒 ${n}</span>` : ""}
         <div class="platter-gallery vac-gallery" style="--n3:${Math.min(total, 3)};--n2:${Math.min(total, 2)}">${fotos}</div>
-        <div class="vac-cap">
+        <div class="vac-cap" role="button" tabindex="0" aria-label="Elegir productos de ${vacEsc(cat.nombre)}" onclick="vacAbrirCategoria('${cat.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();vacAbrirCategoria('${cat.id}');}">
           <div>
             <h3>${vacEsc(cat.emoji || "")} ${vacEsc(cat.nombre)}</h3>
             <p>${total > 2 ? "Desliza para ver todos · " : ""}toca una foto para verla en grande</p>
           </div>
-          <button type="button" class="vac-btn-elegir" onclick="vacAbrirCategoria('${cat.id}')">Elegir productos →</button>
+          <span class="vac-btn-elegir">Elegir productos →</span>
         </div>
       </article>`;
   }).join("");
