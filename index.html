@@ -915,6 +915,15 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 .pedido-resumen{max-height:30dvh;overflow-y:auto;margin-bottom:8px}
 .pedido-resumen .sheet-item{margin-bottom:6px}
 .btn-primary.pedido-wa{background:#25D366;color:#fff}
+.vac-catcard .vac-cap{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.vac-catcard .vac-cap:hover{background:var(--card-hover)}
+.vac-catcard .vac-cap:active{background:var(--bg-soft)}
+.vac-catcard .vac-cap:hover .vac-btn-elegir{background:var(--accent-dark)}
+.vac-catcard .vac-cap:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.vac-btn-elegir{display:inline-block;text-align:center}
+.hero-texto{max-width:620px}
+.hero-actions .hero-btn-primary{padding:14px 20px}
+@media (max-width:480px){.hero-actions .hero-btn-primary{padding:14px 16px}}
 </style>
 </head>
 <body class="con-fondo">
@@ -939,7 +948,9 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
           <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
           <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
           <div class="hero-actions">
-            <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 Armar mi sándwich</button>
+            <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 ¿Un sub?</button>
+            <button type="button" class="hero-btn hero-btn-primary" onclick="abrirBandejas()">🍽️ ¿Una bandeja?</button>
+            <button type="button" class="hero-btn hero-btn-primary" onclick="abrirCharcuteria()">🥓 ¿O charcutería?</button>
             <a class="hero-btn hero-btn-wa js-wa" href="#">💬 Escribirnos por WhatsApp</a>
           </div>
         </div>
@@ -1518,9 +1529,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js"></script>
-<script src="combos.js"></script>
-<script src="vacio.js"></script>
-<script src="app.js"></script>
+<script src="ingredients.js?v=3.20"></script>
+<script src="combos.js?v=3.20"></script>
+<script src="vacio.js?v=3.20"></script>
+<script src="app.js?v=3.20"></script>
 </body>
 </html>
