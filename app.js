@@ -160,7 +160,7 @@ function actualizarBotonConfirmar() {
     btn.style.display = "block";
     if (panesArmados.length >= cantidadTotalPanes) {
       btn.disabled = false;
-      btn.textContent = "CONFIRMAR E IMPRIMIR →";
+      btn.textContent = "CONFIRMAR Y PEDIR →";
       btn.style.background = "var(--accent)";
       btn.style.color = "#0F0F0F";
     } else {
@@ -345,7 +345,7 @@ function construirResumenBarra() {
         </div>
         <div class="sheet-nota">⏰ Se requiere 1 día de anticipo.</div>`;
         r.total = '$' + calcularTotalPanel().toFixed(2);
-        r.accion = { texto: 'Pedir por WhatsApp', fn: () => { cerrarResumenBarra(); pedirBandejaPanel(); } };
+        r.accion = { texto: 'Confirmar y pedir →', fn: () => { cerrarResumenBarra(); abrirPedidoWA(); } };
         return r;
     }
 
@@ -391,7 +391,7 @@ function construirResumenBarra() {
     r.total = barra ? barra.textContent : '$' + total.toFixed(2);
     const btn = document.getElementById('btn-confirmar');
     if (btn && btn.style.display !== 'none' && panesArmados.length) {
-        r.accion = { texto: 'Confirmar e imprimir →', fn: () => { cerrarResumenBarra(); openOrderModal(); } };
+        r.accion = { texto: 'Confirmar y pedir →', fn: () => { cerrarResumenBarra(); abrirPedidoWA(); } };
     }
     return r;
 }
@@ -412,6 +412,77 @@ function cerrarResumenBarra() {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarResumenBarra(); });
+
+// =========================================================
+// CONFIRMAR Y PEDIR (WhatsApp) — común a las tres secciones
+// =========================================================
+function _textoPanes() {
+    const nom = (x) => x.nombre || x.name || 'Sin nombre';
+    let t = '';
+    panesArmados.forEach((pan, i) => {
+        if (pan.tipo === 'combo') {
+            t += `• ${i+1}. ${pan.nombre || 'Combo'} — $${(pan.precio||0).toFixed(2)}\n`;
+            if (pan.descripcion) t += `   ${pan.descripcion}\n`;
+        } else {
+            t += `• ${i+1}. Sándwich — $${(pan.precio||0).toFixed(2)}\n`;
+            if (pan.pan) t += `   Pan: ${nom(pan.pan)}\n`;
+            [['embutidos','Embutidos'],['proteinas','Proteínas'],['vegetales','Vegetales'],['verduras','Vegetales'],['salsas','Salsas']].forEach(([k,e]) => {
+                const arr = pan[k];
+                if (arr && arr.length) t += `   ${e}: ${arr.map(x => (x.qty > 1 ? nom(x) + ' x' + x.qty : nom(x))).join(', ')}\n`;
+            });
+        }
+    });
+    return t;
+}
+
+function abrirPedidoWA() {
+    const r = construirResumenBarra();
+    if (pantallaActual === 'pantalla-bandejas' && !document.querySelector('input[name="tamano-bandeja"]:checked')) {
+        alert('Elige primero el tamaño de la bandeja 👆');
+        return;
+    }
+    if (pantallaActual === 'pantalla-charcuteria' && typeof vacLineas === 'function' && !vacLineas().length) {
+        alert('Agrega primero algún producto 👆');
+        return;
+    }
+    if (pantallaActual !== 'pantalla-bandejas' && pantallaActual !== 'pantalla-charcuteria' && !panesArmados.length) {
+        alert('Agrega primero tu sándwich o combo 👆');
+        return;
+    }
+    document.getElementById('pedido-resumen').innerHTML = r.html;
+    document.getElementById('pedido-total').textContent = r.total;
+    document.getElementById('pedido-modal').classList.add('active');
+}
+
+function cerrarPedidoWA() {
+    document.getElementById('pedido-modal').classList.remove('active');
+}
+
+function enviarPedidoWA() {
+    const nombre = document.getElementById('pedido-nombre').value.trim();
+    const pago = document.getElementById('pedido-pago').value;
+    const total = document.getElementById('pedido-total').textContent;
+    let cuerpo = '';
+    if (pantallaActual === 'pantalla-bandejas') {
+        const base = document.querySelector('input[name="base-panel"]:checked');
+        const extras = [];
+        document.querySelectorAll('.extra-panel:checked').forEach(e => extras.push(e.parentElement.textContent.trim()));
+        cuerpo = `*Bandejas para eventos*\n• ${cantidadPanel} Bandeja${cantidadPanel > 1 ? 's' : ''} ${obtenerNombreTamano()}\n• Base: ${base ? base.value : '—'}\n• Extras: ${extras.length ? extras.join(', ') : 'Ninguno'}\n⏰ Se requiere 1 día de anticipo.\n`;
+    } else if (pantallaActual === 'pantalla-charcuteria' && typeof vacTextoPedido === 'function') {
+        cuerpo = vacTextoPedido();
+    } else {
+        cuerpo = `*Sándwiches*\n${_textoPanes()}`;
+    }
+    let msg = '¡Hola Ricodélico! Quiero hacer este pedido:\n\n' + cuerpo + `\n*TOTAL: ${total}*\n`;
+    if (pago) msg += `💳 Forma de pago: ${pago}\n`;
+    if (nombre) msg += `👤 Nombre: ${nombre}\n`;
+    msg += '\n¿Me confirman disponibilidad? ¡Gracias!';
+    const tel = (typeof NEGOCIO !== 'undefined' && NEGOCIO.whatsapp) ? NEGOCIO.whatsapp : '584146774332';
+    window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+    cerrarPedidoWA();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarPedidoWA(); });
 
 // =========================================================
 // PANTALLA 5: RESUMEN GENERAL
