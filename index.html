@@ -531,16 +531,14 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
 .hero-btn-wa{background:transparent;color:var(--bg);border-color:rgba(245,240,220,.6)}
 .hero-btn-wa:hover{background:rgba(245,240,220,.12);border-color:var(--bg)}
 .home-cards{position:relative;z-index:2;max-width:1100px;margin:-64px auto 0;padding:0 20px}
-.home .inicio-grid{grid-template-columns:1fr 1fr .8fr;gap:20px}
+.home .inicio-grid{grid-template-columns:1fr 1fr 1fr;gap:20px}
 .home .inicio-card{background:var(--card);min-height:0;justify-content:flex-start;gap:6px;border:1px solid var(--border);box-shadow:0 14px 34px rgba(31,58,37,.18)}
 .home .inicio-card-eventos{order:1}
 .home .inicio-card-sandwich{order:2}
 .home .inicio-card-charcuteria{order:3}
 .home .inicio-img{height:210px}
-.home .inicio-card-charcuteria .inicio-img{height:150px}
 .home .inicio-card .inicio-nombre{font-size:26px;margin-top:18px}
 .home .inicio-card .inicio-desc{padding-bottom:6px;font-size:13px}
-.home .inicio-card-charcuteria .inicio-desc{padding-bottom:6px}
 .inicio-cta{margin:8px 0 22px;padding:11px 22px;border-radius:12px;background:var(--accent);color:#FFFBEE;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;text-transform:uppercase;transition:background .2s}
 .inicio-card:hover .inicio-cta{background:var(--accent-dark)}
 .home .inicio-badge{top:10px;right:10px;background:var(--gold);color:#3a2a00}
@@ -908,9 +906,9 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
         </div>
 
         <div class="inicio-card inicio-card-charcuteria" onclick="abrirCharcuteria()">
-          <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería premium">
-          <div class="inicio-nombre">CHARCUTERÍA <span>PREMIUM AL VACÍO</span></div>
-          <div class="inicio-desc">Selección fina envasada al vacío</div>
+          <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería artesanal">
+          <div class="inicio-nombre">CHARCUTERÍA <span>ARTESANAL</span></div>
+          <div class="inicio-desc">Selección fina empacada al vacío</div>
           <span class="inicio-cta">Ver productos →</span>
         </div>
       </div>
