@@ -911,15 +911,12 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 @media (max-width:480px){
 .historia{margin-top:44px}
 }
-.hero-logo{width:min(380px,70vw)!important}
-.footer-logo{height:auto!important;width:min(240px,60vw);opacity:1!important}
-@media (max-width:900px){.hero-logo{width:min(250px,68vw)!important}}
 </style>
 </head>
 <body class="con-fondo">
 
 <header id="header-app">
-  <img src="images/logo-ricodelico.svg" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
+  <img src="images/logo-horizontal.png" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
   <div class="header-texto">
     <h1 id="header-titulo" class="sr-only">RICODÉLICO <span>CHARCUTERÍA ARTESANAL</span></h1>
     <p id="header-subtitulo">Sabor autentico elaborado con dedicación <em>para USTED</em></p>
@@ -933,7 +930,7 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 
     <section class="hero">
       <div class="hero-inner">
-        <img class="hero-logo" src="images/logo-ricodelico-oscuro.svg" alt="Ricodélico Charcutería Artesanal">
+        <img class="hero-logo" src="images/logo-claro.png" alt="Ricodélico Charcutería Artesanal">
         <div class="hero-texto">
           <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
           <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
@@ -1013,7 +1010,7 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
     </section>
 
     <footer class="home-footer">
-      <img src="images/logo-ricodelico.svg" alt="Ricodélico Charcutería Artesanal" class="footer-logo">
+      <img src="images/logo-horizontal.png" alt="Ricodélico" class="footer-logo">
       <p>Rico, delicioso y auténtico</p>
     </footer>
 
@@ -1098,7 +1095,7 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
         <span class="order-block-label">1️⃣ Elige el tamaño</span>
         <div class="size-selector">
           <label class="size-option">
-            <input type="radio" name="tamano-bandeja" value="grande" data-price="60" checked onchange="actualizarPanelPedido()">
+            <input type="radio" name="tamano-bandeja" value="grande" data-price="60" onchange="actualizarPanelPedido()">
             <span class="size-option-content">
               <span class="size-option-nombre">Grande</span>
               <span class="size-option-precio">$60.00</span>
@@ -1132,16 +1129,16 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
             <span class="qty-number" id="qty-panel">1</span>
             <button type="button" class="btn-qty" onclick="cambiarCantidadPanel(1)">+</button>
           </div>
-          <span class="qty-hint">Máximo 20 bandejas por pedido</span>
+          <span class="qty-hint">Máximo 10 bandejas por pedido</span>
         </div>
       </div>
 
       <div class="order-block">
         <span class="order-block-label">3️⃣ Elige la base</span>
         <div class="radio-group">
-          <label><input type="radio" name="base-panel" value="Solo Quesos" checked> Solo Quesos</label>
+          <label><input type="radio" name="base-panel" value="Solo Quesos"> Solo Quesos</label>
           <label><input type="radio" name="base-panel" value="Solo Fiambres"> Solo Fiambres</label>
-          <label><input type="radio" name="base-panel" value="Completa"> Completa (Fiambres y Quesos)</label>
+          <label><input type="radio" name="base-panel" value="Completa" checked> Completa (Fiambres y Quesos)</label>
         </div>
       </div>
 
@@ -1156,7 +1153,7 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
       <div class="order-panel-footer">
         <div class="total-price">
           <span class="total-label">Total</span>
-          <span class="total-amount" id="panel-total">$60.00</span>
+          <span class="total-amount" id="panel-total">$0.00</span>
         </div>
         <button class="btn-pedir" onclick="pedirBandejaPanel()">📱 Pedir por WhatsApp</button>
       </div>
