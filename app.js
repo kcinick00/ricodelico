@@ -258,7 +258,7 @@ function abrirBandejas() {
     mostrarPantalla('pantalla-bandejas');
     document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
     document.getElementById('header-subtitulo').innerHTML = 'Mira nuestras opciones y armá tu pedido <em>al final</em>';
-    document.querySelector('.total-bar').style.display = 'none';
+    document.querySelector('.total-bar').style.display = 'flex';
     actualizarPanelPedido();
 }
 
@@ -290,6 +290,10 @@ function calcularTotalPanel() {
 function actualizarPanelPedido() {
     const totalEl = document.getElementById('panel-total');
     if (totalEl) totalEl.textContent = `$${calcularTotalPanel().toFixed(2)}`;
+    if (pantallaActual === 'pantalla-bandejas') {
+        const barra = document.getElementById('total-out');
+        if (barra) barra.textContent = `$${calcularTotalPanel().toFixed(2)}`;
+    }
 }
 
 function pedirBandejaPanel() {
@@ -309,6 +313,94 @@ function pedirBandejaPanel() {
     const telefono = "584146774332"; // ⚠️ CAMBIA POR TU NÚMERO
     window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`, '_blank');
 }
+
+// =========================================================
+// RESUMEN DESDE LA BARRA DE TOTAL (tocable)
+// =========================================================
+function _esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function construirResumenBarra() {
+    const r = { titulo: 'Resumen del pedido', html: '', total: '$0.00', accion: null };
+    const pant = pantallaActual;
+
+    if (pant === 'pantalla-bandejas') {
+        r.titulo = 'Tu bandeja';
+        const base = document.querySelector('input[name="base-panel"]:checked');
+        const extras = [];
+        document.querySelectorAll('.extra-panel:checked').forEach(e => extras.push(e.parentElement.textContent.trim()));
+        r.html = `<div class="sheet-item">
+            <div class="sheet-titulo-item"><span>${cantidadPanel}× Bandeja ${_esc(obtenerNombreTamano())}</span><span>$${(obtenerPrecioTamano()*cantidadPanel).toFixed(2)}</span></div>
+            <div class="sheet-detalle">Base: ${_esc(base ? base.value : '—')}<br>Extras: ${extras.length ? _esc(extras.join(', ')) : 'Ninguno'}</div>
+        </div>
+        <div class="sheet-nota">⏰ Se requiere 1 día de anticipo.</div>`;
+        r.total = '$' + calcularTotalPanel().toFixed(2);
+        r.accion = { texto: 'Pedir por WhatsApp', fn: () => { cerrarResumenBarra(); pedirBandejaPanel(); } };
+        return r;
+    }
+
+    if (pant === 'pantalla-charcuteria' && typeof vacResumenBarra === 'function') {
+        return vacResumenBarra();
+    }
+
+    // Sándwiches (resumen, combos, armado...)
+    r.titulo = 'Tu pedido';
+    let html = '';
+    let total = 0;
+    panesArmados.forEach((pan, i) => {
+        total += pan.precio || 0;
+        const nom = (x) => x.nombre || x.name || 'Sin nombre';
+        let det = '';
+        if (pan.tipo === 'combo') {
+            det = _esc(pan.descripcion || '');
+        } else {
+            const l = [];
+            if (pan.pan) l.push('🥖 ' + _esc(nom(pan.pan)));
+            [['embutidos','🥓'],['proteinas','🍖'],['vegetales','🥬'],['verduras','🥬'],['salsas','🥫']].forEach(([k,e]) => {
+                const a = pan[k];
+                if (a && a.length) l.push(e + ' ' + a.map(x => (x.qty > 1 ? nom(x) + ' x' + x.qty : nom(x))).join(', ').replace(/[<>]/g,''));
+            });
+            det = l.join('<br>');
+        }
+        html += `<div class="sheet-item">
+            <div class="sheet-titulo-item"><span>${i+1}. ${_esc(pan.tipo === 'combo' ? (pan.nombre || 'Combo') : 'Sándwich')}</span><span>$${(pan.precio||0).toFixed(2)}</span></div>
+            <div class="sheet-detalle">${det}</div></div>`;
+    });
+    const lista = document.querySelectorAll('#summary-list li');
+    if (lista.length && document.getElementById('pantalla-resumen').classList.contains('activa') === false) {
+        // pan en armado (aún no agregado)
+        let h = '';
+        lista.forEach(li => {
+            const n = li.querySelector('.item-name'), p = li.querySelector('.item-price');
+            if (n) h += `<div class="sheet-linea"><span class="sheet-nombre">${_esc(n.textContent)}</span><span class="sheet-precio">${_esc(p ? p.textContent : '')}</span></div>`;
+        });
+        if (h) html += `<div class="sheet-cat">Pan en armado</div><div class="sheet-item">${h}</div>`;
+    }
+    r.html = html;
+    const barra = document.getElementById('total-out');
+    r.total = barra ? barra.textContent : '$' + total.toFixed(2);
+    const btn = document.getElementById('btn-confirmar');
+    if (btn && btn.style.display !== 'none' && panesArmados.length) {
+        r.accion = { texto: 'Confirmar e imprimir →', fn: () => { cerrarResumenBarra(); openOrderModal(); } };
+    }
+    return r;
+}
+
+function abrirResumenBarra() {
+    const r = construirResumenBarra();
+    document.getElementById('sheet-titulo').textContent = r.titulo;
+    document.getElementById('sheet-body').innerHTML = r.html || '<div class="sheet-vacio">Aún no has agregado nada a tu pedido.</div>';
+    document.getElementById('sheet-total').textContent = r.total;
+    const a = document.getElementById('sheet-accion');
+    if (r.accion) { a.style.display = 'block'; a.textContent = r.accion.texto; a.onclick = r.accion.fn; }
+    else { a.style.display = 'none'; a.onclick = null; }
+    document.getElementById('resumen-sheet').classList.add('abierto');
+}
+
+function cerrarResumenBarra() {
+    document.getElementById('resumen-sheet').classList.remove('abierto');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarResumenBarra(); });
 
 // =========================================================
 // PANTALLA 5: RESUMEN GENERAL
