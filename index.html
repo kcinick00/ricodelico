@@ -911,6 +911,10 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 @media (max-width:480px){
 .historia{margin-top:44px}
 }
+body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteria.activa) #btn-confirmar{display:block!important}
+.pedido-resumen{max-height:30dvh;overflow-y:auto;margin-bottom:8px}
+.pedido-resumen .sheet-item{margin-bottom:6px}
+.btn-primary.pedido-wa{background:#25D366;color:#fff}
 </style>
 </head>
 <body class="con-fondo">
@@ -1356,7 +1360,7 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
   <div class="acciones-derecha">
     <button id="btn-abrir-historial" class="btn-admin-secreto" title="">⚙</button>
     <button id="btn-reimprimir" class="btn-reimprimir" onclick="reimprimirUltimoPedido()" style="display: none;">🖨 Reimprimir</button>
-    <button id="btn-confirmar" onclick="openOrderModal()" style="display: none;">CONFIRMAR E IMPRIMIR →</button>
+    <button id="btn-confirmar" onclick="abrirPedidoWA()" style="display: none;">CONFIRMAR Y PEDIR →</button>
   </div>
 </div>
 
@@ -1370,6 +1374,41 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
     <div class="sheet-foot">
       <div class="sheet-total"><span>Total</span><span id="sheet-total">$0.00</span></div>
       <button type="button" id="sheet-accion" class="sheet-accion" style="display:none"></button>
+    </div>
+  </div>
+</div>
+
+<div id="pedido-modal" class="modal-overlay" onclick="if(event.target===this)cerrarPedidoWA()">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="pedido-titulo">
+    <div class="modal-header">
+      <h2 id="pedido-titulo">Confirmar pedido</h2>
+      <button type="button" class="modal-close" onclick="cerrarPedidoWA()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="pedido-nombre">Nombre (opcional)</label>
+        <input type="text" id="pedido-nombre" placeholder="Ej. Juan Pérez" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="pedido-pago">Forma de pago (opcional)</label>
+        <select id="pedido-pago">
+          <option value="">Prefiero decidirlo después</option>
+          <option value="Efectivo">💵 Efectivo</option>
+          <option value="Pago móvil">📱 Pago móvil</option>
+          <option value="Tarjeta">💳 Tarjeta</option>
+          <option value="Zelle">🏦 Zelle</option>
+          <option value="Binance">🪙 Binance</option>
+        </select>
+      </div>
+      <div class="order-preview">
+        <h3>Resumen del pedido</h3>
+        <div id="pedido-resumen" class="pedido-resumen"></div>
+        <div class="modal-total"><span>Total</span><span id="pedido-total">$0.00</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" onclick="cerrarPedidoWA()">Cancelar</button>
+      <button type="button" class="btn-primary pedido-wa" onclick="enviarPedidoWA()">📱 Enviar por WhatsApp</button>
     </div>
   </div>
 </div>
