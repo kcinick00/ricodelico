@@ -411,6 +411,26 @@ function vacLimpiar() {
   if (m && m.classList.contains("abierto")) vacRenderProductos();
 }
 
+// ---------- Resumen para la barra de total ----------
+function vacResumenBarra() {
+  const lineas = vacLineas();
+  let html = "", catActual = null;
+  lineas.forEach(l => {
+    if (l.cat.id !== catActual) {
+      catActual = l.cat.id;
+      html += `<div class="sheet-cat">${vacEsc(l.cat.emoji || "")} ${vacEsc(l.cat.nombre)}</div>`;
+    }
+    const nombre = l.prod.nombre + (l.g ? " · " + vacEtiquetaTamano(l.g) : "");
+    html += `<div class="sheet-linea"><span class="sheet-qty">${l.q}×</span><span class="sheet-nombre">${vacEsc(nombre)}</span><span class="sheet-precio">${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}</span></div>`;
+  });
+  return {
+    titulo: "Tu pedido",
+    html,
+    total: vacMoneda(vacTotal()),
+    accion: lineas.length ? { texto: "Enviar por WhatsApp", fn: () => { cerrarResumenBarra(); vacEnviarWhatsApp(); } } : null
+  };
+}
+
 // ---------- Envío por WhatsApp ----------
 function vacEnviarWhatsApp() {
   const lineas = vacLineas();
