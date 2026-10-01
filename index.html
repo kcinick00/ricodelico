@@ -890,12 +890,60 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 .sheet-total span:last-child{color:var(--accent)}
 .sheet-accion{width:100%;background:var(--accent);color:#FFFBEE;border:0;border-radius:14px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer}
 .home .inicio-card .inicio-nombre{font-family:'Caprasimo','Bevan',serif;font-weight:400;letter-spacing:1px;font-size:24px;line-height:1.1}
+/* ===== IDENTIDAD DE MARCA (portada) ===== */
+.hero-eyebrow{margin:0 0 10px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+.kicker{display:inline-block;font-family:'Caveat',cursive;font-size:24px;font-weight:700;color:var(--accent);line-height:1}
+.kicker-claro{color:var(--gold)}
+.sec-title{margin:6px 0 0;font-family:'Caprasimo','Bevan',serif;font-weight:400;font-size:34px;line-height:1.1;color:var(--text)}
+.sec-title span{color:var(--accent)}
+.sec-title-claro{color:var(--bg)}
+.sec-title-claro span{color:var(--gold)}
+.historia,.insignia{max-width:1100px;margin:56px auto 0;padding:0 20px}
+.historia-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:34px;align-items:center}
+.historia-texto p{margin:14px 0 0;font-size:15px;line-height:1.65;color:var(--text)}
+.historia-datos{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.historia-datos li{background:var(--card);border:1px solid var(--border);border-left:5px solid var(--gold);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:2px}
+.historia-datos strong{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;font-weight:400;color:var(--text);line-height:1.1}
+.historia-datos span{font-size:12px;color:var(--text-muted)}
+.proceso{margin:56px 0 0;padding:52px 20px 56px;color:var(--bg);background:repeating-linear-gradient(92deg,rgba(0,0,0,.05) 0 2px,transparent 2px 9px),radial-gradient(circle at 12% 0,rgba(229,165,46,.18) 0,transparent 45%),linear-gradient(170deg,#1F3A25 0%,#183020 100%);border-top:4px solid var(--gold)}
+.proceso-inner{max-width:1100px;margin:0 auto}
+.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px}
+.paso{background:rgba(245,240,220,.06);border:1px solid rgba(245,240,220,.18);border-radius:16px;padding:20px 18px}
+.paso-n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:13px;color:var(--gold);letter-spacing:2px}
+.paso h3{margin:8px 0 6px;font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:24px;letter-spacing:1.5px;line-height:1.05;color:var(--bg)}
+.paso p{margin:0;font-size:13px;line-height:1.5;color:rgba(245,240,220,.8)}
+.insignia{text-align:center}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+.chip{border:1.5px solid var(--accent);background:var(--card);color:var(--accent-dark);font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border-radius:999px;cursor:pointer;transition:all .2s}
+.chip:hover{background:var(--accent);color:#FFFBEE;transform:translateY(-2px)}
+.insignia-nota{margin:16px 0 0;font-size:12px;color:var(--text-muted)}
+.mostrador{max-width:1100px;margin:56px auto 0;padding:0 20px}
+.mostrador-card{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;padding:34px;border-radius:24px;color:var(--bg);background:repeating-linear-gradient(92deg,rgba(0,0,0,.06) 0 2px,transparent 2px 9px),linear-gradient(160deg,#2B1D10 0%,#3B2915 100%);box-shadow:0 14px 34px rgba(31,58,37,.2);border-bottom:5px solid var(--gold)}
+.mostrador-texto{flex:1 1 380px}
+.mostrador-texto p{margin:12px 0 0;font-size:14px;line-height:1.6;color:rgba(245,240,220,.88)}
+.mostrador-acciones{display:flex;flex-direction:column;gap:10px;min-width:220px}
+.footer-ubic{display:block;margin-top:6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)}
+@media (max-width:900px){
+.sec-title{font-size:27px}
+.historia-grid{grid-template-columns:1fr;gap:22px}
+.proceso-grid{grid-template-columns:1fr 1fr}
+.mostrador-card{padding:26px 22px}
+.mostrador-acciones{width:100%}
+}
+@media (max-width:480px){
+.proceso-grid{grid-template-columns:1fr}
+.chip{font-size:16px;padding:9px 14px}
+.historia,.insignia,.mostrador{margin-top:44px}
+}
+.hero-logo{width:min(380px,70vw)!important}
+.footer-logo{height:auto!important;width:min(240px,60vw);opacity:1!important}
+@media (max-width:900px){.hero-logo{width:min(250px,68vw)!important}}
 </style>
 </head>
 <body class="con-fondo">
 
 <header id="header-app">
-  <img src="images/logo-horizontal.png" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
+  <img src="images/logo-ricodelico.svg" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
   <div class="header-texto">
     <h1 id="header-titulo" class="sr-only">RICODÉLICO <span>CHARCUTERÍA ARTESANAL</span></h1>
     <p id="header-subtitulo">Sabor autentico elaborado con dedicación <em>para USTED</em></p>
@@ -909,10 +957,11 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 
     <section class="hero">
       <div class="hero-inner">
-        <img class="hero-logo" src="images/logo-claro.png" alt="Ricodélico Charcutería Artesanal">
+        <img class="hero-logo" src="images/logo-ricodelico-oscuro.svg" alt="Ricodélico Charcutería Artesanal">
         <div class="hero-texto">
+          <p class="hero-eyebrow">Maracaibo · Zulia · Concepto gastronómico de autor</p>
           <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
-          <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
+          <p class="hero-sub">Charcutería artesanal y subs de especialidad, hechos con dedicación <em>para USTED</em></p>
           <div class="hero-actions">
             <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 Armar mi sándwich</button>
             <a class="hero-btn hero-btn-wa js-wa" href="#">💬 Escribirnos por WhatsApp</a>
@@ -946,9 +995,67 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
       </div>
     </section>
 
+    <section class="historia">
+      <div class="historia-grid">
+        <div class="historia-texto">
+          <span class="kicker">Nuestra esencia</span>
+          <h2 class="sec-title">De negocio familiar a <span>charcutería de autor</span></h2>
+          <p>Ricodélico nació de una tradición familiar y creció con una idea clara: hacer en casa lo que otros compran hecho. Elaboramos nuestros propios embutidos y cortes curados o ahumados, con procesos cuidados, medidas exactas y mucha paciencia.</p>
+          <p>El resultado es charcutería de verdad, con sazón zuliana: ajo, pimienta, pimentón y un toque parrillero que sabe a Maracaibo.</p>
+        </div>
+        <ul class="historia-datos">
+          <li><strong>100%</strong><span>elaboración propia</span></li>
+          <li><strong>Curado, ahumado y sous vide</strong><span>técnicas de la charcutería clásica</span></li>
+          <li><strong>Sazón zuliana</strong><span>mezclas exclusivas de la casa</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="proceso">
+      <div class="proceso-inner">
+        <span class="kicker kicker-claro">Del taller a tu mesa</span>
+        <h2 class="sec-title sec-title-claro">Así hacemos <span>nuestra charcutería</span></h2>
+        <div class="proceso-grid">
+          <div class="paso"><span class="paso-n">01</span><h3>Salmuera y curado</h3><p>Formulaciones medidas al gramo para lograr textura, sabor y buena conservación.</p></div>
+          <div class="paso"><span class="paso-n">02</span><h3>Ahumado artesanal</h3><p>Lomo, muchacho redondo y más, con humo lento y sazón propia.</p></div>
+          <div class="paso"><span class="paso-n">03</span><h3>Cocción sous vide</h3><p>Temperatura controlada para piezas tiernas, jugosas y parejas.</p></div>
+          <div class="paso"><span class="paso-n">04</span><h3>Corte y empacado al vacío</h3><p>Rebanado al momento y sellado para que llegue fresco a tu casa.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="insignia">
+      <span class="kicker">Productos insignia</span>
+      <h2 class="sec-title">Lo que nos hace <span>Ricodélico</span></h2>
+      <div class="chips">
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Lomo ahumado</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Jamón tierno</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Roast beef</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Pastrami</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Selva negra</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Salchichones</button>
+        <button type="button" class="chip" onclick="abrirCharcuteria()">Muchacho redondo ahumado</button>
+      </div>
+      <p class="insignia-nota">Toca cualquiera para ver la charcutería al vacío y pedir por WhatsApp.</p>
+    </section>
+
+    <section class="mostrador">
+      <div class="mostrador-card">
+        <div class="mostrador-texto">
+          <span class="kicker kicker-claro">En el mostrador</span>
+          <h2 class="sec-title sec-title-claro">Subs, smash burgers <span>y mucho más</span></h2>
+          <p>Subs con charcutería propia, vegetales frescos y salsas de la casa, con <strong>beef au jus</strong> para sumergir cada bocado. Además: smash burgers de sazón precisa, tequeños, papas fritas y platillos para eventos.</p>
+        </div>
+        <div class="mostrador-acciones">
+          <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 Armar mi sub</button>
+          <a class="hero-btn hero-btn-wa js-wa" href="#">💬 Consultar el menú</a>
+        </div>
+      </div>
+    </section>
+
     <section class="confianza">
       <div class="confianza-grid">
-        <div class="confianza-item"><span class="ci-icon">🔪</span><strong>Hecho con dedicación</strong><small>Charcutería artesanal, rica y auténtica</small></div>
+        <div class="confianza-item"><span class="ci-icon">🔪</span><strong>Elaboración propia</strong><small>Embutidos curados y ahumados en casa</small></div>
         <div class="confianza-item"><span class="ci-icon">⏰</span><strong>Bandejas con 24 h de anticipo</strong><small>Para asegurar tu fecha y disponibilidad</small></div>
         <div class="confianza-item"><span class="ci-icon">🥪</span><strong>Sándwich a tu gusto</strong><small>Tú eliges pan, salsas, embutidos y más</small></div>
         <div class="confianza-item"><span class="ci-icon">💬</span><strong>Pedido directo por WhatsApp</strong><small>Sin intermediarios, hablas con nosotros</small></div>
@@ -970,8 +1077,9 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
     </section>
 
     <footer class="home-footer">
-      <img src="images/logo-horizontal.png" alt="Ricodélico" class="footer-logo">
+      <img src="images/logo-ricodelico.svg" alt="Ricodélico Charcutería Artesanal" class="footer-logo">
       <p>Rico, delicioso y auténtico</p>
+      <small class="footer-ubic">Maracaibo, Zulia · Venezuela</small>
     </footer>
 
   </div>
