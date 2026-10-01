@@ -411,6 +411,19 @@ function vacLimpiar() {
   if (m && m.classList.contains("abierto")) vacRenderProductos();
 }
 
+// ---------- Texto del pedido (para el cuadro "Confirmar y pedir") ----------
+function vacTextoPedido() {
+  let msg = "*Charcutería artesanal al vacío*\n", catActual = null;
+  vacLineas().forEach(l => {
+    if (l.cat.id !== catActual) { catActual = l.cat.id; msg += `\n_${l.cat.nombre}_\n`; }
+    const pres = l.g ? " " + vacEtiquetaTamano(l.g) : (l.prod.detalle ? " (" + l.prod.detalle + ")" : "");
+    msg += `• ${l.q} x ${l.prod.nombre}${pres} — ${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}\n`;
+  });
+  const nota = (document.getElementById("vac-nota") || {}).value;
+  if (nota && nota.trim()) msg += `\n📝 ${nota.trim()}\n`;
+  return msg;
+}
+
 // ---------- Resumen para la barra de total ----------
 function vacResumenBarra() {
   const lineas = vacLineas();
@@ -427,7 +440,7 @@ function vacResumenBarra() {
     titulo: "Tu pedido",
     html,
     total: vacMoneda(vacTotal()),
-    accion: lineas.length ? { texto: "Enviar por WhatsApp", fn: () => { cerrarResumenBarra(); vacEnviarWhatsApp(); } } : null
+    accion: lineas.length ? { texto: "Confirmar y pedir →", fn: () => { cerrarResumenBarra(); abrirPedidoWA(); } } : null
   };
 }
 
