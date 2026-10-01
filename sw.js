@@ -1,13 +1,17 @@
 // =========================================================
-// sw.js - Service Worker para "Arma tu sándwich"
+// sw.js - Service Worker de Ricodélico
 // =========================================================
+// ⚠️ Cada vez que subas cambios a index.html, app.js, vacio.js, etc.
+//    sube también este número (v3.5 -> v3.6 ...) para que los clientes
+//    reciban la versión nueva enseguida.
 
-const CACHE_NAME = "sandwich-app-v3.4";
+const CACHE_NAME = "sandwich-app-v3.5";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
   "index.html",
   "app.js",
+  "vacio.js",
   "combos.js",
   "ingredients.js",
   "manifest.json",
@@ -42,10 +46,11 @@ const FILES_TO_CACHE = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // addAll falla si UNO falla, así que hacemos uno por uno
+      // addAll falla si UNO falla, así que hacemos uno por uno.
+      // cache: "reload" evita copiar una versión vieja guardada por el navegador.
       return Promise.all(
         FILES_TO_CACHE.map((url) =>
-          cache.add(url).catch((err) => {
+          cache.add(new Request(url, { cache: "reload" })).catch((err) => {
             console.warn("[SW] No se pudo cachear:", url, err);
           })
         )
@@ -81,6 +86,7 @@ self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
   // 1) No cachear Google Sheets (siempre fresco)
+  //    Aquí entran el menú de sándwiches y la pestaña "vacio".
   if (url.includes("docs.google.com/spreadsheets")) {
     return; // dejar que el navegador lo maneje normal
   }
