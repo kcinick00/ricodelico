@@ -820,6 +820,31 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
   .vac-size-g { font-size: 18px; }
   .vac-mini-stepper button { width: 28px; height: 28px; }
 }
+
+/* --- Tarjetas grandes de categoría con fotos deslizables --- */
+.vac-grid{display:flex;flex-direction:column;gap:40px;margin-bottom:32px}
+.vac-gallery{--n:var(--n3)}
+.vac-catcard .vac-tag{position:absolute;top:14px;left:14px;z-index:5;background:rgba(245,240,220,.92);border:1.5px solid var(--accent);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:6px 12px;border-radius:8px;text-transform:uppercase;pointer-events:none}
+.vac-catcard .vac-cart-tag{position:absolute;top:14px;right:14px;z-index:5;background:var(--accent);color:#FFFBEE;font-weight:800;font-size:14px;padding:6px 14px;border-radius:10px;box-shadow:0 4px 16px rgba(46,125,70,.4);pointer-events:none}
+.vac-gallery .vac-ph{position:relative;flex:0 0 calc((100% - (var(--n) - 1)*8px)/var(--n));height:460px;border-radius:8px;overflow:hidden;scroll-snap-align:start;background:linear-gradient(145deg,#2a3a2f,#1b2a20)}
+.vac-gallery .vac-ph img{flex:none;width:100%;height:100%;object-fit:cover;border-radius:0}
+.vac-ph-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:84px;background:linear-gradient(145deg,#3a4d3f,#22332a)}
+.vac-ph-label{position:absolute;left:0;right:0;bottom:0;padding:38px 14px 14px;background:linear-gradient(transparent,rgba(0,0,0,.82));color:#fff;pointer-events:none;display:flex;flex-direction:column;gap:2px}
+.vac-ph-label b{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;text-transform:uppercase;line-height:1.05}
+.vac-ph-label span{font-size:12px;font-weight:700;color:#F3D98A}
+.vac-catcard .vac-cap{padding:20px 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.vac-catcard .vac-cap h3{font-family:'Bebas Neue',sans-serif;color:var(--text);font-size:30px;margin:0;letter-spacing:3px;text-transform:uppercase;line-height:1}
+.vac-catcard .vac-cap p{margin:6px 0 0;color:var(--text-muted);font-size:13px}
+.vac-btn-elegir{background:var(--accent);color:#FFFBEE;border:0;border-radius:14px;padding:14px 22px;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 14px rgba(46,125,70,.35)}
+.vac-btn-elegir:active{transform:scale(.97)}
+/* miniaturas dentro de la ventana de productos */
+.vac-thumb{width:62px;height:62px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#2a3a2f}
+.vac-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.vac-thumb .vac-ph-fb{font-size:30px}
+.vac-prod{justify-content:flex-start}
+.vac-prod-info{flex:1;min-width:0}
+@media (max-width:900px){.vac-gallery .vac-ph{height:380px}}
+@media (max-width:600px){.vac-grid{gap:30px}.vac-gallery{--n:var(--n2)}.vac-gallery .vac-ph{height:330px}.vac-ph-label b{font-size:20px}.vac-catcard .vac-cap{padding:16px}.vac-catcard .vac-cap h3{font-size:24px;letter-spacing:2px}.vac-btn-elegir{width:100%}.vac-catcard .vac-tag{top:10px;left:10px;font-size:11px}.vac-catcard .vac-cart-tag{top:10px;right:10px}}
 </style>
 </head>
 <body class="con-fondo">
