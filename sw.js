@@ -2,10 +2,10 @@
 // sw.js - Service Worker de Ricodélico
 // =========================================================
 // ⚠️ Cada vez que subas cambios a index.html, app.js, vacio.js, etc.
-//    sube también este número (v3.6 -> v3.7 ...) para que los clientes
+//    sube también este número (v3.11 -> v3.11 ...) para que los clientes
 //    reciban la versión nueva enseguida.
 
-const CACHE_NAME = "sandwich-app-v3.9";
+const CACHE_NAME = "sandwich-app-v3.11";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
@@ -103,6 +103,29 @@ self.addEventListener("fetch", (event) => {
 
   // 4) Ignorar los iframes de impresión (no son requests reales)
   if (url.includes("print-iframe")) {
+    return;
+  }
+
+  // Código (html/js/css/json y navegaciones): primero red, caché solo si no hay conexión.
+  // Así los cambios publicados llegan siempre a los clientes.
+  const u = new URL(event.request.url);
+  const esCodigo = event.request.mode === "navigate" ||
+    (u.origin === self.location.origin && /\.(html|js|css|json)$/.test(u.pathname)) ||
+    (u.origin === self.location.origin && u.pathname.endsWith("/"));
+  if (esCodigo) {
+    event.respondWith(
+      fetch(event.request, { cache: "no-cache" })
+        .then((response) => {
+          if (response && response.status === 200 && response.type === "basic") {
+            const copia = response.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, copia));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(event.request).then((c) => c || caches.match("index.html"))
+        )
+    );
     return;
   }
 
