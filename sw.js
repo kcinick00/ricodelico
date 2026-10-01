@@ -5,7 +5,7 @@
 //    sube también este número (v3.6 -> v3.7 ...) para que los clientes
 //    reciban la versión nueva enseguida.
 
-const CACHE_NAME = "sandwich-app-v3.6";
+const CACHE_NAME = "sandwich-app-v3.7";
 
 // Archivos que se cachean al instalar el SW (app shell)
 const FILES_TO_CACHE = [
