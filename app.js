@@ -264,7 +264,7 @@ function abrirBandejas() {
 
 function cambiarCantidadPanel(delta) {
     const nueva = cantidadPanel + delta;
-    if (nueva < 1 || nueva > 20) return;
+    if (nueva < 1 || nueva > 10) return;
     cantidadPanel = nueva;
     document.getElementById('qty-panel').textContent = nueva;
     actualizarPanelPedido();
@@ -272,16 +272,17 @@ function cambiarCantidadPanel(delta) {
 
 function obtenerPrecioTamano() {
     const s = document.querySelector('input[name="tamano-bandeja"]:checked');
-    return s ? parseFloat(s.getAttribute('data-price')) : 60;
+    return s ? parseFloat(s.getAttribute('data-price')) : 0;
 }
 
 function obtenerNombreTamano() {
     const s = document.querySelector('input[name="tamano-bandeja"]:checked');
     const map = { grande: 'Grande', mediana: 'Mediana', pequena: 'Pequeña' };
-    return s ? (map[s.value] || 'Grande') : 'Grande';
+    return s ? (map[s.value] || '') : '';
 }
 
 function calcularTotalPanel() {
+    if (!document.querySelector('input[name="tamano-bandeja"]:checked')) return 0;
     let unitario = obtenerPrecioTamano();
     document.querySelectorAll('.extra-panel:checked').forEach(e => { unitario += parseFloat(e.value); });
     return unitario * cantidadPanel;
@@ -297,6 +298,12 @@ function actualizarPanelPedido() {
 }
 
 function pedirBandejaPanel() {
+    if (!document.querySelector('input[name="tamano-bandeja"]:checked')) {
+        alert('Elige primero el tamaño de la bandeja 👆');
+        const t = document.querySelector('input[name="tamano-bandeja"]');
+        if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
     const tamano = obtenerNombreTamano();
     const base = document.querySelector('input[name="base-panel"]:checked').value;
     const extras = [];
@@ -325,6 +332,10 @@ function construirResumenBarra() {
 
     if (pant === 'pantalla-bandejas') {
         r.titulo = 'Tu bandeja';
+        if (!document.querySelector('input[name="tamano-bandeja"]:checked')) {
+            r.html = '<div class="sheet-vacio">Elige el tamaño de la bandeja para ver tu pedido.</div>';
+            return r;
+        }
         const base = document.querySelector('input[name="base-panel"]:checked');
         const extras = [];
         document.querySelectorAll('.extra-panel:checked').forEach(e => extras.push(e.parentElement.textContent.trim()));
