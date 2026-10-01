@@ -5,7 +5,7 @@
 const fmt = n => "$" + n.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const quantities = {};
-let pantallaActual = "pantalla-cantidad";
+let pantallaActual = "pantalla-inicio";
 let cantidadTotalPanes = 1;
 let panesArmados = [];
 let ultimoPanArmado = null;
@@ -147,9 +147,6 @@ function actualizarBotonVolver() {
     btn.innerHTML = "← Volver";
   } else if (pantallaActual === "pantalla-resumen") {
     btn.style.display = "flex";
-    btn.innerHTML = panesArmados.length > 0 ? "← Empezar de nuevo" : "← Volver a cantidad";
-  } else if (pantallaActual === "pantalla-cantidad") {
-    btn.style.display = "flex";
     btn.innerHTML = "← Inicio";
   } else {
     btn.style.display = "none";
@@ -194,31 +191,22 @@ function volverAtras() {
     return;
   }
   if (pantallaActual === "pantalla-resumen") {
-    if (panesArmados.length > 0) {
-      const confirmar = confirm("¿Empezar de nuevo? Se borrará el pedido actual.");
-      if (confirmar) {
-        panesArmados = []; panEnEdicion = null; ultimoPanArmado = null;
-        cantidadTotalPanes = 1;
-        document.getElementById("cantidad-inicial-display").textContent = "1";
-        limpiarEditor();
-        mostrarPantalla("pantalla-cantidad");
-      }
-    } else {
-      panesArmados = []; panEnEdicion = null; ultimoPanArmado = null;
-      cantidadTotalPanes = 1;
-      document.getElementById("cantidad-inicial-display").textContent = "1";
-      limpiarEditor();
-      mostrarPantalla("pantalla-cantidad");
-    }
+    if (panesArmados.length > 0 && !confirm("¿Volver al inicio? Se borrará el pedido actual.")) return;
+    resetearPedidoSandwich();
+    mostrarPantalla("pantalla-inicio");
+    document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
+    document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
     return;
   }
-  if (pantallaActual === "pantalla-cantidad") {
-    if (panesArmados.length === 0) {
-      mostrarPantalla("pantalla-inicio");
-      document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
-      document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
-    }
-  }
+}
+
+// Deja el pedido de sándwiches en blanco (1 pan, nada armado)
+function resetearPedidoSandwich() {
+  panesArmados = []; panEnEdicion = null; ultimoPanArmado = null;
+  cantidadTotalPanes = 1;
+  const d = document.getElementById("cantidad-inicial-display");
+  if (d) d.textContent = "1";
+  if (typeof limpiarEditor === "function") limpiarEditor();
 }
 
 // =========================================================
@@ -226,14 +214,14 @@ function volverAtras() {
 // =========================================================
 function cambiarCantidadInicial(delta) {
   const nueva = cantidadTotalPanes + delta;
-  if (nueva < 1 || nueva > 20) return;
+  if (nueva > 20) return;
+  // No se puede bajar de los panes que ya están armados
+  if (nueva < Math.max(1, panesArmados.length)) {
+    if (nueva >= 1) showToast("Elimina un pan del pedido para bajar la cantidad", "info");
+    return;
+  }
   cantidadTotalPanes = nueva;
   document.getElementById("cantidad-inicial-display").textContent = cantidadTotalPanes;
-}
-
-function confirmarCantidadInicial() {
-  panesArmados = []; panEnEdicion = null; ultimoPanArmado = null;
-  mostrarPantalla("pantalla-resumen");
   renderResumenGeneral();
 }
 
@@ -242,7 +230,10 @@ function confirmarCantidadInicial() {
 // =========================================================
 function elegirServicio(servicio) {
   if (servicio === "sandwich") {
-    mostrarPantalla("pantalla-cantidad");
+    if (panesArmados.length === 0) resetearPedidoSandwich();
+    document.getElementById("cantidad-inicial-display").textContent = cantidadTotalPanes;
+    mostrarPantalla("pantalla-resumen");
+    renderResumenGeneral();
     document.getElementById("header-titulo").innerHTML = 'ARMA TU <span>SÁNDWICH</span>';
     document.getElementById("header-subtitulo").innerHTML = 'Elige tus ingredientes y mira el total <em>al instante</em>';
     return;
@@ -1250,7 +1241,7 @@ function limpiarTodoDespuesDeImprimir() {
   cantidadTotalPanes = 1;
   document.getElementById("cantidad-inicial-display").textContent = "1";
   showToast("Pedido completado y limpiado", "success");
-  setTimeout(() => { mostrarPantalla("pantalla-cantidad"); }, 800);
+  setTimeout(() => { mostrarPantalla("pantalla-resumen"); renderResumenGeneral(); }, 800);
 }
 
 function reimprimirUltimoPedido() {
