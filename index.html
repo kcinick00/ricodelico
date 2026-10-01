@@ -53,7 +53,10 @@ header p em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);f
 .btn-continuar:hover{background:var(--accent-dark);transform:translateY(-2px)}
 
 /* ===== PANTALLA 3: COMBOS ===== */
-#pantalla-combos{padding:16px;overflow-y:auto}
+#pantalla-combos{padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+#pantalla-combos.activa{display:block}
+#pantalla-combos>*{flex-shrink:0}
+.combos-grid{align-content:start;padding-bottom:90px}
 .combos-titulo{text-align:center;margin-bottom:16px}
 .combos-titulo h2{margin:0;font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;text-transform:uppercase;color:var(--text)}
 .combos-titulo h2 span{color:var(--accent)}
