@@ -845,6 +845,13 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
 .vac-prod-info{flex:1;min-width:0}
 @media (max-width:900px){.vac-gallery .vac-ph{height:380px}}
 @media (max-width:600px){.vac-grid{gap:30px}.vac-gallery{--n:var(--n2)}.vac-gallery .vac-ph{height:330px}.vac-ph-label b{font-size:20px}.vac-catcard .vac-cap{padding:16px}.vac-catcard .vac-cap h3{font-size:24px;letter-spacing:2px}.vac-btn-elegir{width:100%}.vac-catcard .vac-tag{top:10px;left:10px;font-size:11px}.vac-catcard .vac-cart-tag{top:10px;right:10px}}
+
+/* --- Agotado (viene de la columna "disponible" de la hoja) --- */
+.vac-ph.agotado img,.vac-ph.agotado .vac-ph-fb{filter:grayscale(1) brightness(.55)}
+.vac-agotado-badge{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);z-index:3;text-align:center;background:rgba(192,57,43,.92);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;padding:8px 0;pointer-events:none}
+.vac-agotado-tag{display:inline-block;background:#c0392b;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;padding:3px 9px;border-radius:6px;line-height:1.1}
+.vac-prod-accordion.agotado,.vac-prod.agotado{opacity:.6}
+.vac-acc-header:disabled{cursor:not-allowed}
 </style>
 </head>
 <body class="con-fondo">
