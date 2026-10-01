@@ -168,10 +168,10 @@ function vacTotal() {
 // ---------- Navegación ----------
 function abrirCharcuteria() {
   mostrarPantalla("pantalla-charcuteria");
-  document.getElementById("header-titulo").innerHTML = 'CHARCUTERÍA <span>AL VACÍO</span>';
-  document.getElementById("header-subtitulo").innerHTML = 'Elige tu categoría y arma tu pedido <em>al final</em>';
+  document.getElementById("header-titulo").innerHTML = 'CHARCUTERÍA <span>ARTESANAL</span>';
+  document.getElementById("header-subtitulo").innerHTML = 'Selección fina empacada al vacío <em>para USTED</em>';
   const tb = document.querySelector(".total-bar");
-  if (tb) tb.style.display = "none";
+  if (tb) tb.style.display = "flex";
   vacRenderCategorias();
   vacRenderPedido();
   vacRefrescarMenu();
@@ -386,6 +386,9 @@ function vacRenderPedido() {
   });
   cont.innerHTML = html || '<div class="vac-vacio-msg">Aún no has agregado productos. Toca una categoría 👆</div>';
   totalEl.textContent = vacMoneda(vacTotal());
+  const pantVac = document.getElementById("pantalla-charcuteria");
+  const barra = document.getElementById("total-out");
+  if (barra && pantVac && pantVac.classList.contains("activa")) barra.textContent = vacMoneda(vacTotal());
   btn.disabled = !html;
 }
 
