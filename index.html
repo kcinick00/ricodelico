@@ -106,6 +106,12 @@ header p em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);f
 .categoria-section[data-cat="proteinas"]::before{color:rgba(194,90,58,.55)}
 .categoria-section[data-cat="vegetales"]{border-left-color:var(--cat-vegetales)}
 .categoria-section[data-cat="vegetales"]::before{color:rgba(155,197,61,.55)}
+.categoria-section[data-cat="delicateses"]{border-left-color:#8E5BA8}
+.categoria-section[data-cat="delicateses"]::before{color:rgba(142,91,168,.55)}
+.categoria-section[data-cat="salchichones"]{border-left-color:#9C3B3B}
+.categoria-section[data-cat="salchichones"]::before{color:rgba(156,59,59,.55)}
+.categoria-section[data-cat="quesos"]{border-left-color:#E5A52E}
+.categoria-section[data-cat="quesos"]::before{color:rgba(229,165,46,.65)}
 .category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
 .option{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:6px 4px 8px;background:var(--card);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s,background .2s;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
 .option:has(input:checked){border-color:var(--accent);background:linear-gradient(180deg,rgba(46,125,70,.08) 0%,var(--card) 100%)}
@@ -1233,9 +1239,12 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
       <div class="categorias-tabs">
         <button class="categoria-tab active" data-cat="pan" onclick="scrollToCategoria('pan')">🥖 Pan</button>
         <button class="categoria-tab" data-cat="salsas" onclick="scrollToCategoria('salsas')">🥫 Salsas</button>
+        <button class="categoria-tab" data-cat="delicateses" onclick="scrollToCategoria('delicateses')">🧆 Delicateses</button>
         <button class="categoria-tab" data-cat="embutidos" onclick="scrollToCategoria('embutidos')">🥓 Embutidos</button>
         <button class="categoria-tab" data-cat="proteinas" onclick="scrollToCategoria('proteinas')">🍖 Proteínas</button>
         <button class="categoria-tab" data-cat="vegetales" onclick="scrollToCategoria('vegetales')">🥬 Vegetales</button>
+        <button class="categoria-tab" data-cat="salchichones" onclick="scrollToCategoria('salchichones')">🌭 Salchichones</button>
+        <button class="categoria-tab" data-cat="quesos" onclick="scrollToCategoria('quesos')">🧀 Quesos</button>
       </div>
 
       <div class="categorias-contenido" id="categorias-contenido">
@@ -1245,6 +1254,9 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="categoria-section" data-cat="salsas" data-label="SALSAS" id="section-salsas">
           <div id="salsas-group" class="category-grid"></div>
         </div>
+        <div class="categoria-section" data-cat="delicateses" data-label="DELICATESES" id="section-delicateses">
+          <div id="delicateses-group" class="category-grid"></div>
+        </div>
         <div class="categoria-section" data-cat="embutidos" data-label="EMBUTIDOS" id="section-embutidos">
           <div id="embutidos-group" class="category-grid"></div>
         </div>
@@ -1253,6 +1265,12 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         </div>
         <div class="categoria-section" data-cat="vegetales" data-label="VEGETALES" id="section-vegetales">
           <div id="vegetales-group" class="category-grid"></div>
+        </div>
+        <div class="categoria-section" data-cat="salchichones" data-label="SALCHICHONES" id="section-salchichones">
+          <div id="salchichones-group" class="category-grid"></div>
+        </div>
+        <div class="categoria-section" data-cat="quesos" data-label="QUESOS" id="section-quesos">
+          <div id="quesos-group" class="category-grid"></div>
         </div>
       </div>
     </div>
@@ -1529,9 +1547,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.20"></script>
-<script src="combos.js?v=3.20"></script>
-<script src="vacio.js?v=3.20"></script>
-<script src="app.js?v=3.20"></script>
+<script src="ingredients.js?v=3.21"></script>
+<script src="combos.js?v=3.21"></script>
+<script src="vacio.js?v=3.21"></script>
+<script src="app.js?v=3.21"></script>
 </body>
 </html>
