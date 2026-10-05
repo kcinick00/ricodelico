@@ -33,7 +33,26 @@ function normalizarCategoria(cat) {
   if (c === "embutido" || c === "embutidos" || c === "frios") return "embutidos";
   if (c === "proteina" || c === "proteinas" || c === "carnes") return "proteinas";
   if (c === "verdura" || c === "verduras" || c === "vegetal" || c === "vegetales") return "vegetales";
+  if (c === "delicatesen" || c === "delicatesenes" || c === "delicatessen" || c === "delicateses" || c === "delicatesses" || c === "delicatessens" || c === "delicatesse") return "delicateses";
+  if (c === "salchichon" || c === "salchichones") return "salchichones";
+  if (c === "queso" || c === "quesos") return "quesos";
   return c;
+}
+
+// Categorías de ingredientes de tipo "capa" (todas menos pan y salsas), en el orden en que se muestran
+const CATS_EXTRA = [
+  { key: "delicateses",  emoji: "🧆", label: "Delicateses" },
+  { key: "embutidos",    emoji: "🥓", label: "Embutidos" },
+  { key: "proteinas",    emoji: "🍖", label: "Proteínas" },
+  { key: "vegetales",    emoji: "🥬", label: "Vegetales" },
+  { key: "salchichones", emoji: "🌭", label: "Salchichones" },
+  { key: "quesos",       emoji: "🧀", label: "Quesos" }
+];
+// Compat: algunos pedidos viejos guardaron "verduras"
+function itemsDeCategoria(obj, key) {
+  if (!obj) return [];
+  if (key === "vegetales") return obj.vegetales || obj.verduras || [];
+  return obj[key] || [];
 }
 
 // =========================================================
@@ -100,7 +119,7 @@ function scrollToCategoria(cat) {
 function actualizarPestanaActiva() {
   const contenido = document.getElementById("categorias-contenido");
   if (!contenido) return;
-  const sections = document.querySelectorAll(".categoria-section");
+  const sections = Array.from(document.querySelectorAll(".categoria-section")).filter(s => s.style.display !== "none");
   const contenidoRect = contenido.getBoundingClientRect();
   const puntoReferencia = contenidoRect.top + 80;
   let activeCat = "pan";
@@ -366,8 +385,8 @@ function construirResumenBarra() {
         } else {
             const l = [];
             if (pan.pan) l.push('🥖 ' + _esc(nom(pan.pan)));
-            [['embutidos','🥓'],['proteinas','🍖'],['vegetales','🥬'],['verduras','🥬'],['salsas','🥫']].forEach(([k,e]) => {
-                const a = pan[k];
+            [...CATS_EXTRA.map(c => [c.key, c.emoji]), ['salsas','🥫']].forEach(([k,e]) => {
+                const a = itemsDeCategoria(pan, k);
                 if (a && a.length) l.push(e + ' ' + a.map(x => (x.qty > 1 ? nom(x) + ' x' + x.qty : nom(x))).join(', ').replace(/[<>]/g,''));
             });
             det = l.join('<br>');
@@ -426,8 +445,8 @@ function _textoPanes() {
         } else {
             t += `• ${i+1}. Sándwich — $${(pan.precio||0).toFixed(2)}\n`;
             if (pan.pan) t += `   Pan: ${nom(pan.pan)}\n`;
-            [['embutidos','Embutidos'],['proteinas','Proteínas'],['vegetales','Vegetales'],['verduras','Vegetales'],['salsas','Salsas']].forEach(([k,e]) => {
-                const arr = pan[k];
+            [...CATS_EXTRA.map(c => [c.key, c.label]), ['salsas','Salsas']].forEach(([k,e]) => {
+                const arr = itemsDeCategoria(pan, k);
                 if (arr && arr.length) t += `   ${e}: ${arr.map(x => (x.qty > 1 ? nom(x) + ' x' + x.qty : nom(x))).join(', ')}\n`;
             });
         }
@@ -523,9 +542,7 @@ function renderResumenGeneral() {
         }).join(", ");
         lineas.push(`${emoji} ${texto}`);
       };
-      agregarLinea(pan.embutidos, "🥓");
-      agregarLinea(pan.proteinas, "🍖");
-      agregarLinea(pan.vegetales || pan.verduras, "🥬");
+      CATS_EXTRA.forEach(c => agregarLinea(itemsDeCategoria(pan, c.key), c.emoji));
       agregarLinea(pan.salsas, "🥫");
       detalleHTML = `<div class="detalle" style="margin-top: 6px;">${lineas.join("<br>")}</div>`;
     }
@@ -663,21 +680,22 @@ function guardarPan() {
     price: i.price || 0, qty: quantities[i.id] || 1
   }));
 
-  const embutidos = simplificar(getSelectedItems("embutidos"));
-  const proteinas = simplificar(getSelectedItems("proteinas"));
-  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
-  const vegetales = simplificar(getSelectedItems(vegetalesKey));
   const salsas = simplificar(getSelectedItems("salsas"));
+  const extras = {};
+  CATS_EXTRA.forEach(c => {
+    const key = (c.key === "vegetales" && !ingredientsData.vegetales && ingredientsData.verduras) ? "verduras" : c.key;
+    extras[c.key] = simplificar(getSelectedItems(key));
+  });
 
   let precio = panItem.price;
-  [...embutidos, ...proteinas, ...vegetales, ...salsas].forEach(item => {
+  [...Object.values(extras).flat(), ...salsas].forEach(item => {
     precio += item.price * item.qty;
   });
 
   const panData = {
     tipo: "personalizado",
     pan: { id: panItem.id, nombre: panItem.name || "Pan", price: panItem.price || 0, qty: 1 },
-    embutidos, proteinas, vegetales, salsas, precio
+    ...extras, salsas, precio
   };
 
   if (panEnEdicion !== null) {
@@ -744,9 +762,8 @@ function editarPan(idx) {
       updateCardControls(pan.pan.id, true);
     }
   }
-  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
-  ["embutidos", "proteinas", vegetalesKey, "salsas"].forEach(cat => {
-    (pan[cat] || pan[cat === "vegetales" ? "verduras" : cat] || []).forEach(item => {
+  [...CATS_EXTRA.map(c => c.key), "salsas"].forEach(cat => {
+    itemsDeCategoria(pan, cat).forEach(item => {
       const input = document.querySelector(`input[value="${item.id}"]`);
       if (input) {
         input.checked = true;
@@ -927,6 +944,7 @@ function updateCardControls(id, isChecked) {
 }
 
 function getSelectedItems(key) {
+  if (key === "vegetales" && !ingredientsData.vegetales && ingredientsData.verduras) key = "verduras";
   const cfg = ingredientsData[key];
   if (!cfg) return [];
   const inputs = document.querySelectorAll('input[name="' + key + '"]:checked');
@@ -951,8 +969,7 @@ function actualizarResumenPan() {
     }
   }
 
-  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
-  ["salsas", "embutidos", "proteinas", vegetalesKey].forEach(key => {
+  ["salsas", ...CATS_EXTRA.map(c => c.key)].forEach(key => {
     getSelectedItems(key).forEach(item => {
       const qty = quantities[item.id] || 1;
       const itemTotal = item.price * qty;
@@ -1037,8 +1054,7 @@ function drawLayer(ctx, src, color, x, y, w, h, r, drawShadow = true) {
 function getDPR() { return Math.min(window.devicePixelRatio || 1, 1.5); }
 
 function getLayersWithQuantities() {
-  const vegetalesKey = ingredientsData.vegetales ? "vegetales" : "verduras";
-  const baseLayers = [...getSelectedItems("embutidos"), ...getSelectedItems("proteinas"), ...getSelectedItems(vegetalesKey)];
+  const baseLayers = CATS_EXTRA.flatMap(c => getSelectedItems(c.key));
   const expandedLayers = [];
   baseLayers.forEach(item => {
     const qty = quantities[item.id] || 1;
@@ -1292,9 +1308,7 @@ function generarDetallePanHTML(pan, idx) {
         partes.push(qty > 1 ? `${getNombre(item)} x${qty}` : getNombre(item));
       });
     };
-    agregarItems(pan.embutidos);
-    agregarItems(pan.proteinas);
-    agregarItems(pan.vegetales || pan.verduras);
+    CATS_EXTRA.forEach(c => agregarItems(itemsDeCategoria(pan, c.key)));
     agregarItems(pan.salsas);
     const descripcion = partes.join(", ");
     html += `<div class="pan-bloque">`;
@@ -1549,6 +1563,19 @@ function buildAllGroups() {
   Object.assign(ingredientsData, dataFinal);
 
   Object.entries(ingredientsData).forEach(([key, cfg]) => buildGroup(key, cfg));
+  ocultarCategoriasVacias();
+}
+
+// Oculta pestañas/secciones de categorías que aún no tienen productos en el menú
+function ocultarCategoriasVacias() {
+  document.querySelectorAll(".categoria-section").forEach(sec => {
+    const cat = sec.dataset.cat;
+    const cfg = ingredientsData[cat] || (cat === "vegetales" ? ingredientsData.verduras : null);
+    const vacia = !cfg || !cfg.items || !cfg.items.length;
+    sec.style.display = vacia ? "none" : "";
+    const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
+    if (tab) tab.style.display = vacia ? "none" : "";
+  });
 }
 
 // =========================================================
@@ -1782,6 +1809,7 @@ async function iniciarApp() {
   }
 
   Object.entries(ingredientsData).forEach(([key, cfg]) => buildGroup(key, cfg));
+  ocultarCategoriasVacias();
 
   cargarMenuDesdeSheets().then(ok => {
     if (ok) console.log("[Menu] Actualizado desde Google Sheets");
