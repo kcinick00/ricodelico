@@ -189,7 +189,13 @@ function actualizarBotonConfirmar() {
       btn.style.color = "#555";
     }
   } else {
+    // Restaurar el estado normal del botón: en bandejas y charcutería el CSS lo
+    // muestra aunque aquí lo ocultemos, y no debe quedar con "FALTAN N" / deshabilitado.
     btn.style.display = "none";
+    btn.disabled = false;
+    btn.textContent = "CONFIRMAR Y PEDIR →";
+    btn.style.background = "";
+    btn.style.color = "";
   }
 }
 
