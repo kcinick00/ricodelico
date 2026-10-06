@@ -324,6 +324,12 @@ header p em{font-family:'Caveat',cursive;font-style:normal;color:var(--accent);f
 .platters-grid{display:flex;flex-direction:column;gap:48px}
 .platter-card{background-color:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.5);position:relative;transition:border-color .3s ease}
 .platter-card:hover{border-color:rgba(46,125,70,.35)}
+.platter-card[data-size]{cursor:pointer}
+.platter-card.seleccionada{border:2px solid var(--accent);box-shadow:0 0 0 4px rgba(46,125,70,.18),0 12px 40px rgba(0,0,0,.35)}
+.platter-card.seleccionada::after{content:"✓ Elegida";position:absolute;top:12px;right:12px;z-index:5;background:var(--accent);color:#FFFBEE;padding:6px 14px;border-radius:999px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;pointer-events:none}
+.platter-elegir{margin-top:12px;width:100%;padding:12px 16px;border-radius:12px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s}
+.platter-elegir:hover{background:rgba(46,125,70,.1)}
+.platter-card.seleccionada .platter-elegir{background:var(--accent);color:#FFFBEE}
 .platter-gallery{position:relative;width:100%;background:#000;padding:8px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--accent) #000;-webkit-overflow-scrolling:touch;display:flex;gap:8px}
 .platter-gallery::-webkit-scrollbar{height:8px}
 .platter-gallery::-webkit-scrollbar-track{background:#000;border-radius:4px}
@@ -1054,7 +1060,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     </div>
 
     <div class="platters-grid">
-      <div class="platter-card">
+      <div class="platter-card" data-size="grande" onclick="elegirTamanoBandeja('grande', event)" onkeydown="if(event.key==='Enter'){elegirTamanoBandeja('grande')}" role="button" tabindex="0">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Grande</span>
           <span class="platter-price-tag">$60</span>
@@ -1068,9 +1074,10 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="platter-caption">
           <h3>Bandeja Grande</h3>
           <p>Ideal para 20 - 30 personas · Precio base $60</p>
+          <button type="button" class="platter-elegir" data-size="grande">Elegir esta bandeja</button>
         </div>
       </div>
-      <div class="platter-card">
+      <div class="platter-card" data-size="mediana" onclick="elegirTamanoBandeja('mediana', event)" onkeydown="if(event.key==='Enter'){elegirTamanoBandeja('mediana')}" role="button" tabindex="0">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Mediana</span>
           <span class="platter-price-tag">$40</span>
@@ -1085,9 +1092,10 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="platter-caption">
           <h3>Bandeja Mediana</h3>
           <p>Ideal para 10 - 15 personas · Precio base $40</p>
+          <button type="button" class="platter-elegir" data-size="mediana">Elegir esta bandeja</button>
         </div>
       </div>
-      <div class="platter-card">
+      <div class="platter-card" data-size="pequena" onclick="elegirTamanoBandeja('pequena', event)" onkeydown="if(event.key==='Enter'){elegirTamanoBandeja('pequena')}" role="button" tabindex="0">
         <div class="platter-gallery">
           <span class="platter-size-tag">📦 Pequeña</span>
           <span class="platter-price-tag">$20</span>
@@ -1101,6 +1109,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="platter-caption">
           <h3>Bandeja Pequeña</h3>
           <p>Ideal para 2 - 5 personas · Precio base $20</p>
+          <button type="button" class="platter-elegir" data-size="pequena">Elegir esta bandeja</button>
         </div>
       </div>
     </div>
@@ -1546,9 +1555,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.22"></script>
-<script src="combos.js?v=3.22"></script>
-<script src="vacio.js?v=3.22"></script>
-<script src="app.js?v=3.22"></script>
+<script src="ingredients.js?v=3.23"></script>
+<script src="combos.js?v=3.23"></script>
+<script src="vacio.js?v=3.23"></script>
+<script src="app.js?v=3.23"></script>
 </body>
 </html>
