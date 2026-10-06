@@ -313,7 +313,30 @@ function calcularTotalPanel() {
     return unitario * cantidadPanel;
 }
 
+// Click en una tarjeta de bandeja = elegir ese tamaño en el panel de abajo
+function elegirTamanoBandeja(tam, ev) {
+    // Las fotos abren el visor ampliado; no cuentan como elección
+    if (ev && ev.target && ev.target.closest && ev.target.closest('.platter-gallery img')) return;
+    const radio = document.querySelector('input[name="tamano-bandeja"][value="' + tam + '"]');
+    if (!radio) return;
+    radio.checked = true;
+    actualizarPanelPedido();
+    if (typeof showToast === 'function') showToast('✓ Bandeja ' + obtenerNombreTamano() + ' elegida · mira "Armá tu pedido" abajo', 'info');
+}
+
+// Marca visualmente la tarjeta del tamaño elegido
+function sincronizarTarjetasBandeja() {
+    const sel = document.querySelector('input[name="tamano-bandeja"]:checked');
+    document.querySelectorAll('.platter-card[data-size]').forEach(c => {
+        const activa = !!sel && c.getAttribute('data-size') === sel.value;
+        c.classList.toggle('seleccionada', activa);
+        const b = c.querySelector('.platter-elegir');
+        if (b) b.textContent = activa ? '✓ Bandeja elegida' : 'Elegir esta bandeja';
+    });
+}
+
 function actualizarPanelPedido() {
+    sincronizarTarjetasBandeja();
     const totalEl = document.getElementById('panel-total');
     if (totalEl) totalEl.textContent = `$${calcularTotalPanel().toFixed(2)}`;
     if (pantallaActual === 'pantalla-bandejas') {
