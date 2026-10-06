@@ -1538,7 +1538,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 
 <script>
 /* === CONFIGURA AQUÍ TU WHATSAPP (código de país + número, solo dígitos). Ej. México: 521234567890 === */
-const NEGOCIO = { whatsapp: "584125296998", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
+const NEGOCIO = { whatsapp: "584146774332", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
 document.querySelectorAll('.js-wa').forEach(function(a){
   var ok = /^\d{10,15}$/.test(NEGOCIO.whatsapp);
   a.href = ok ? 'https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(NEGOCIO.mensaje) : '#';
@@ -1546,9 +1546,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.21"></script>
-<script src="combos.js?v=3.21"></script>
-<script src="vacio.js?v=3.21"></script>
-<script src="app.js?v=3.21"></script>
+<script src="ingredients.js?v=3.22"></script>
+<script src="combos.js?v=3.22"></script>
+<script src="vacio.js?v=3.22"></script>
+<script src="app.js?v=3.22"></script>
 </body>
 </html>
