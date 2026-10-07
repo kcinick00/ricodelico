@@ -901,6 +901,11 @@ body:has(#pantalla-bandejas.activa) .total-bar,body:has(#pantalla-charcuteria.ac
 .sheet-total span:last-child{color:var(--accent)}
 .sheet-accion{width:100%;background:var(--accent);color:#FFFBEE;border:0;border-radius:14px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer}
 .home .inicio-card .inicio-nombre{font-family:'Caprasimo','Bevan',serif;font-weight:400;letter-spacing:1px;font-size:24px;line-height:1.1}
+/* Escritorio: los 3 títulos ocupan el mismo alto (2 líneas) para que las tarjetas queden parejas */
+@media (min-width:901px){
+.home .inicio-card .inicio-nombre{min-height:54px;display:flex;flex-direction:column;justify-content:center}
+.home .inicio-card-charcuteria .inicio-nombre{font-size:min(19px,1.4vw);letter-spacing:.5px}
+}
 /* ===== IDENTIDAD DE MARCA (portada) ===== */
 .kicker{display:inline-block;font-family:'Caveat',cursive;font-size:24px;font-weight:700;color:var(--accent);line-height:1}
 .kicker-claro{color:var(--gold)}
@@ -1556,9 +1561,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.24"></script>
-<script src="combos.js?v=3.24"></script>
-<script src="vacio.js?v=3.24"></script>
-<script src="app.js?v=3.24"></script>
+<script src="ingredients.js?v=3.25"></script>
+<script src="combos.js?v=3.25"></script>
+<script src="vacio.js?v=3.25"></script>
+<script src="app.js?v=3.25"></script>
 </body>
 </html>
