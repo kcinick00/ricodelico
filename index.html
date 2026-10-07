@@ -546,9 +546,9 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
 .home-cards{position:relative;z-index:2;max-width:1100px;margin:-64px auto 0;padding:0 20px}
 .home .inicio-grid{grid-template-columns:1fr 1fr 1fr;gap:20px}
 .home .inicio-card{background:var(--card);min-height:0;justify-content:flex-start;gap:6px;border:1px solid var(--border);box-shadow:0 14px 34px rgba(31,58,37,.18)}
-.home .inicio-card-eventos{order:1}
-.home .inicio-card-sandwich{order:2}
-.home .inicio-card-charcuteria{order:3}
+.home .inicio-card-charcuteria{order:1}
+.home .inicio-card-eventos{order:2}
+.home .inicio-card-sandwich{order:3}
 .home .inicio-img{height:210px}
 .home .inicio-card .inicio-nombre{font-size:26px;margin-top:18px}
 .home .inicio-card .inicio-desc{padding-bottom:6px;font-size:13px}
@@ -575,8 +575,9 @@ body:has(#pantalla-inicio.activa) .total-bar>div:first-child{display:none}
 .hero-actions{justify-content:center}
 .hero-title{font-size:38px}
 .home .inicio-grid{grid-template-columns:1fr;gap:16px}
-.home .inicio-card-sandwich{order:1}
+.home .inicio-card-charcuteria{order:1}
 .home .inicio-card-eventos{order:2}
+.home .inicio-card-sandwich{order:3}
 .home .inicio-img{height:190px}
 .confianza-grid{grid-template-columns:1fr 1fr}
 .contacto-card{padding:24px 22px;flex-direction:column;align-items:stretch;text-align:center}
@@ -958,9 +959,9 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
           <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
           <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
           <div class="hero-actions">
-            <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 ¿Un sub?</button>
+            <button type="button" class="hero-btn hero-btn-primary" onclick="abrirCharcuteria()">🥓 ¿Charcutería?</button>
             <button type="button" class="hero-btn hero-btn-primary" onclick="abrirBandejas()">🍽️ ¿Una bandeja?</button>
-            <button type="button" class="hero-btn hero-btn-primary" onclick="abrirCharcuteria()">🥓 ¿O charcutería?</button>
+            <button type="button" class="hero-btn hero-btn-primary" onclick="elegirServicio('sandwich')">🥪 ¿O un sub?</button>
             <a class="hero-btn hero-btn-wa js-wa" href="#">💬 Escribirnos por WhatsApp</a>
           </div>
         </div>
@@ -969,6 +970,13 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 
     <section class="home-cards">
       <div class="inicio-grid">
+        <div class="inicio-card inicio-card-charcuteria" onclick="abrirCharcuteria()">
+          <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería artesanal, delicateses y quesos">
+          <div class="inicio-nombre">CHARCUTERÍA ARTESANAL <span>DELICATESES Y QUESOS</span></div>
+          <div class="inicio-desc">Selección fina y también empacamos al vacío</div>
+          <span class="inicio-cta">Ver productos →</span>
+        </div>
+
         <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
           <img class="inicio-img" src="images/bandeja-evento.jpg" alt="Bandeja para eventos">
           <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
@@ -981,13 +989,6 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
           <div class="inicio-nombre">ÁRMATE UN <span>SÁNDWICH</span></div>
           <div class="inicio-desc">Elige cada ingrediente a tu gusto</div>
           <span class="inicio-cta">Armar mi sándwich →</span>
-        </div>
-
-        <div class="inicio-card inicio-card-charcuteria" onclick="abrirCharcuteria()">
-          <img class="inicio-img" src="images/charcuteria.jpg" alt="Charcutería artesanal">
-          <div class="inicio-nombre">CHARCUTERÍA <span>ARTESANAL</span></div>
-          <div class="inicio-desc">Selección fina empacada al vacío</div>
-          <span class="inicio-cta">Ver productos →</span>
         </div>
       </div>
     </section>
@@ -1555,9 +1556,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.23"></script>
-<script src="combos.js?v=3.23"></script>
-<script src="vacio.js?v=3.23"></script>
-<script src="app.js?v=3.23"></script>
+<script src="ingredients.js?v=3.24"></script>
+<script src="combos.js?v=3.24"></script>
+<script src="vacio.js?v=3.24"></script>
+<script src="app.js?v=3.24"></script>
 </body>
 </html>
