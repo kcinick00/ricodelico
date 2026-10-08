@@ -59,7 +59,7 @@ const charcuteriaVacio = [
     // Tamaños en gramos (1000 = 1 kg). Precios por cada 100 g.
     tamanos: [250, 500, 1000],
     productos: [
-      { id: "queso-blanco",     nombre: "Queso blanco",       precio100: 0.90 },
+      { id: "queso-blanco",     nombre: "Queso blanco",       precio100: 0.90, presentacion: "entero" },
       { id: "queso-telita",     nombre: "Queso telita",       precio100: 1.00 },
       { id: "queso-guayanes",   nombre: "Queso guayanés",     precio100: 1.10 },
       { id: "queso-de-mano",    nombre: "Queso de mano",      precio100: 1.20 },
@@ -125,7 +125,44 @@ function vacEsc(t) {
   return String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 function vacMoneda(n) { return "$" + n.toFixed(2); }
-function vacClave(id, g) { return g ? id + "@" + g : id; }
+// Presentaciones: entero / rebanado / rallado
+const VAC_PRES_NOMBRE = { entero: "Entero", rebanado: "Rebanado", rallado: "Rallado" };
+const VAC_PRES_ICONO  = { entero: "🧱", rebanado: "🔪", rallado: "🧀" };
+function vacPresNorm(t) {
+  const s = vacSlug(t);
+  if (s.startsWith("entero") || s === "pieza" || s === "cuna") return "entero";
+  if (s.startsWith("rebanad") || s === "lonchas" || s === "loncha" || s === "sliced") return "rebanado";
+  if (s.startsWith("rallad") || s === "grated") return "rallado";
+  return "";
+}
+function vacListaPres(txt) {
+  const out = [];
+  String(txt || "").split(/[,;\/\s]+/).forEach(x => { const p = vacPresNorm(x); if (p && !out.includes(p)) out.push(p); });
+  return out;
+}
+// Opciones de un producto (si el Excel no dice nada: quesos = 3, el resto = 2)
+function vacOpciones(cat, p) {
+  if (p.opciones && p.opciones.length) return p.opciones;
+  if (cat.opciones && cat.opciones.length) return cat.opciones;
+  return /^queso/.test(vacSlug(cat.nombre || cat.id)) ? ["entero", "rebanado", "rallado"] : ["entero", "rebanado"];
+}
+function vacPresDefecto(cat, p) {
+  const ops = vacOpciones(cat, p);
+  const d = vacPresNorm(p.presentacion);
+  if (d && ops.includes(d)) return d;
+  return ops.includes("rebanado") ? "rebanado" : ops[0];
+}
+// Presentación elegida en pantalla para cada producto (no se guarda)
+const vacPresElegida = {};
+function vacPresActual(cat, p) {
+  const ops = vacOpciones(cat, p);
+  const e = vacPresElegida[p.id];
+  return (e && ops.includes(e)) ? e : vacPresDefecto(cat, p);
+}
+function vacElegirPres(id, pres) { vacPresElegida[id] = pres; vacRenderProductos(); }
+
+// Clave de carrito: "id@gramos|pres"  o  "id|pres"
+function vacClave(id, g, pres) { return (g ? id + "@" + g : id) + (pres ? "|" + pres : ""); }
 
 // Precio de un producto (en el tamaño g, si aplica)
 function vacPrecio(p, g) {
@@ -138,11 +175,12 @@ function vacEtiquetaTamano(g) { return g >= 1000 ? (g / 1000) + " kg" : g + " g"
 
 // A partir de una clave devuelve { cat, prod, g }
 function vacBuscarClave(clave) {
-  const [id, gTxt] = clave.split("@");
+  const [base, pres] = clave.split("|");
+  const [id, gTxt] = base.split("@");
   const g = gTxt ? parseInt(gTxt, 10) : null;
   for (const cat of charcuteriaVacio) {
     const prod = cat.productos.find(x => x.id === id);
-    if (prod) return { cat, prod, g };
+    if (prod) return { cat, prod, g, pres: pres || "" };
   }
   return null;
 }
@@ -258,9 +296,19 @@ function vacToggleProducto(id) {
   vacRenderProductos();
 }
 
+// Selector Entero / Rebanado / Rallado de un producto
+function vacSelectorPres(cat, p) {
+  const ops = vacOpciones(cat, p);
+  if (ops.length < 2) return "";
+  const act = vacPresActual(cat, p);
+  return `<div class="vac-pres" role="group" aria-label="Presentación">` + ops.map(o =>
+    `<button type="button" class="vac-pres-op ${o === act ? "sel" : ""}" onclick="vacElegirPres('${p.id}','${o}')">${VAC_PRES_ICONO[o] || ""} ${VAC_PRES_NOMBRE[o] || o}</button>`
+  ).join("") + `</div>`;
+}
+
 // Celda de un tamaño: muestra "Agregar" o, si ya hay cantidad, un − n +
-function vacCeldaTamano(p, g) {
-  const clave = vacClave(p.id, g);
+function vacCeldaTamano(p, g, cat) {
+  const clave = vacClave(p.id, g, vacPresActual(cat, p));
   const q = vacCarrito[clave] || 0;
   const control = q > 0
     ? `<div class="vac-mini-stepper">
@@ -297,7 +345,7 @@ function vacRenderProductos() {
       // Cuántas unidades hay en carrito para este producto (sumando todos los tamaños)
       let totalEnCarrito = 0;
       cat.tamanos.forEach(g => {
-        totalEnCarrito += vacCarrito[vacClave(p.id, g)] || 0;
+        vacOpciones(cat, p).forEach(o => { totalEnCarrito += vacCarrito[vacClave(p.id, g, o)] || 0; });
       });
 
       return `
@@ -313,25 +361,30 @@ function vacRenderProductos() {
           </button>
           ${abierto ? `
             <div class="vac-acc-body">
-              <div class="vac-sizes">${cat.tamanos.map(g => vacCeldaTamano(p, g)).join("")}</div>
+              ${vacSelectorPres(cat, p)}
+              <div class="vac-sizes">${cat.tamanos.map(g => vacCeldaTamano(p, g, cat)).join("")}</div>
             </div>
           ` : ""}
         </div>`;
     }
     // Producto simple (sin tamaños)
-    const q2 = vacCarrito[p.id] || 0;
+    const presAct = vacPresActual(cat, p);
+    const kp = vacClave(p.id, null, presAct);
+    const q2 = vacCarrito[kp] || 0;
+    const totalSimple = vacOpciones(cat, p).reduce((a, o) => a + (vacCarrito[vacClave(p.id, null, o)] || 0), 0);
     return `
       <div class="vac-prod ${p._agotado ? "agotado" : ""}">
         <div class="vac-thumb">${vacImgTag(p, cat)}</div>
         <div class="vac-prod-info">
           <div class="vac-prod-nombre">${vacEsc(p.nombre)}</div>
           <div class="vac-prod-detalle">${vacEsc(p.detalle || "")}</div>
+          ${vacSelectorPres(cat, p)}
           <div class="vac-prod-precio">${vacMoneda(p.precio)}${p._agotado ? ' <span class="vac-agotado-tag">AGOTADO</span>' : ""}</div>
         </div>
         <div class="vac-stepper">
-          <button type="button" onclick="vacCambiar('${p.id}',-1)" ${q2 === 0 ? "disabled" : ""} aria-label="Quitar">−</button>
+          <button type="button" onclick="vacCambiar('${kp}',-1)" ${q2 === 0 ? "disabled" : ""} aria-label="Quitar">−</button>
           <span>${q2}</span>
-          <button type="button" onclick="vacCambiar('${p.id}',1)" aria-label="Agregar" ${p._agotado ? "disabled" : ""}>+</button>
+          <button type="button" onclick="vacCambiar('${kp}',1)" aria-label="Agregar" ${p._agotado ? "disabled" : ""}>+</button>
         </div>
       </div>`;
   }).join("");
@@ -354,8 +407,10 @@ function vacLineas() {
     for (const prod of cat.productos) {
       const gs = (cat.tamanos && cat.tamanos.length) ? cat.tamanos : [null];
       for (const g of gs) {
-        const clave = vacClave(prod.id, g);
-        if (vacCarrito[clave]) out.push({ cat, prod, g, clave, q: vacCarrito[clave] });
+        for (const pres of vacOpciones(cat, prod)) {
+          const clave = vacClave(prod.id, g, pres);
+          if (vacCarrito[clave]) out.push({ cat, prod, g, pres, clave, q: vacCarrito[clave] });
+        }
       }
     }
   }
@@ -375,7 +430,7 @@ function vacRenderPedido() {
       catActual = l.cat.id;
       html += `<div class="vac-ped-cat">${vacEsc(l.cat.emoji || "")} ${vacEsc(l.cat.nombre)}</div>`;
     }
-    const nombre = l.prod.nombre + (l.g ? " · " + vacEtiquetaTamano(l.g) : "");
+    const nombre = l.prod.nombre + (l.g ? " · " + vacEtiquetaTamano(l.g) : "") + vacTxtPres(l);
     html += `
       <div class="vac-ped-linea">
         <span class="vac-ped-qty">${l.q}×</span>
@@ -390,6 +445,11 @@ function vacRenderPedido() {
   const barra = document.getElementById("total-out");
   if (barra && pantVac && pantVac.classList.contains("activa")) barra.textContent = vacMoneda(vacTotal());
   btn.disabled = !html;
+}
+
+// " · rebanado" (solo si el producto ofrece más de una presentación)
+function vacTxtPres(l) {
+  return (l.pres && vacOpciones(l.cat, l.prod).length > 1) ? " · " + l.pres : "";
 }
 
 function vacQuitar(clave) {
@@ -417,7 +477,7 @@ function vacTextoPedido() {
   vacLineas().forEach(l => {
     if (l.cat.id !== catActual) { catActual = l.cat.id; msg += `\n_${l.cat.nombre}_\n`; }
     const pres = l.g ? " " + vacEtiquetaTamano(l.g) : (l.prod.detalle ? " (" + l.prod.detalle + ")" : "");
-    msg += `• ${l.q} x ${l.prod.nombre}${pres} — ${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}\n`;
+    msg += `• ${l.q} x ${l.prod.nombre}${pres}${l.pres ? " (" + l.pres + ")" : ""} — ${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}\n`;
   });
   const nota = (document.getElementById("vac-nota") || {}).value;
   if (nota && nota.trim()) msg += `\n📝 ${nota.trim()}\n`;
@@ -433,7 +493,7 @@ function vacResumenBarra() {
       catActual = l.cat.id;
       html += `<div class="sheet-cat">${vacEsc(l.cat.emoji || "")} ${vacEsc(l.cat.nombre)}</div>`;
     }
-    const nombre = l.prod.nombre + (l.g ? " · " + vacEtiquetaTamano(l.g) : "");
+    const nombre = l.prod.nombre + (l.g ? " · " + vacEtiquetaTamano(l.g) : "") + vacTxtPres(l);
     html += `<div class="sheet-linea"><span class="sheet-qty">${l.q}×</span><span class="sheet-nombre">${vacEsc(nombre)}</span><span class="sheet-precio">${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}</span></div>`;
   });
   return {
@@ -462,7 +522,7 @@ function vacEnviarWhatsApp() {
       msg += `\n*${l.cat.nombre}*\n`;
     }
     const pres = l.g ? " " + vacEtiquetaTamano(l.g) : (l.prod.detalle ? " (" + l.prod.detalle + ")" : "");
-    msg += `• ${l.q} x ${l.prod.nombre}${pres} — ${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}\n`;
+    msg += `• ${l.q} x ${l.prod.nombre}${pres}${l.pres ? " (" + l.pres + ")" : ""} — ${vacMoneda(vacPrecio(l.prod, l.g) * l.q)}\n`;
   });
 
   msg += `\n*TOTAL: ${vacMoneda(vacTotal())}*\n`;
@@ -487,6 +547,11 @@ function vacEnviarWhatsApp() {
 //  detalle     presentación (ej. Paquete al vacío · 250 g) — para productos por unidad
 //  disponible  TRUE / FALSE (FALSE o NO = AGOTADO). Vacío = disponible
 //  imagen      (opcional) ruta de la foto; si está vacío usa images/<id>.jpg
+//  presentacion (opcional) predeterminada del producto: entero / rebanado / rallado.
+//              Vacío = rebanado.
+//  opciones    (opcional) presentaciones disponibles, ej. "entero,rebanado,rallado".
+//              Vacío = quesos: entero, rebanado y rallado · resto: entero y rebanado.
+//              Basta con escribirlo en la primera fila de la categoría.
 //  precio_500  (opcional) precio fijo para ese tamaño (también precio_100, precio_250...)
 // =========================================================
 let vacUltimaCarga = 0;
@@ -550,6 +615,10 @@ function vacConstruirDesdeCSV(texto) {
     if (tam.length && !cat.tamanos) cat.tamanos = tam.sort((a, b) => a - b);
 
     const prod = { id, nombre: f.nombre || id, detalle: f.detalle || "", _agotado: vacEsAgotado(f.disponible) };
+    const ops = vacListaPres(f.opciones || f.presentaciones);
+    if (ops.length) { prod.opciones = ops; if (!cat.opciones) cat.opciones = ops; }
+    const pd = vacPresNorm(f.presentacion || f.predeterminado || f.por_defecto);
+    if (pd) prod.presentacion = pd;
     if (f.imagen) prod.imagen = f.imagen;
     const p100 = vacNum(f.precio100), pu = vacNum(f.precio);
     const precios = {};
@@ -589,7 +658,8 @@ function vacAplicarMenu(cats) {
   for (const clave in vacCarrito) {
     const f = vacBuscarClave(clave);
     const tamOk = f && (f.g ? (f.cat.tamanos || []).includes(f.g) : !f.cat.tamanos);
-    if (!f || f.prod._agotado || !tamOk) delete vacCarrito[clave];
+    const presOk = f && (!f.pres || vacOpciones(f.cat, f.prod).includes(f.pres));
+    if (!f || f.prod._agotado || !tamOk || !presOk) delete vacCarrito[clave];
   }
   const pant = document.getElementById("pantalla-charcuteria");
   if (pant && pant.classList.contains("activa")) {
