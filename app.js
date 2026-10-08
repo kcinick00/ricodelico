@@ -522,8 +522,82 @@ function abrirPedidoWA() {
         return;
     }
     document.getElementById('pedido-resumen').innerHTML = r.html;
-    document.getElementById('pedido-total').textContent = r.total;
+    pedidoBase = parseFloat(String(r.total).replace(/[^0-9.]/g, '')) || 0;
+    pedidoExtras = {};
+    pedidoExtrasSimples = {};
+    renderExtrasModal();
+    const entr = document.querySelector('input[name="pedido-entrega"][value="retiro"]');
+    if (entr) entr.checked = true;
+    actualizarEntrega();
+    actualizarTotalModal();
     document.getElementById('pedido-modal').classList.add('active');
+}
+
+// ----- Venta adicional (bebida / papitas) y entrega -----
+let pedidoBase = 0;
+let pedidoExtras = {};          // { id: cantidad } (extras con precio, del Sheets)
+let pedidoExtrasSimples = {};   // { "Bebida": true } (si no hay lista en el Sheets)
+
+function _esFlujoSandwich() {
+    return pantallaActual !== 'pantalla-bandejas' && pantallaActual !== 'pantalla-charcuteria';
+}
+
+function totalExtrasModal() {
+    return extrasMenu.reduce((s, e) => s + (pedidoExtras[e.id] || 0) * e.price, 0);
+}
+
+function actualizarTotalModal() {
+    document.getElementById('pedido-total').textContent = '$' + (pedidoBase + totalExtrasModal()).toFixed(2);
+}
+
+function renderExtrasModal() {
+    const box = document.getElementById('pedido-extras');
+    if (!box) return;
+    if (!_esFlujoSandwich()) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    const cont = document.getElementById('pedido-extras-lista');
+    const disp = extrasMenu.filter(e => !e._agotado);
+    if (disp.length) {
+        cont.innerHTML = disp.map(e => {
+            const q = pedidoExtras[e.id] || 0;
+            return `<div class="extra-card ${q ? 'sel' : ''}">
+                ${e.image ? `<img src="${_esc(e.image)}" alt="${_esc(e.name)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div class="extra-nombre">${_esc(e.name)}</div>
+                <div class="extra-precio">+${fmt(e.price)}</div>
+                <div class="extra-qty">
+                    <button type="button" onclick="cambiarExtra('${_esc(e.id)}',-1)" ${q ? '' : 'disabled'} aria-label="Quitar">−</button>
+                    <span>${q}</span>
+                    <button type="button" onclick="cambiarExtra('${_esc(e.id)}',1)" aria-label="Agregar">+</button>
+                </div>
+            </div>`;
+        }).join('');
+    } else {
+        cont.innerHTML = ['🥤 Bebida', '🍟 Papitas'].map(n =>
+            `<button type="button" class="extra-chip ${pedidoExtrasSimples[n] ? 'sel' : ''}" onclick="toggleExtraSimple('${n}')">${n}</button>`
+        ).join('') + '<div class="extra-nota">Te confirmamos opciones y precio por WhatsApp.</div>';
+    }
+}
+
+function cambiarExtra(id, d) {
+    const q = Math.max(0, Math.min(10, (pedidoExtras[id] || 0) + d));
+    if (q) pedidoExtras[id] = q; else delete pedidoExtras[id];
+    renderExtrasModal();
+    actualizarTotalModal();
+}
+
+function toggleExtraSimple(n) {
+    if (pedidoExtrasSimples[n]) delete pedidoExtrasSimples[n]; else pedidoExtrasSimples[n] = true;
+    renderExtrasModal();
+}
+
+function actualizarEntrega() {
+    const v = (document.querySelector('input[name="pedido-entrega"]:checked') || {}).value || 'retiro';
+    document.getElementById('entrega-delivery').style.display = v === 'delivery' ? '' : 'none';
+    document.getElementById('entrega-retiro').style.display = v === 'retiro' ? '' : 'none';
+    document.querySelectorAll('.entrega-op').forEach(l => {
+        const i = l.querySelector('input');
+        l.classList.toggle('sel', !!(i && i.checked));
+    });
 }
 
 function cerrarPedidoWA() {
@@ -534,6 +608,14 @@ function enviarPedidoWA() {
     const nombre = document.getElementById('pedido-nombre').value.trim();
     const pago = document.getElementById('pedido-pago').value;
     const total = document.getElementById('pedido-total').textContent;
+    const entrega = (document.querySelector('input[name="pedido-entrega"]:checked') || {}).value || 'retiro';
+    const dir = document.getElementById('pedido-direccion').value.trim();
+    const hora = document.getElementById('pedido-hora').value.trim();
+    if (entrega === 'delivery' && !dir) {
+        alert('Escribe la dirección para el delivery 📍');
+        document.getElementById('pedido-direccion').focus();
+        return;
+    }
     let cuerpo = '';
     if (pantallaActual === 'pantalla-bandejas') {
         const base = document.querySelector('input[name="base-panel"]:checked');
@@ -545,7 +627,19 @@ function enviarPedidoWA() {
     } else {
         cuerpo = `*Sándwiches*\n${_textoPanes()}`;
     }
+    if (_esFlujoSandwich()) {
+        const conPrecio = extrasMenu.filter(e => pedidoExtras[e.id]);
+        const simples = Object.keys(pedidoExtrasSimples);
+        if (conPrecio.length || simples.length) {
+            cuerpo += '\n*Para acompañar*\n';
+            conPrecio.forEach(e => { cuerpo += `• ${pedidoExtras[e.id]} x ${e.name} — $${(e.price * pedidoExtras[e.id]).toFixed(2)}\n`; });
+            simples.forEach(n => { cuerpo += `• ${n} (me confirman opciones y precio)\n`; });
+        }
+    }
     let msg = '¡Hola Ricodélico! Quiero hacer este pedido:\n\n' + cuerpo + `\n*TOTAL: ${total}*\n`;
+    msg += entrega === 'delivery'
+        ? `🛵 *Delivery*\n📍 ${dir}\n(El costo del delivery me lo confirman)\n`
+        : `🏪 *Retiro en tienda*${hora ? '\n🕒 Paso a las ' + hora : ''}\n`;
     if (pago) msg += `💳 Forma de pago: ${pago}\n`;
     if (nombre) msg += `👤 Nombre: ${nombre}\n`;
     msg += '\n¿Me confirman disponibilidad? ¡Gracias!';
@@ -1191,6 +1285,7 @@ function calculateTargets() {
 }
 
 function renderSandwich() {
+  return; // El sándwich dibujado se eliminó (ahora: fotos grandes de cada ingrediente)
   const canvas = document.getElementById("sandwich-canvas");
   if (!canvas) return;
   const dpr = getDPR();
@@ -1301,6 +1396,7 @@ function drawSalsaWavy(ctx, t, cx, currentY) {
 }
 
 function startAnimation() {
+  return; // sin dibujo animado
   const targets = calculateTargets();
   Object.keys(targets.layerTargets).forEach(key => {
     const t = targets.layerTargets[key];
@@ -1561,6 +1657,10 @@ function parseBool(v) {
   return s === "true" || s === "1" || s === "si" || s === "sí" || s === "yes" || s === "x";
 }
 
+// Bebidas / papitas / adicionales para la venta final (categoría "extras" en el Sheets)
+const EXTRAS_CATS = ["extras", "extra", "adicionales", "adicional", "bebidas", "bebida", "papitas", "acompanantes"];
+const extrasMenu = [];
+
 async function cargarMenuDesdeSheets() {
   if (!MENU_CSV_URL || MENU_CSV_URL.includes("PEGA_AQUÍ")) {
     console.warn("[Menu] No hay URL configurada. Usando ingredients.js local.");
@@ -1574,14 +1674,20 @@ async function cargarMenuDesdeSheets() {
     if (!filas.length) throw new Error("CSV vacío");
 
     const agrupado = {};
+    extrasMenu.length = 0;
     filas.forEach(fila => {
       const cat = normalizarCategoria(fila.categoria);
       const id = (fila.id || "").trim();
       if (!cat || !id) return;
+      const disponible = parseBool(fila.disponible);
+      if (EXTRAS_CATS.includes(cat)) {
+        extrasMenu.push({ id, name: fila.nombre || id, price: parseFloat(fila.precio) || 0,
+          image: fila.image || "", _agotado: !disponible });
+        return;
+      }
       if (!agrupado[cat]) {
         agrupado[cat] = { type: cat === "pan" ? "radio" : "checkbox", items: [] };
       }
-      const disponible = parseBool(fila.disponible);
       agrupado[cat].items.push({
         id,
         name: fila.nombre || id,
