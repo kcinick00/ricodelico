@@ -1036,6 +1036,21 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 .combo-fav{border-color:var(--gold)}
 .fav-borrar{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.06);color:var(--text-muted);cursor:pointer;font-size:13px}
 .fav-borrar:hover{background:#C25A3A;color:#fff}
+/* --- Móvil: constructor menos congestionado --- */
+@media (max-width:900px){
+  body:has(#pantalla-sandwich.activa) #header-app{display:none}
+  body:has(#pantalla-sandwich.activa) .total-bar{display:none!important}
+  body:has(#pantalla-sandwich.activa) #pasos-tabs,
+  body:has(#pantalla-sandwich.activa) #carnes-chips{display:none!important}
+  body:has(#pantalla-sandwich.activa) #paso-ayuda{font-size:13px;margin:0 0 4px}
+  body:has(#pantalla-sandwich.activa) .pasos-cabecera{padding:8px 12px 4px}
+  body:has(#pantalla-sandwich.activa) .pasos-barra{margin-bottom:6px}
+  body:has(#pantalla-sandwich.activa) .movil-tabs{padding:4px 10px}
+  body:has(#pantalla-sandwich.activa) .movil-tabs button{padding:5px 4px}
+  body:has(#pantalla-sandwich.activa) .barra-pasos{padding:6px 12px}
+  body:has(#pantalla-sandwich.activa) .paso-texto{font-size:17px;letter-spacing:1px}
+  body:has(#pantalla-sandwich.activa) .categoria-section>*:first-child{font-size:18px!important;letter-spacing:1px!important;white-space:normal!important}
+}
 </style>
 </head>
 <body class="con-fondo">
@@ -1081,7 +1096,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
           <img class="inicio-img" src="images/bandeja-evento.jpg" alt="Bandeja para eventos">
           <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
-          <div class="inicio-desc">Exquisitas bandejas de fiambres para tus eventos</div>
+          <div class="inicio-desc">Exquisitas bandejas de fiambres para tu evento</div>
           <span class="inicio-cta">Ver bandejas →</span>
         </div>
 
@@ -1670,9 +1685,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.26"></script>
-<script src="combos.js?v=3.26"></script>
-<script src="vacio.js?v=3.26"></script>
-<script src="app.js?v=3.26"></script>
+<script src="ingredients.js?v=3.27"></script>
+<script src="combos.js?v=3.27"></script>
+<script src="vacio.js?v=3.27"></script>
+<script src="app.js?v=3.27"></script>
 </body>
 </html>
