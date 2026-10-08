@@ -969,11 +969,11 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 #pantalla-sandwich .categorias-contenido{scroll-behavior:smooth}
 #pantalla-sandwich .categoria-section{margin:0 0 24px;padding:0;border-left:0;background:transparent;scroll-margin-top:8px}
 #pantalla-sandwich .categoria-section::before{display:none}
-#categorias-contenido[data-paso="carnes"] .categoria-section::before{display:block;position:static;transform:none;writing-mode:horizontal-tb;text-orientation:mixed;margin:0 0 10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);left:auto;top:auto}
-#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="delicateses"]::before{content:"🏠 DELICATESES · DE LA CASA"}
-#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="embutidos"]::before{content:"EMBUTIDOS"}
-#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="salchichones"]::before{content:"SALCHICHONES"}
+#categorias-contenido[data-paso="delicateses"] .categoria-section::before,#categorias-contenido[data-paso="carnes"] .categoria-section::before{display:block;position:static;transform:none;writing-mode:horizontal-tb;text-orientation:mixed;margin:0 0 10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);left:auto;top:auto}
+#categorias-contenido[data-paso="delicateses"] .categoria-section[data-cat="delicateses"]::before{content:"🏠 DELICATESES · DE LA CASA"}
+#categorias-contenido[data-paso="delicateses"] .categoria-section[data-cat="salchichones"]::before{content:"SALCHICHONES"}
 #categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="proteinas"]::before{content:"PROTEÍNAS"}
+#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="embutidos"]::before{content:"EMBUTIDOS"}
 
 /* --- Tarjetas grandes con foto --- */
 #pantalla-sandwich .category-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
@@ -1723,9 +1723,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.29"></script>
-<script src="combos.js?v=3.29"></script>
-<script src="vacio.js?v=3.29"></script>
-<script src="app.js?v=3.29"></script>
+<script src="ingredients.js?v=3.32"></script>
+<script src="combos.js?v=3.32"></script>
+<script src="vacio.js?v=3.32"></script>
+<script src="app.js?v=3.32"></script>
 </body>
 </html>
