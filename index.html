@@ -940,6 +940,102 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 .hero-texto{max-width:620px}
 .hero-actions .hero-btn-primary{padding:14px 20px}
 @media (max-width:480px){.hero-actions .hero-btn-primary{padding:14px 16px}}
+
+/* =========================================================
+   CONSTRUCTOR GUIADO POR PASOS (estilo Sweetgreen)
+   ========================================================= */
+.fuera-de-paso{display:none!important}
+
+/* --- Cabecera de pasos --- */
+.pasos-cabecera{flex-shrink:0;padding:2px 2px 6px}
+.pasos-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.paso-texto{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--text)}
+.paso-cancelar{background:transparent;border:0;color:var(--text-muted);font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;padding:6px 8px;border-radius:8px}
+.paso-cancelar:hover{color:var(--orange,#C25A3A);background:rgba(0,0,0,.04)}
+.pasos-barra{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.pasos-relleno{height:100%;width:20%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:99px;transition:width .35s ease}
+.pasos-tabs{position:static;background:none;padding:0 0 4px;margin:0 0 6px;gap:8px}
+.paso-tab{padding:9px 14px;border-radius:99px;font-size:13px;gap:7px;opacity:1}
+.paso-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--border);color:var(--text);font-size:11px;font-weight:900;font-family:'Inter',sans-serif;letter-spacing:0}
+.paso-tab.active .paso-num{background:rgba(255,255,255,.25);color:#FFFBEE}
+.paso-tab.hecho{border-color:var(--accent);color:var(--accent)}
+.paso-tab.hecho .paso-num{background:var(--accent);color:#FFFBEE}
+.paso-ayuda{margin:2px 0 0;font-size:13px;color:var(--text-muted)}
+.carnes-chips{gap:6px;flex-wrap:wrap;margin-top:8px}
+.carne-chip{background:var(--card);border:1.5px solid var(--border);color:var(--text);padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
+.carne-chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* --- Secciones: sin etiqueta vertical; título horizontal solo en "Carnes" --- */
+#pantalla-sandwich .categorias-contenido{scroll-behavior:smooth}
+#pantalla-sandwich .categoria-section{margin:0 0 24px;padding:0;border-left:0;background:transparent;scroll-margin-top:8px}
+#pantalla-sandwich .categoria-section::before{display:none}
+#categorias-contenido[data-paso="carnes"] .categoria-section::before{display:block;position:static;transform:none;writing-mode:horizontal-tb;text-orientation:mixed;margin:0 0 10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);left:auto;top:auto}
+#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="delicateses"]::before{content:"🏠 DELICATESES · DE LA CASA"}
+#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="embutidos"]::before{content:"EMBUTIDOS"}
+#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="salchichones"]::before{content:"SALCHICHONES"}
+#categorias-contenido[data-paso="carnes"] .categoria-section[data-cat="proteinas"]::before{content:"PROTEÍNAS"}
+
+/* --- Tarjetas grandes con foto --- */
+#pantalla-sandwich .category-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+@media (max-width:600px){#pantalla-sandwich .category-grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+#pantalla-sandwich .option{padding:0 0 12px;border-radius:16px;gap:6px;border:2px solid var(--border);box-shadow:var(--shadow-sm);justify-content:flex-start}
+#pantalla-sandwich .option-img{aspect-ratio:4/3;border-radius:0;width:100%}
+#pantalla-sandwich .option-name{font-size:14px;font-weight:700;padding:0 8px;line-height:1.2}
+#pantalla-sandwich .price{font-size:13px}
+#pantalla-sandwich .option:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,125,70,.22)}
+#pantalla-sandwich .option:has(input:checked)::after{top:8px;right:8px;width:26px;height:26px;font-size:15px}
+#pantalla-sandwich .qty-btn{width:28px;height:28px;font-size:16px}
+#pantalla-sandwich .qty-display{font-size:14px;min-width:20px}
+#pantalla-sandwich .qty-controls{margin-top:2px;padding:2px 5px;gap:6px}
+#pantalla-sandwich .agotado-badge{font-size:11px;padding:3px 8px}
+
+/* --- Etiquetas --- */
+.tag-casa,.tag-pop{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:99px;line-height:1.1;white-space:nowrap}
+.tag-casa{background:var(--gold);color:#2b1d00}
+.tag-pop{background:#C25A3A;color:#fff}
+.option:not(:has(img)):has(.tag-carta){padding-top:36px!important}
+.tag-carta{position:absolute;top:8px;left:8px;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+
+/* --- Barra inferior: Atrás · subtotal en vivo · Siguiente --- */
+.barra-pasos{justify-content:space-between;gap:12px;padding:10px 16px;max-width:none}
+.barra-pasos .btn-cancelar-pan{min-width:104px}
+.barra-subtotal{display:flex;flex-direction:column;align-items:center;line-height:1.05;flex:0 0 auto}
+.barra-subtotal small{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);font-weight:800}
+.barra-subtotal strong{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--accent)}
+.btn-guardar-paso{flex:1;max-width:260px;min-width:150px;background:var(--accent);color:#FFFBEE;border:none;padding:13px 22px;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:0 4px 16px rgba(46,125,70,.3)}
+.btn-guardar-paso:hover{background:var(--accent-dark)}
+@media (max-width:480px){.barra-pasos{padding:10px 12px;gap:8px}.barra-pasos .btn-cancelar-pan{min-width:0;padding:12px 12px}.btn-guardar-paso{min-width:0;padding:13px 12px;font-size:15px}.barra-subtotal strong{font-size:19px}}
+
+/* --- Aviso suave y favorito --- */
+.nudge{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin:0 12px 8px;padding:10px 12px;background:#FFF3D6;border:1.5px solid var(--gold);border-radius:14px;font-size:13px;color:var(--text);flex-shrink:0}
+.nudge.visible{display:flex}
+.nudge-texto{flex:1 1 200px;font-weight:600}
+.nudge-btn{border:1.5px solid var(--border);background:var(--card);color:var(--text);padding:8px 12px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer}
+.nudge-principal{background:var(--accent);border-color:var(--accent);color:#FFFBEE}
+.fav-row{justify-content:center;padding:6px 12px 0;flex-shrink:0}
+.btn-fav{background:transparent;border:1.5px dashed var(--border);color:var(--text-muted);padding:7px 14px;border-radius:99px;font-size:12px;font-weight:800;cursor:pointer}
+.btn-fav.activo{border-style:solid;border-color:var(--gold);color:#7a5200;background:#FFF3D6}
+
+/* --- Combos: Los de la casa --- */
+.combos-cta{display:flex;justify-content:center;margin:0 0 18px}
+.btn-desde-cero{background:var(--accent);color:#FFFBEE;border:0;padding:14px 26px;border-radius:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 6px 18px rgba(46,125,70,.3)}
+.btn-desde-cero:hover{background:var(--accent-dark)}
+.combos-sub{max-width:1400px;margin:6px auto 12px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);text-transform:uppercase}
+.favoritos-bloque{max-width:1400px;margin:0 auto}
+.combos-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.combo-card{border-radius:20px;padding:18px 16px 16px;gap:8px}
+.combo-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:22px}
+.combo-ingredientes{font-size:13px}
+.combo-botones{display:flex;gap:8px;margin-top:2px}
+.combo-botones button{flex:1;min-width:0;white-space:nowrap;padding:11px 6px;border-radius:12px;font-size:14px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer}
+.combo-personalizar{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.combo-personalizar:hover{background:rgba(46,125,70,.1)}
+.combo-agregar:disabled{opacity:.45;cursor:not-allowed}
+.combo-aviso{font-size:11px;font-weight:800;color:#C25A3A;text-align:center}
+.combo-card.agotado .combo-emoji,.combo-card.agotado .combo-nombre{opacity:.55}
+.combo-fav{border-color:var(--gold)}
+.fav-borrar{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.06);color:var(--text-muted);cursor:pointer;font-size:13px}
+.fav-borrar:hover{background:#C25A3A;color:#fff}
 </style>
 </head>
 <body class="con-fondo">
@@ -985,7 +1081,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <div class="inicio-card inicio-card-eventos" onclick="abrirBandejas()">
           <img class="inicio-img" src="images/bandeja-evento.jpg" alt="Bandeja para eventos">
           <div class="inicio-nombre">BANDEJA <span>PARA EVENTOS</span></div>
-          <div class="inicio-desc">Exquisitas bandejas de fiambres para tu evento</div>
+          <div class="inicio-desc">Exquisitas bandejas de fiambres para tus eventos</div>
           <span class="inicio-cta">Ver bandejas →</span>
         </div>
 
@@ -1240,8 +1336,16 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 <!-- ===== PANTALLA 3: COMBOS ===== -->
 <div id="pantalla-combos" class="pantalla">
   <div class="combos-titulo">
-    <h2>COMBOS <span>PREARMADOS</span></h2>
-    <p>Selecciona el combo para completar un pan</p>
+    <h2>LOS DE LA <span>CASA</span></h2>
+    <p>Combos con nuestras carnes curadas y ahumadas. Agrégalos tal cual o personalízalos.</p>
+  </div>
+  <div class="combos-cta">
+    <button type="button" class="btn-desde-cero" onclick="abrirSandwich()">🥪 Armar el mío desde cero →</button>
+  </div>
+  <div id="favoritos-bloque" class="favoritos-bloque" style="display:none">
+    <h3 class="combos-sub">⭐ Tus favoritos</h3>
+    <div id="favoritos-grid" class="combos-grid"></div>
+    <h3 class="combos-sub">🏠 Los de la casa</h3>
   </div>
   <div id="combos-grid" class="combos-grid"></div>
 </div>
@@ -1250,15 +1354,15 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 <div id="pantalla-sandwich" class="pantalla">
   <div class="layout">
     <div class="col-ingredientes movil-activa" id="col-ingredientes">
-      <div class="categorias-tabs">
-        <button class="categoria-tab active" data-cat="pan" onclick="scrollToCategoria('pan')">🥖 Pan</button>
-        <button class="categoria-tab" data-cat="salsas" onclick="scrollToCategoria('salsas')">🥫 Salsas</button>
-        <button class="categoria-tab" data-cat="delicateses" onclick="scrollToCategoria('delicateses')">🧆 Delicateses</button>
-        <button class="categoria-tab" data-cat="embutidos" onclick="scrollToCategoria('embutidos')">🥓 Embutidos</button>
-        <button class="categoria-tab" data-cat="proteinas" onclick="scrollToCategoria('proteinas')">🍖 Proteínas</button>
-        <button class="categoria-tab" data-cat="vegetales" onclick="scrollToCategoria('vegetales')">🥬 Vegetales</button>
-        <button class="categoria-tab" data-cat="salchichones" onclick="scrollToCategoria('salchichones')">🌭 Salchichones</button>
-        <button class="categoria-tab" data-cat="quesos" onclick="scrollToCategoria('quesos')">🧀 Quesos</button>
+      <div class="pasos-cabecera">
+        <div class="pasos-top">
+          <span class="paso-texto" id="paso-texto">Paso 1 de 5 · Pan</span>
+          <button type="button" class="paso-cancelar" onclick="cancelarPan()">✕ Cancelar</button>
+        </div>
+        <div class="pasos-barra"><div class="pasos-relleno" id="pasos-relleno"></div></div>
+        <div class="categorias-tabs pasos-tabs" id="pasos-tabs"></div>
+        <p class="paso-ayuda" id="paso-ayuda"></p>
+        <div class="carnes-chips" id="carnes-chips" style="display:none"></div>
       </div>
 
       <div class="categorias-contenido" id="categorias-contenido">
@@ -1324,9 +1428,14 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     </button>
   </div>
   
-  <div class="barra-acciones-sandwich">
-    <button type="button" class="btn-cancelar-pan" onclick="cancelarPan()">Cancelar</button>
-    <button type="button" class="btn-guardar" onclick="guardarPan()">✓ Ordenar este pan</button>
+  <div class="nudge" id="nudge" role="status"></div>
+  <div class="fav-row" id="fav-row" style="display:none">
+    <button type="button" class="btn-fav" id="btn-fav" onclick="toggleFavoritoPendiente()">☆ Guardar como mi favorito</button>
+  </div>
+  <div class="barra-acciones-sandwich barra-pasos">
+    <button type="button" class="btn-cancelar-pan" id="btn-paso-atras" onclick="pasoAtras()">Cancelar</button>
+    <div class="barra-subtotal"><small>Este pan</small><strong id="barra-subtotal">$0.00</strong></div>
+    <button type="button" class="btn-guardar-paso" id="btn-paso-siguiente" onclick="pasoSiguiente()">Siguiente →</button>
   </div>
 </div>
 
@@ -1351,16 +1460,16 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     </div>
 
     <div class="resumen-opciones">
+      <div class="opcion-card" onclick="abrirCombos()">
+        <div class="opcion-emoji">🏠</div>
+        <div class="opcion-titulo">LOS DE LA <span>CASA</span></div>
+        <div class="opcion-desc">Combos listos para pedir</div>
+      </div>
+
       <div class="opcion-card" onclick="abrirSandwich()">
         <div class="opcion-emoji">🥪</div>
-        <div class="opcion-titulo">ARMA TU <span>SÁNDWICH</span></div>
-        <div class="opcion-desc">Elige cada ingrediente</div>
-      </div>
-      
-      <div class="opcion-card" onclick="abrirCombos()">
-        <div class="opcion-emoji">🎁</div>
-        <div class="opcion-titulo">COMBOS <span>PREARMADOS</span></div>
-        <div class="opcion-desc">Los favoritos de la casa</div>
+        <div class="opcion-titulo">ARMA EL <span>TUYO</span></div>
+        <div class="opcion-desc">Paso a paso, a tu gusto</div>
       </div>
 
       <div class="opcion-card" id="opcion-repetir" onclick="repetirUltimoPan()">
@@ -1561,9 +1670,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.25"></script>
-<script src="combos.js?v=3.25"></script>
-<script src="vacio.js?v=3.25"></script>
-<script src="app.js?v=3.25"></script>
+<script src="ingredients.js?v=3.26"></script>
+<script src="combos.js?v=3.26"></script>
+<script src="vacio.js?v=3.26"></script>
+<script src="app.js?v=3.26"></script>
 </body>
 </html>
