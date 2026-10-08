@@ -986,6 +986,12 @@ function buildGroup(key, cfg) {
         showToast("Máximo " + MAX_CARNES + " carnes por pan", "remove");
         return;
       }
+      if (input.checked && cfg.type === "checkbox" && LIMITES_CAT[key] &&
+          document.querySelectorAll('input[name="' + key + '"]:checked').length > LIMITES_CAT[key].max) {
+        input.checked = false;
+        showToast("Máximo " + LIMITES_CAT[key].max + " " + LIMITES_CAT[key].txt + " por pan", "remove");
+        return;
+      }
       if (input.checked) {
         if (cfg.type === "radio") {
           document.querySelectorAll(`input[name="${key}"]`).forEach(other => {
@@ -1783,17 +1789,21 @@ function ocultarCategoriasVacias() {
 const PASOS = [
   { id: "pan",       emoji: "🥖", titulo: "Pan",       cats: ["pan"],
     ayuda: "Empieza por el pan: elige uno." },
-  { id: "carnes",    emoji: "🥓", titulo: "Carnes",    cats: ["delicateses", "embutidos", "salchichones", "proteinas"],
-    ayuda: "Elige hasta 3 carnes. Las marcadas “De la casa” las hacemos nosotros." },
+  { id: "delicateses", emoji: "🏠", titulo: "Delicateses", cats: ["delicateses", "salchichones"],
+    ayuda: "Nuestras carnes curadas y ahumadas “De la casa”, y salchichones. Máximo 3 carnes en total por pan." },
+  { id: "carnes",    emoji: "🥓", titulo: "Carnes",    cats: ["proteinas", "embutidos"],
+    ayuda: "Proteínas y embutidos. Máximo 3 carnes en total por pan (contando las delicateses)." },
   { id: "quesos",    emoji: "🧀", titulo: "Quesos",    cats: ["quesos"],
-    ayuda: "Elige los quesos que quieras." },
+    ayuda: "Elige hasta 2 quesos." },
   { id: "vegetales", emoji: "🥬", titulo: "Vegetales", cats: ["vegetales"],
-    ayuda: "Frescos y al gusto: suma los que quieras." },
+    ayuda: "Frescos y al gusto. Elige hasta 5 vegetales." },
   { id: "salsas",    emoji: "🥫", titulo: "Salsas",    cats: ["salsas"],
-    ayuda: "El toque final. Una o varias." }
+    ayuda: "El toque final. Elige hasta 3 salsas." }
 ];
-const CARNE_KEYS = PASOS[1].cats;
+const CARNE_KEYS = ["delicateses", "salchichones", "proteinas", "embutidos"];
 const MAX_CARNES = 3;
+const LIMITES_CAT = { quesos: { max: 2, txt: "quesos" }, salsas: { max: 3, txt: "salsas" },
+  vegetales: { max: 5, txt: "vegetales" }, verduras: { max: 5, txt: "vegetales" } };
 const NOMBRE_CAT = { delicateses: "Delicateses · de la casa", embutidos: "Embutidos", salchichones: "Salchichones", proteinas: "Proteínas" };
 
 let pasoActual = 0;
@@ -1849,7 +1859,7 @@ function renderPasos() {
 
   const chips = document.getElementById("carnes-chips");
   if (chips) {
-    const cats = actual.id === "carnes" ? actual.cats.filter(catConItems) : [];
+    const cats = actual.cats.filter(catConItems);
     chips.style.display = cats.length > 1 ? "flex" : "none";
     chips.innerHTML = cats.map(c => `<button type="button" class="carne-chip" onclick="scrollToCategoria('${c}')">${NOMBRE_CAT[c] || c}</button>`).join("");
   }
@@ -1913,7 +1923,7 @@ function validarAntesDeGuardar() {
   const hayQueso = document.querySelectorAll('input[name="quesos"]:checked').length > 0;
   if (!hayCarne && !hayQueso && !nudgesOmitidos.vacio) {
     mostrarNudge("Tu sándwich no lleva carne ni queso. ¿Quieres agregar algo?",
-      "Agregar carnes", () => irAPaso(indicePaso("carnes")),
+      "Agregar carnes", () => irAPaso(indicePaso("delicateses")),
       "Así está bien", () => { nudgesOmitidos.vacio = true; pasoSiguiente(); });
     return false;
   }
@@ -2004,7 +2014,7 @@ function cargarSeleccionEnEditor(sel, tituloHTML, subtitulo) {
   renderSandwich();
   startAnimation();
   actualizarResumenPan();
-  irAPaso(indicePaso("carnes"));
+  irAPaso(indicePaso("delicateses"));
   if (esMovil()) {
     const tabIng = document.querySelector('.movil-tab');
     cambiarVistaMovil('ingredientes', tabIng);
