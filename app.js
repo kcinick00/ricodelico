@@ -306,7 +306,7 @@ let cantidadPanel = 1;
 function abrirBandejas() {
     mostrarPantalla('pantalla-bandejas');
     document.getElementById('header-titulo').innerHTML = 'BANDEJAS <span>PARA EVENTOS</span>';
-    document.getElementById('header-subtitulo').innerHTML = 'Mira nuestras opciones y armá tu pedido <em>al final</em>';
+    document.getElementById('header-subtitulo').innerHTML = 'Mira nuestras opciones y arma tu pedido <em>al final</em>';
     document.querySelector('.total-bar').style.display = 'flex';
     actualizarPanelPedido();
 }
@@ -345,7 +345,7 @@ function elegirTamanoBandeja(tam, ev) {
     if (!radio) return;
     radio.checked = true;
     actualizarPanelPedido();
-    if (typeof showToast === 'function') showToast('✓ Bandeja ' + obtenerNombreTamano() + ' elegida · mira "Armá tu pedido" abajo', 'info');
+    if (typeof showToast === 'function') showToast('✓ Bandeja ' + obtenerNombreTamano() + ' elegida · mira "Arma tu pedido" abajo', 'info');
 }
 
 // Marca visualmente la tarjeta del tamaño elegido
