@@ -1057,6 +1057,31 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 .vac-pres-op.sel{background:var(--accent);border-color:var(--accent);color:#FFFBEE}
 .vac-prod .vac-pres{margin:6px 0 0}
 .vac-prod .vac-pres-op{flex:0 0 auto;min-width:0;padding:4px 10px;font-size:13px}
+/* --- Sin sándwich dibujado: fotos grandes --- */
+#pantalla-sandwich .layout{grid-template-columns:2.2fr 1fr}
+#pantalla-sandwich .category-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+#pantalla-sandwich .option-img{aspect-ratio:1/1}
+#pantalla-sandwich .option-name{font-size:16px}
+#pantalla-sandwich .price{font-size:14px}
+@media (max-width:900px){#pantalla-sandwich .category-grid{grid-template-columns:repeat(2,1fr);gap:10px}#pantalla-sandwich .option-img{aspect-ratio:4/3}#pantalla-sandwich .option-name{font-size:15px}}
+/* --- Entrega y venta adicional --- */
+.entrega-ops{display:flex;gap:8px}
+.entrega-op{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 8px;border:2px solid var(--border);border-radius:12px;background:var(--card);font-weight:800;font-size:14px;cursor:pointer;text-align:center}
+.entrega-op input{position:absolute;opacity:0;pointer-events:none}
+.entrega-op.sel{border-color:var(--accent);background:rgba(46,125,70,.1);color:var(--accent)}
+#pedido-hora,#pedido-direccion{width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font:inherit;background:var(--card);color:var(--text)}
+.extras-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.extra-card{border:2px solid var(--border);border-radius:14px;background:var(--card);overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:2px;padding-bottom:8px;text-align:center}
+.extra-card.sel{border-color:var(--accent)}
+.extra-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.extra-nombre{font-weight:800;font-size:13px;padding:4px 6px 0}
+.extra-precio{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:700}
+.extra-qty{display:flex;align-items:center;gap:10px;margin-top:4px}
+.extra-qty button{width:30px;height:30px;border-radius:50%;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:18px;font-weight:900;line-height:1;cursor:pointer}
+.extra-qty button:disabled{opacity:.35}
+.extra-chip{padding:10px 16px;border-radius:99px;border:2px solid var(--border);background:var(--card);font-weight:800;font-size:15px;cursor:pointer}
+.extra-chip.sel{background:var(--accent);border-color:var(--accent);color:#FFFBEE}
+.extra-nota{grid-column:1/-1;font-size:12px;color:var(--text-muted);margin-top:4px}
 </style>
 </head>
 <body class="con-fondo">
@@ -1425,13 +1450,6 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <button id="clear-btn" class="clear-btn">🗑 Limpiar esta lista</button>
       </div>
     </div>
-
-    <div class="col-sandwich" id="col-sandwich">
-      <div class="preview-card">
-        <span class="preview-title">Así va tu sándwich</span>
-        <canvas id="sandwich-canvas" width="220" height="440"></canvas>
-      </div>
-    </div>
   </div>
   
   <div class="movil-tabs">
@@ -1442,10 +1460,6 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     <button class="movil-tab" data-vista="resumen" ontouchend="cambiarVistaMovil('resumen', this); event.preventDefault();" onclick="cambiarVistaMovil('resumen', this)">
       <span class="icono">📋</span>
       <span>Resumen</span>
-    </button>
-    <button class="movil-tab" data-vista="sandwich" ontouchend="cambiarVistaMovil('sandwich', this); event.preventDefault();" onclick="cambiarVistaMovil('sandwich', this)">
-      <span class="icono">🥪</span>
-      <span>Sándwich</span>
     </button>
   </div>
   
@@ -1561,6 +1575,24 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
       <div class="form-group">
         <label for="pedido-nombre">Nombre (opcional)</label>
         <input type="text" id="pedido-nombre" placeholder="Ej. Juan Pérez" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>¿Cómo lo recibes?</label>
+        <div class="entrega-ops">
+          <label class="entrega-op sel"><input type="radio" name="pedido-entrega" value="retiro" checked onchange="actualizarEntrega()"> 🏪 Retiro en tienda</label>
+          <label class="entrega-op"><input type="radio" name="pedido-entrega" value="delivery" onchange="actualizarEntrega()"> 🛵 Delivery</label>
+        </div>
+        <div id="entrega-retiro" style="margin-top:8px">
+          <input type="text" id="pedido-hora" placeholder="¿A qué hora pasas? (opcional) Ej. 1:30 pm">
+        </div>
+        <div id="entrega-delivery" style="display:none;margin-top:8px">
+          <textarea id="pedido-direccion" rows="2" placeholder="Dirección y punto de referencia *" autocomplete="street-address"></textarea>
+          <div class="extra-nota">El costo del delivery te lo confirmamos por WhatsApp.</div>
+        </div>
+      </div>
+      <div class="form-group" id="pedido-extras" style="display:none">
+        <label>¿Le agregas una bebida o papitas? 🥤🍟</label>
+        <div id="pedido-extras-lista" class="extras-lista"></div>
       </div>
       <div class="form-group">
         <label for="pedido-pago">Forma de pago (opcional)</label>
@@ -1691,9 +1723,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.28"></script>
-<script src="combos.js?v=3.28"></script>
-<script src="vacio.js?v=3.28"></script>
-<script src="app.js?v=3.28"></script>
+<script src="ingredients.js?v=3.29"></script>
+<script src="combos.js?v=3.29"></script>
+<script src="vacio.js?v=3.29"></script>
+<script src="app.js?v=3.29"></script>
 </body>
 </html>
