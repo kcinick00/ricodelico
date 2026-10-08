@@ -43,10 +43,10 @@ function normalizarCategoria(cat) {
 const CATS_EXTRA = [
   { key: "delicateses",  emoji: "🧆", label: "Delicateses" },
   { key: "embutidos",    emoji: "🥓", label: "Embutidos" },
-  { key: "proteinas",    emoji: "🍖", label: "Proteínas" },
-  { key: "vegetales",    emoji: "🥬", label: "Vegetales" },
   { key: "salchichones", emoji: "🌭", label: "Salchichones" },
-  { key: "quesos",       emoji: "🧀", label: "Quesos" }
+  { key: "proteinas",    emoji: "🍖", label: "Proteínas" },
+  { key: "quesos",       emoji: "🧀", label: "Quesos" },
+  { key: "vegetales",    emoji: "🥬", label: "Vegetales" }
 ];
 // Compat: algunos pedidos viejos guardaron "verduras"
 function itemsDeCategoria(obj, key) {
@@ -210,19 +210,39 @@ function volverAtras() {
     return;
   }
 
-  if (pantallaActual === "pantalla-sandwich" || pantallaActual === "pantalla-combos") {
-    if (panEnEdicion !== null) cancelarPan();
-    else { mostrarPantalla("pantalla-resumen"); renderResumenGeneral(); }
+  if (pantallaActual === "pantalla-sandwich") {
+    if (pasoActual > 0) { pasoAtras(); return; }
+    cancelarPan();
+    return;
+  }
+  if (pantallaActual === "pantalla-combos") {
+    if (panesArmados.length === 0) { irAInicioSandwich(); return; }
+    mostrarPantalla("pantalla-resumen");
+    renderResumenGeneral();
     return;
   }
   if (pantallaActual === "pantalla-resumen") {
     if (panesArmados.length > 0 && !confirm("¿Volver al inicio? Se borrará el pedido actual.")) return;
-    resetearPedidoSandwich();
-    mostrarPantalla("pantalla-inicio");
-    document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
-    document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
+    irAInicioSandwich();
     return;
   }
+}
+
+function irAInicioSandwich() {
+  resetearPedidoSandwich();
+  mostrarPantalla("pantalla-inicio");
+  document.getElementById("header-titulo").innerHTML = '¿QUÉ DESEA <span>HOY?</span>';
+  document.getElementById("header-subtitulo").innerHTML = 'Elige el servicio que buscas <em>para empezar</em>';
+}
+
+// Si ya se llenó la cantidad de panes, agrega un cupo más (en vez de bloquear)
+function asegurarCupo() {
+  if (panesArmados.length < cantidadTotalPanes) return true;
+  if (cantidadTotalPanes >= 20) { showToast("Máximo 20 panes por pedido", "remove"); return false; }
+  cantidadTotalPanes += 1;
+  const d = document.getElementById("cantidad-inicial-display");
+  if (d) d.textContent = cantidadTotalPanes;
+  return true;
 }
 
 // Deja el pedido de sándwiches en blanco (1 pan, nada armado)
@@ -255,7 +275,11 @@ function cambiarCantidadInicial(delta) {
 // =========================================================
 function elegirServicio(servicio) {
   if (servicio === "sandwich") {
-    if (panesArmados.length === 0) resetearPedidoSandwich();
+    if (panesArmados.length === 0) {
+      resetearPedidoSandwich();
+      abrirCombos();            // primero "Los de la casa" (como Sweetgreen); desde ahí se puede armar uno desde cero
+      return;
+    }
     document.getElementById("cantidad-inicial-display").textContent = cantidadTotalPanes;
     mostrarPantalla("pantalla-resumen");
     renderResumenGeneral();
@@ -616,14 +640,11 @@ function renderResumenGeneral() {
 // ABRIR ARMA TU SÁNDWICH
 // =========================================================
 function abrirSandwich() {
-  if (panesArmados.length >= cantidadTotalPanes) {
-    showToast("Ya completaste todos los panes", "remove");
-    return;
-  }
+  if (!asegurarCupo()) return;
   limpiarEditor();
   panEnEdicion = null;
   const btnGuardar = document.querySelector(".btn-guardar");
-  if (btnGuardar) btnGuardar.innerHTML = "✓ Ordenar este pan";
+  if (btnGuardar) btnGuardar.innerHTML = "✓ Ordenar pan";
 
   const firstPan = document.querySelector('input[name="pan"]:not(:disabled)');
   if (firstPan) { firstPan.checked = true; quantities[firstPan.value] = 1; }
@@ -633,6 +654,7 @@ function abrirSandwich() {
   renderSandwich();
   startAnimation();
   actualizarResumenPan();
+  irAPaso(0);
 
   if (esMovil()) {
     const tabIng = document.querySelector('.movil-tab');
@@ -649,12 +671,9 @@ function abrirSandwich() {
 }
 
 function abrirCombos() {
-  if (panesArmados.length >= cantidadTotalPanes) {
-    showToast("Ya completaste todos los panes", "remove");
-    return;
-  }
+  if (!asegurarCupo()) return;
   mostrarPantalla("pantalla-combos");
-  document.getElementById("header-titulo").innerHTML = 'COMBOS <span>PREARMADOS</span>';
+  document.getElementById("header-titulo").innerHTML = 'LOS DE LA <span>CASA</span>';
   document.getElementById("header-subtitulo").innerHTML = `Pan ${panesArmados.length + 1} de ${cantidadTotalPanes}`;
   renderCombos();
 }
@@ -664,35 +683,54 @@ function renderCombos() {
   if (!grid) return;
   grid.innerHTML = "";
   combos.forEach(combo => {
+    const sel = normalizarSeleccion(combo.ingredientes);
+    const r = resolverSeleccion(sel);
+    if (!r.ok) return;                       // algún ingrediente no está en el menú: no se muestra
     const card = document.createElement("div");
-    card.className = "combo-card";
+    card.className = "combo-card" + (r.agotado ? " agotado" : "");
+    const casa = (sel.delicateses || []).length > 0;
     card.innerHTML = `
+      <div class="combo-tags">
+        ${casa ? '<span class="tag-casa">🏠 De la casa</span>' : ''}
+        ${combo.masPedido ? '<span class="tag-pop">🔥 Más pedido</span>' : ''}
+      </div>
       <div class="combo-emoji">${combo.emoji}</div>
-      <div class="combo-nombre">${combo.nombre}</div>
-      <div class="combo-ingredientes">${combo.descripcion}</div>
-      <div class="combo-precio">${fmt(combo.precio)}</div>
-      <button class="combo-agregar" onclick="agregarComboAlPedido('${combo.id}')">Agregar al pedido</button>
+      <div class="combo-nombre">${_esc(combo.nombre)}</div>
+      <div class="combo-ingredientes">${_esc(r.nombres.join(" · "))}</div>
+      ${r.agotado ? '<div class="combo-aviso">Hoy hay un ingrediente agotado</div>' : ''}
+      <div class="combo-precio">${fmt(r.precio)}</div>
+      <div class="combo-botones">
+        <button class="combo-agregar" ${r.agotado ? "disabled" : ""} onclick="agregarComboAlPedido('${combo.id}')">Agregar</button>
+        <button class="combo-personalizar" onclick="personalizarCombo('${combo.id}')">Personalizar</button>
+      </div>
     `;
     grid.appendChild(card);
   });
+  renderFavoritos();
 }
 
 function agregarComboAlPedido(comboId) {
   const combo = combos.find(c => c.id === comboId);
   if (!combo) return;
-  if (panesArmados.length >= cantidadTotalPanes) {
-    showToast("Ya completaste todos los panes", "remove");
-    return;
-  }
+  const r = resolverSeleccion(normalizarSeleccion(combo.ingredientes));
+  if (!r.ok || r.agotado) { showToast("Este combo no está disponible hoy", "remove"); return; }
+  if (!asegurarCupo()) return;
   const panCombo = {
     tipo: "combo", id: combo.id, nombre: combo.nombre, emoji: combo.emoji,
-    descripcion: combo.descripcion, precio: combo.precio
+    descripcion: r.nombres.join(", "), precio: r.precio
   };
   panesArmados.push(panCombo);
   ultimoPanArmado = JSON.parse(JSON.stringify(panCombo));
   showToast(`${combo.emoji} ${combo.nombre} agregado`, "success");
   mostrarPantalla("pantalla-resumen");
   renderResumenGeneral();
+}
+
+function personalizarCombo(comboId) {
+  const combo = combos.find(c => c.id === comboId);
+  if (!combo) return;
+  if (!asegurarCupo()) return;
+  cargarSeleccionEnEditor(normalizarSeleccion(combo.ingredientes), 'PERSONALIZA <span>TU COMBO</span>', combo.nombre);
 }
 
 // =========================================================
@@ -727,6 +765,8 @@ function guardarPan() {
     ...extras, salsas, precio
   };
 
+  if (typeof registrarFavoritoSiAplica === "function") registrarFavoritoSiAplica(panData);
+
   if (panEnEdicion !== null) {
     panesArmados[panEnEdicion] = panData;
     panEnEdicion = null;
@@ -737,7 +777,7 @@ function guardarPan() {
   }
 
   const btnGuardar = document.querySelector(".btn-guardar");
-  if (btnGuardar) btnGuardar.innerHTML = "✓ Ordenar este pan";
+  if (btnGuardar) btnGuardar.innerHTML = "✓ Ordenar pan";
 
   ultimoPanArmado = JSON.parse(JSON.stringify(panData));
   limpiarEditor();
@@ -746,10 +786,10 @@ function guardarPan() {
 }
 
 function cancelarPan() {
-  if (panEnEdicion !== null) panEnEdicion = null;
-  const btnGuardar = document.querySelector(".btn-guardar");
-  if (btnGuardar) btnGuardar.innerHTML = "✓ Ordenar este pan";
+  const eraEdicion = panEnEdicion !== null;
+  if (eraEdicion) panEnEdicion = null;
   limpiarEditor();
+  if (!eraEdicion && panesArmados.length === 0) { abrirCombos(); return; }
   mostrarPantalla("pantalla-resumen");
   renderResumenGeneral();
 }
@@ -760,6 +800,7 @@ function limpiarEditor() {
   Object.keys(quantities).forEach(k => delete quantities[k]);
   document.querySelectorAll('.qty-controls').forEach(c => c.classList.remove('visible'));
   animState.layers = {};
+  if (typeof reiniciarEstadoPasos === "function") reiniciarEstadoPasos();
   renderSandwich();
   actualizarResumenPan();
 }
@@ -808,9 +849,7 @@ function editarPan(idx) {
   renderSandwich();
   startAnimation();
   actualizarResumenPan();
-
-  const btnGuardar = document.querySelector(".btn-guardar");
-  if (btnGuardar) btnGuardar.innerHTML = "✓ Actualizar este pan";
+  irAPaso(0);
 
   if (esMovil()) {
     const tabIng = document.querySelector('.movil-tab');
@@ -848,6 +887,11 @@ function buildGroup(key, cfg) {
     if (item._agotado) input.disabled = true;
 
     input.addEventListener("change", () => {
+      if (input.checked && cfg.type === "checkbox" && CARNE_KEYS.includes(key) && contarCarnesElegidas() > MAX_CARNES) {
+        input.checked = false;
+        showToast("Máximo " + MAX_CARNES + " carnes por pan", "remove");
+        return;
+      }
       if (input.checked) {
         if (cfg.type === "radio") {
           document.querySelectorAll(`input[name="${key}"]`).forEach(other => {
@@ -885,6 +929,19 @@ function buildGroup(key, cfg) {
     label.className = "option-name";
     label.textContent = item.name;
     row.appendChild(label);
+
+    const etq = String(item.etiqueta || "").toLowerCase();
+    if (key === "delicateses" || /casa/.test(etq)) {
+      const t = document.createElement("span");
+      t.className = "tag-casa tag-carta";
+      t.textContent = "🏠 De la casa";
+      row.appendChild(t);
+    } else if (/popular|pedido|top/.test(etq)) {
+      const t = document.createElement("span");
+      t.className = "tag-pop tag-carta";
+      t.textContent = "🔥 Más pedido";
+      row.appendChild(t);
+    }
 
     const price = document.createElement("span");
     price.className = "price";
@@ -1017,6 +1074,8 @@ function actualizarResumenPan() {
     list.appendChild(li);
   }
   subtotalOut.textContent = fmt(subtotal);
+  const barraSub = document.getElementById("barra-subtotal");
+  if (barraSub) barraSub.textContent = fmt(subtotal);
 }
 
 // =========================================================
@@ -1532,6 +1591,7 @@ async function cargarMenuDesdeSheets() {
         layerImage: fila.layerImage || "",
         bottomImage: fila.bottomImage || "",
         topImage: fila.topImage || "",
+        etiqueta: fila.etiqueta || "",
         _agotado: !disponible
       });
     });
@@ -1573,6 +1633,7 @@ function menuToIngredientsData() {
         id: i.id, name: i.name, price: i.price, color: i.color,
         image: i.image, layerImage: i.layerImage,
         bottomImage: i.bottomImage, topImage: i.topImage,
+        etiqueta: i.etiqueta || "",
         _agotado: i._agotado
       }))
     };
@@ -1593,6 +1654,7 @@ function buildAllGroups() {
 
   Object.entries(ingredientsData).forEach(([key, cfg]) => buildGroup(key, cfg));
   ocultarCategoriasVacias();
+  if (pantallaActual === "pantalla-combos") renderCombos();
 }
 
 // Oculta pestañas/secciones de categorías que aún no tienen productos en el menú
@@ -1605,6 +1667,318 @@ function ocultarCategoriasVacias() {
     const tab = document.querySelector(`.categoria-tab[data-cat="${cat}"]`);
     if (tab) tab.style.display = vacia ? "none" : "";
   });
+  if (typeof renderPasos === "function") renderPasos();
+}
+
+// =========================================================
+// CONSTRUCTOR GUIADO POR PASOS (estilo Sweetgreen)
+// Pan → Carnes → Quesos → Vegetales → Salsas
+// =========================================================
+const PASOS = [
+  { id: "pan",       emoji: "🥖", titulo: "Pan",       cats: ["pan"],
+    ayuda: "Empieza por el pan: elige uno." },
+  { id: "carnes",    emoji: "🥓", titulo: "Carnes",    cats: ["delicateses", "embutidos", "salchichones", "proteinas"],
+    ayuda: "Elige hasta 3 carnes. Las marcadas “De la casa” las hacemos nosotros." },
+  { id: "quesos",    emoji: "🧀", titulo: "Quesos",    cats: ["quesos"],
+    ayuda: "Elige los quesos que quieras." },
+  { id: "vegetales", emoji: "🥬", titulo: "Vegetales", cats: ["vegetales"],
+    ayuda: "Frescos y al gusto: suma los que quieras." },
+  { id: "salsas",    emoji: "🥫", titulo: "Salsas",    cats: ["salsas"],
+    ayuda: "El toque final. Una o varias." }
+];
+const CARNE_KEYS = PASOS[1].cats;
+const MAX_CARNES = 3;
+const NOMBRE_CAT = { delicateses: "Delicateses · de la casa", embutidos: "Embutidos", salchichones: "Salchichones", proteinas: "Proteínas" };
+
+let pasoActual = 0;
+let favoritoPendiente = false;
+let nudgesOmitidos = {};
+
+function catConItems(c) {
+  const cfg = ingredientsData[c] || (c === "vegetales" ? ingredientsData.verduras : null);
+  return !!(cfg && cfg.items && cfg.items.length);
+}
+function pasosVisibles() { return PASOS.filter(p => p.cats.some(catConItems)); }
+function indicePaso(id) { return Math.max(0, pasosVisibles().findIndex(p => p.id === id)); }
+
+function contarCarnesElegidas() {
+  return CARNE_KEYS.reduce((n, k) => n + document.querySelectorAll('input[name="' + k + '"]:checked').length, 0);
+}
+
+function reiniciarEstadoPasos() {
+  pasoActual = 0;
+  favoritoPendiente = false;
+  nudgesOmitidos = {};
+  ocultarNudge();
+}
+
+function renderPasos() {
+  const pasos = pasosVisibles();
+  const tabs = document.getElementById("pasos-tabs");
+  if (!pasos.length || !tabs) return;
+  if (pasoActual > pasos.length - 1) pasoActual = pasos.length - 1;
+  if (pasoActual < 0) pasoActual = 0;
+  const actual = pasos[pasoActual];
+  const ultimo = pasoActual === pasos.length - 1;
+
+  tabs.innerHTML = pasos.map((p, i) =>
+    `<button type="button" class="categoria-tab paso-tab${i === pasoActual ? " active" : ""}${i < pasoActual ? " hecho" : ""}" onclick="irAPaso(${i})">` +
+    `<span class="paso-num">${i < pasoActual ? "✓" : i + 1}</span>${p.emoji} ${p.titulo}</button>`
+  ).join("");
+  const act = tabs.querySelector(".paso-tab.active");
+  if (act) tabs.scrollLeft = Math.max(0, act.offsetLeft - 24);
+
+  const txt = document.getElementById("paso-texto");
+  if (txt) txt.textContent = `Paso ${pasoActual + 1} de ${pasos.length} · ${actual.titulo}`;
+  const rel = document.getElementById("pasos-relleno");
+  if (rel) rel.style.width = ((pasoActual + 1) / pasos.length * 100) + "%";
+  const ayuda = document.getElementById("paso-ayuda");
+  if (ayuda) ayuda.textContent = actual.ayuda;
+
+  const contenido = document.getElementById("categorias-contenido");
+  if (contenido) contenido.dataset.paso = actual.id;
+  document.querySelectorAll(".categoria-section").forEach(sec => {
+    sec.classList.toggle("fuera-de-paso", !actual.cats.includes(sec.dataset.cat));
+  });
+
+  const chips = document.getElementById("carnes-chips");
+  if (chips) {
+    const cats = actual.id === "carnes" ? actual.cats.filter(catConItems) : [];
+    chips.style.display = cats.length > 1 ? "flex" : "none";
+    chips.innerHTML = cats.map(c => `<button type="button" class="carne-chip" onclick="scrollToCategoria('${c}')">${NOMBRE_CAT[c] || c}</button>`).join("");
+  }
+
+  const atras = document.getElementById("btn-paso-atras");
+  if (atras) atras.textContent = pasoActual === 0 ? "Cancelar" : "← Atrás";
+  const sig = document.getElementById("btn-paso-siguiente");
+  if (sig) sig.textContent = ultimo ? (panEnEdicion !== null ? "✓ Actualizar pan" : "✓ Ordenar pan") : "Siguiente →";
+  const favRow = document.getElementById("fav-row");
+  if (favRow) favRow.style.display = ultimo ? "flex" : "none";
+  actualizarBtnFavorito();
+}
+
+function irAPaso(i) {
+  pasoActual = i;
+  ocultarNudge();
+  renderPasos();
+  const contenido = document.getElementById("categorias-contenido");
+  if (contenido) contenido.scrollTop = 0;
+}
+
+function pasoAtras() {
+  if (pasoActual === 0) { cancelarPan(); return; }
+  irAPaso(pasoActual - 1);
+}
+
+function pasoSiguiente() {
+  const pasos = pasosVisibles();
+  if (pasos[pasoActual] && pasos[pasoActual].id === "pan" && !document.querySelector('input[name="pan"]:checked')) {
+    showToast("Elige un pan para continuar", "remove");
+    return;
+  }
+  if (pasoActual < pasos.length - 1) { irAPaso(pasoActual + 1); return; }
+  if (!validarAntesDeGuardar()) return;
+  guardarPan();
+}
+
+// ----- Avisos suaves (no bloquean, solo preguntan) -----
+function mostrarNudge(mensaje, txtA, fnA, txtB, fnB) {
+  const n = document.getElementById("nudge");
+  if (!n) { fnB(); return; }
+  n.innerHTML = "";
+  const m = document.createElement("span");
+  m.className = "nudge-texto";
+  m.textContent = mensaje;
+  const a = document.createElement("button");
+  a.type = "button"; a.className = "nudge-btn nudge-principal"; a.textContent = txtA;
+  a.onclick = () => { ocultarNudge(); fnA(); };
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "nudge-btn"; b.textContent = txtB;
+  b.onclick = () => { ocultarNudge(); fnB(); };
+  n.appendChild(m); n.appendChild(a); n.appendChild(b);
+  n.classList.add("visible");
+}
+function ocultarNudge() {
+  const n = document.getElementById("nudge");
+  if (n) { n.classList.remove("visible"); n.innerHTML = ""; }
+}
+function validarAntesDeGuardar() {
+  const hayCarne = contarCarnesElegidas() > 0;
+  const hayQueso = document.querySelectorAll('input[name="quesos"]:checked').length > 0;
+  if (!hayCarne && !hayQueso && !nudgesOmitidos.vacio) {
+    mostrarNudge("Tu sándwich no lleva carne ni queso. ¿Quieres agregar algo?",
+      "Agregar carnes", () => irAPaso(indicePaso("carnes")),
+      "Así está bien", () => { nudgesOmitidos.vacio = true; pasoSiguiente(); });
+    return false;
+  }
+  const hayQuesoSalsas = catConItems("salsas");
+  const haySalsa = document.querySelectorAll('input[name="salsas"]:checked').length > 0;
+  if (hayQuesoSalsas && !haySalsa && !nudgesOmitidos.salsa) {
+    mostrarNudge("¿Sin salsa? Se ve seco 😅 Una salsa lo cambia todo.",
+      "Elegir salsa", () => { /* ya estás en el paso de salsas */ },
+      "Así está bien", () => { nudgesOmitidos.salsa = true; pasoSiguiente(); });
+    return false;
+  }
+  return true;
+}
+
+// ----- Selecciones (combos y favoritos) -----
+function limpiarNombre(n) {
+  return String(n || "").replace(/\s*\([^)]*\)/g, "").replace(/\s{2,}/g, " ").trim();
+}
+function itemEnMenu(cat, id) {
+  const cfg = ingredientsData[cat] || (cat === "vegetales" ? ingredientsData.verduras : null);
+  return cfg ? (cfg.items.find(i => i.id === id) || null) : null;
+}
+// ingredientes de un combo { pan:"id", quesos:["a","b"] }  →  { pan:"id", quesos:[{id,qty}] }
+function normalizarSeleccion(ing) {
+  const sel = { pan: ing.pan };
+  [...CATS_EXTRA.map(c => c.key), "salsas"].forEach(cat => {
+    sel[cat] = (ing[cat] || []).map(x => typeof x === "string" ? { id: x, qty: 1 } : { id: x.id, qty: x.qty || 1 });
+  });
+  return sel;
+}
+function resolverSeleccion(sel) {
+  const r = { ok: true, agotado: false, precio: 0, nombres: [] };
+  const pan = itemEnMenu("pan", sel.pan);
+  if (!pan) { r.ok = false; return r; }
+  r.precio += pan.price;
+  if (pan._agotado) r.agotado = true;
+  r.nombres.push(limpiarNombre(pan.name));
+  [...CATS_EXTRA.map(c => c.key), "salsas"].forEach(cat => {
+    (sel[cat] || []).forEach(x => {
+      const it = itemEnMenu(cat, x.id);
+      if (!it) { r.ok = false; return; }
+      if (it._agotado) r.agotado = true;
+      const q = x.qty || 1;
+      r.precio += it.price * q;
+      r.nombres.push(limpiarNombre(it.name) + (q > 1 ? " x" + q : ""));
+    });
+  });
+  return r;
+}
+function construirPanDesdeSeleccion(sel) {
+  const pan = itemEnMenu("pan", sel.pan);
+  const simple = (cat) => (sel[cat] || []).map(x => {
+    const it = itemEnMenu(cat, x.id);
+    return it ? { id: it.id, nombre: it.name, price: it.price || 0, qty: x.qty || 1 } : null;
+  }).filter(Boolean);
+  const data = { tipo: "personalizado", pan: { id: pan.id, nombre: pan.name, price: pan.price || 0, qty: 1 } };
+  CATS_EXTRA.forEach(c => { data[c.key] = simple(c.key); });
+  data.salsas = simple("salsas");
+  data.precio = pan.price + [...CATS_EXTRA.map(c => c.key), "salsas"].reduce((t, cat) => t + data[cat].reduce((a, i) => a + i.price * i.qty, 0), 0);
+  return data;
+}
+function seleccionDesdePan(pan) {
+  const sel = { pan: pan.pan && pan.pan.id };
+  [...CATS_EXTRA.map(c => c.key), "salsas"].forEach(cat => {
+    sel[cat] = itemsDeCategoria(pan, cat).map(i => ({ id: i.id, qty: i.qty || 1 }));
+  });
+  return sel;
+}
+// Carga una selección en el editor y abre el constructor (en el paso de carnes)
+function cargarSeleccionEnEditor(sel, tituloHTML, subtitulo) {
+  panEnEdicion = null;
+  limpiarEditor();
+  const marcar = (cat, id, qty) => {
+    let input = document.querySelector('input[name="' + cat + '"][value="' + id + '"]');
+    if (!input && cat === "vegetales") input = document.querySelector('input[name="verduras"][value="' + id + '"]');
+    if (!input || input.disabled) return;
+    input.checked = true;
+    quantities[id] = qty || 1;
+    updateCardControls(id, true);
+    updateQtyDisplay(id);
+  };
+  marcar("pan", sel.pan, 1);
+  [...CATS_EXTRA.map(c => c.key), "salsas"].forEach(cat => (sel[cat] || []).forEach(x => marcar(cat, x.id, x.qty)));
+
+  mostrarPantalla("pantalla-sandwich");
+  document.getElementById("header-titulo").innerHTML = tituloHTML;
+  document.getElementById("header-subtitulo").innerHTML = subtitulo ? _esc(subtitulo) : `Pan ${panesArmados.length + 1} de ${cantidadTotalPanes}`;
+  renderSandwich();
+  startAnimation();
+  actualizarResumenPan();
+  irAPaso(indicePaso("carnes"));
+  if (esMovil()) {
+    const tabIng = document.querySelector('.movil-tab');
+    cambiarVistaMovil('ingredientes', tabIng);
+  }
+}
+
+// ----- Favoritos (guardados en el teléfono del cliente) -----
+const FAV_KEY = "ricodelico_favoritos";
+function leerFavoritos() {
+  try { const a = JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); return Array.isArray(a) ? a : []; }
+  catch (e) { return []; }
+}
+function escribirFavoritos(arr) {
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(arr.slice(0, 12))); } catch (e) { /* ignorar */ }
+}
+function toggleFavoritoPendiente() {
+  favoritoPendiente = !favoritoPendiente;
+  actualizarBtnFavorito();
+}
+function actualizarBtnFavorito() {
+  const b = document.getElementById("btn-fav");
+  if (!b) return;
+  b.classList.toggle("activo", favoritoPendiente);
+  b.textContent = favoritoPendiente ? "⭐ Se guardará en tus favoritos" : "☆ Guardar como mi favorito";
+}
+function registrarFavoritoSiAplica(panData) {
+  if (!favoritoPendiente) return;
+  const sel = seleccionDesdePan(panData);
+  const clave = JSON.stringify(sel);
+  const favs = leerFavoritos().filter(f => JSON.stringify(f.sel) !== clave);
+  let base = panData.pan ? limpiarNombre(panData.pan.nombre) : "Mi pan";
+  for (const c of CARNE_KEYS) { const it = itemsDeCategoria(panData, c)[0]; if (it) { base = limpiarNombre(it.nombre); break; } }
+  favs.unshift({ id: "fav_" + Date.now(), nombre: "Mi favorito · " + base, sel });
+  escribirFavoritos(favs);
+  favoritoPendiente = false;
+  showToast("⭐ Guardado en tus favoritos", "success");
+}
+function renderFavoritos() {
+  const bloque = document.getElementById("favoritos-bloque");
+  const grid = document.getElementById("favoritos-grid");
+  if (!bloque || !grid) return;
+  const lista = leerFavoritos().map(f => ({ f, r: resolverSeleccion(f.sel) })).filter(x => x.r.ok);
+  bloque.style.display = lista.length ? "" : "none";
+  grid.innerHTML = lista.map(({ f, r }) => `
+    <div class="combo-card combo-fav${r.agotado ? " agotado" : ""}">
+      <button type="button" class="fav-borrar" aria-label="Quitar de favoritos" onclick="borrarFavorito('${f.id}')">✕</button>
+      <div class="combo-emoji">⭐</div>
+      <div class="combo-nombre">${_esc(f.nombre)}</div>
+      <div class="combo-ingredientes">${_esc(r.nombres.join(" · "))}</div>
+      ${r.agotado ? '<div class="combo-aviso">Hoy hay un ingrediente agotado</div>' : ''}
+      <div class="combo-precio">${fmt(r.precio)}</div>
+      <div class="combo-botones">
+        <button class="combo-agregar" ${r.agotado ? "disabled" : ""} onclick="agregarFavorito('${f.id}')">Agregar</button>
+        <button class="combo-personalizar" onclick="personalizarFavorito('${f.id}')">Personalizar</button>
+      </div>
+    </div>`).join("");
+}
+function buscarFavorito(id) { return leerFavoritos().find(f => f.id === id); }
+function agregarFavorito(id) {
+  const f = buscarFavorito(id);
+  if (!f) return;
+  const r = resolverSeleccion(f.sel);
+  if (!r.ok || r.agotado) { showToast("Este favorito no está disponible hoy", "remove"); return; }
+  if (!asegurarCupo()) return;
+  const panData = construirPanDesdeSeleccion(f.sel);
+  panesArmados.push(panData);
+  ultimoPanArmado = JSON.parse(JSON.stringify(panData));
+  showToast("⭐ Favorito agregado", "success");
+  mostrarPantalla("pantalla-resumen");
+  renderResumenGeneral();
+}
+function personalizarFavorito(id) {
+  const f = buscarFavorito(id);
+  if (!f) return;
+  if (!asegurarCupo()) return;
+  cargarSeleccionEnEditor(f.sel, 'PERSONALIZA <span>TU FAVORITO</span>', f.nombre);
+}
+function borrarFavorito(id) {
+  escribirFavoritos(leerFavoritos().filter(f => f.id !== id));
+  renderFavoritos();
 }
 
 // =========================================================
