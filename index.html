@@ -1051,6 +1051,12 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
   body:has(#pantalla-sandwich.activa) .paso-texto{font-size:17px;letter-spacing:1px}
   body:has(#pantalla-sandwich.activa) .categoria-section>*:first-child{font-size:18px!important;letter-spacing:1px!important;white-space:normal!important}
 }
+/* --- Presentación: entero / rebanado / rallado --- */
+.vac-pres{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 10px}
+.vac-pres-op{flex:1;min-width:84px;padding:8px 10px;border-radius:99px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;cursor:pointer}
+.vac-pres-op.sel{background:var(--accent);border-color:var(--accent);color:#FFFBEE}
+.vac-prod .vac-pres{margin:6px 0 0}
+.vac-prod .vac-pres-op{flex:0 0 auto;min-width:0;padding:4px 10px;font-size:13px}
 </style>
 </head>
 <body class="con-fondo">
@@ -1685,9 +1691,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.27"></script>
-<script src="combos.js?v=3.27"></script>
-<script src="vacio.js?v=3.27"></script>
-<script src="app.js?v=3.27"></script>
+<script src="ingredients.js?v=3.28"></script>
+<script src="combos.js?v=3.28"></script>
+<script src="vacio.js?v=3.28"></script>
+<script src="app.js?v=3.28"></script>
 </body>
 </html>
