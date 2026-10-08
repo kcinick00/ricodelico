@@ -8,10 +8,15 @@
 <meta property="og:title" content="Ricodélico · Charcutería artesanal">
 <meta property="og:description" content="Bandejas para eventos y sándwiches armados a tu gusto. Pide por WhatsApp.">
 <meta property="og:image" content="https://ricodelico.com/images/og-image.jpg">
+<link rel="canonical" href="https://ricodelico.com/">
 <meta property="og:url" content="https://ricodelico.com/">
+<meta property="og:image:alt" content="Ricodélico · Charcutería artesanal y quesos en Maracaibo">
 <meta property="og:locale" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ricodelico.com/images/og-image.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FoodEstablishment","name":"Ricodélico · Charcutería y Ricos Quesos","alternateName":"Ricodélico (antes Rico Queso)","url":"https://ricodelico.com/","image":"https://ricodelico.com/images/og-image.jpg","telephone":"+58-412-5296998","servesCuisine":"Charcutería artesanal, quesos, embutidos","priceRange":"$$","address":{"@type":"PostalAddress","streetAddress":"Calle 41, sector Canaima, local 4","addressLocality":"Maracaibo","addressRegion":"Zulia","postalCode":"4005","addressCountry":"VE"},"areaServed":"Zona norte de Maracaibo","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:30","closes":"19:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"08:30","closes":"15:00"}]}
+</script>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -1082,6 +1087,17 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 .extra-chip{padding:10px 16px;border-radius:99px;border:2px solid var(--border);background:var(--card);font-weight:800;font-size:15px;cursor:pointer}
 .extra-chip.sel{background:var(--accent);border-color:var(--accent);color:#FFFBEE}
 .extra-nota{grid-column:1/-1;font-size:12px;color:var(--text-muted);margin-top:4px}
+/* --- Pie de página con datos del negocio --- */
+.footer-info{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:1100px;margin:26px auto 0;text-align:left}
+.footer-col{font-size:14px;line-height:1.55;color:var(--text)}
+.footer-col h3{margin:0 0 6px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--accent);font-weight:400}
+.footer-col address{font-style:normal}
+.footer-col a{display:block;color:var(--accent);font-weight:700;text-decoration:none;margin-top:2px}
+.footer-col a:hover{text-decoration:underline}
+.footer-ig{color:var(--text-muted);margin-top:2px}
+.footer-copy{margin-top:26px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+@media (max-width:900px){.footer-info{grid-template-columns:1fr 1fr;gap:18px}}
+@media (max-width:520px){.footer-info{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="con-fondo">
@@ -1090,7 +1106,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
   <img src="images/logo-horizontal.png" alt="Ricodélico Charcutería Artesanal" class="logo-header" onclick="location.reload()">
   <div class="header-texto">
     <h1 id="header-titulo" class="sr-only">RICODÉLICO <span>CHARCUTERÍA ARTESANAL</span></h1>
-    <p id="header-subtitulo">Sabor autentico elaborado con dedicación <em>para USTED</em></p>
+    <p id="header-subtitulo">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
   </div>
   <button id="btn-volver" class="btn-volver" style="display: none;" onclick="volverAtras()">← Volver</button>
 </header>
@@ -1103,7 +1119,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
       <div class="hero-inner">
         <img class="hero-logo" src="images/logo-claro.png" alt="Ricodélico Charcutería Artesanal">
         <div class="hero-texto">
-          <h1 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h1>
+          <h2 class="hero-title">¿QUÉ DESEA <span>HOY?</span></h2>
           <p class="hero-sub">Sabor auténtico elaborado con dedicación <em>para USTED</em></p>
           <div class="hero-actions">
             <button type="button" class="hero-btn hero-btn-primary" onclick="abrirCharcuteria()">🥓 ¿Charcutería?</button>
@@ -1186,6 +1202,32 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     <footer class="home-footer">
       <img src="images/logo-horizontal.png" alt="Ricodélico" class="footer-logo">
       <p>Rico, delicioso y auténtico</p>
+      <div class="footer-info">
+        <div class="footer-col">
+          <h3>📍 Dónde estamos</h3>
+          <address>Calle 41, sector Canaima, local 4<br>Maracaibo, Zulia, Venezuela</address>
+          <a href="https://www.google.com/maps/search/?api=1&query=Calle+41+sector+Canaima+local+4+Maracaibo+Zulia" target="_blank" rel="noopener">Cómo llegar →</a>
+        </div>
+        <div class="footer-col">
+          <h3>🕒 Horario</h3>
+          <div>Lunes a viernes: 8:30 am – 7:00 pm</div>
+          <div>Sábados: 8:30 am – 3:00 pm</div>
+          <div>Domingos: cerrado</div>
+        </div>
+        <div class="footer-col">
+          <h3>🛵 Entrega</h3>
+          <div>Retiro en tienda</div>
+          <div>Delivery en la zona norte</div>
+          <div>Costo de delivery: lo confirmamos por WhatsApp</div>
+        </div>
+        <div class="footer-col">
+          <h3>📞 Contacto</h3>
+          <a href="tel:+584125296998">0412-5296998</a>
+          <a class="js-wa" href="#">Escríbenos por WhatsApp</a>
+          <div class="footer-ig">Instagram @ricodelico · próximamente</div>
+        </div>
+      </div>
+      <div class="footer-copy">© <span id="anio-actual">2026</span> Ricodélico · Charcutería artesanal · Maracaibo, Venezuela</div>
     </footer>
 
   </div>
@@ -1196,7 +1238,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
   <div class="platters-section">
     <div class="section-header">
       <h2>Bandejas para Eventos</h2>
-      <p>Mira nuestras opciones y armá tu pedido al final.</p>
+      <p>Mira nuestras opciones y arma tu pedido al final.</p>
     </div>
 
     <div class="aviso-anticipo">
@@ -1265,7 +1307,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
     <div class="order-panel" id="order-panel">
       <div class="order-panel-header">
         <span class="order-panel-icon">🛒</span>
-        <div><h2>Armá tu pedido</h2><p>Elige el tamaño, la base y los extras</p></div>
+        <div><h2>Arma tu pedido</h2><p>Elige el tamaño, la base y los extras</p></div>
       </div>
 
       <div class="order-block">
@@ -1320,7 +1362,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
       </div>
 
       <div class="order-block">
-        <span class="order-block-label">4️⃣ Agregá extras</span>
+        <span class="order-block-label">4️⃣ Agrega extras</span>
         <div class="checkbox-group">
           <label><input type="checkbox" class="extra-panel" value="3.50" onchange="actualizarPanelPedido()"> + Frutas (+$3.50)</label>
           <label><input type="checkbox" class="extra-panel" value="4.00" onchange="actualizarPanelPedido()"> + Frutos Secos (+$4.00)</label>
@@ -1636,10 +1678,10 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
         <select id="payment-method">
           <option value="">Selecciona una opción...</option>
           <option value="Efectivo">💵 Efectivo</option>
-          <option value="Tarjeta de crédito">💳 Tarjeta de crédito</option>
-          <option value="Tarjeta de débito">💳 Tarjeta de débito</option>
-          <option value="Transferencia">📱 Transferencia / SPEI</option>
-          <option value="PayPal">🅿️ PayPal</option>
+          <option value="Pago móvil">📱 Pago móvil</option>
+          <option value="Tarjeta">💳 Tarjeta</option>
+          <option value="Zelle">🏦 Zelle</option>
+          <option value="Binance">🪙 Binance</option>
         </select>
       </div>
       
@@ -1716,6 +1758,7 @@ body:has(#pantalla-bandejas.activa) #btn-confirmar,body:has(#pantalla-charcuteri
 <script>
 /* === CONFIGURA AQUÍ TU WHATSAPP (código de país + número, solo dígitos). Ej. México: 521234567890 === */
 const NEGOCIO = { whatsapp: "584125296998", mensaje: "Hola Ricodélico, quiero hacer un pedido" };
+(function(){var y=document.getElementById('anio-actual');if(y)y.textContent=new Date().getFullYear();})();
 document.querySelectorAll('.js-wa').forEach(function(a){
   var ok = /^\d{10,15}$/.test(NEGOCIO.whatsapp);
   a.href = ok ? 'https://wa.me/' + NEGOCIO.whatsapp + '?text=' + encodeURIComponent(NEGOCIO.mensaje) : '#';
@@ -1723,9 +1766,9 @@ document.querySelectorAll('.js-wa').forEach(function(a){
   a.addEventListener('click', function(e){ if(!ok){ e.preventDefault(); alert('Falta configurar tu número de WhatsApp en index.html (NEGOCIO.whatsapp).'); } });
 });
 </script>
-<script src="ingredients.js?v=3.32"></script>
-<script src="combos.js?v=3.32"></script>
-<script src="vacio.js?v=3.32"></script>
-<script src="app.js?v=3.32"></script>
+<script src="ingredients.js?v=3.34"></script>
+<script src="combos.js?v=3.34"></script>
+<script src="vacio.js?v=3.34"></script>
+<script src="app.js?v=3.34"></script>
 </body>
 </html>
