@@ -343,6 +343,7 @@ function elegirTamanoBandeja(tam, ev) {
     if (ev && ev.target && ev.target.closest && ev.target.closest('.platter-gallery img')) return;
     const radio = document.querySelector('input[name="tamano-bandeja"][value="' + tam + '"]');
     if (!radio) return;
+    if (radio.disabled) { if (typeof showToast === 'function') showToast('Esa bandeja no está disponible hoy', 'remove'); return; }
     radio.checked = true;
     actualizarPanelPedido();
     if (typeof showToast === 'function') showToast('✓ Bandeja ' + obtenerNombreTamano() + ' elegida · mira "Arma tu pedido" abajo', 'info');
@@ -355,7 +356,7 @@ function sincronizarTarjetasBandeja() {
         const activa = !!sel && c.getAttribute('data-size') === sel.value;
         c.classList.toggle('seleccionada', activa);
         const b = c.querySelector('.platter-elegir');
-        if (b) b.textContent = activa ? '✓ Bandeja elegida' : 'Elegir esta bandeja';
+        if (b) b.textContent = c.classList.contains('agotada') ? 'No disponible' : (activa ? '✓ Bandeja elegida' : 'Elegir esta bandeja');
     });
 }
 
@@ -1667,6 +1668,62 @@ function parseBool(v) {
 const EXTRAS_CATS = ["extras", "extra", "adicionales", "adicional", "bebidas", "bebida", "papitas", "acompanantes"];
 const extrasMenu = [];
 
+// Precios de bandejas (filas "bandejas" y "extras bandeja" del Sheets; si no hay, quedan los del HTML)
+const bandejasPrecios = { tamanos: {}, extras: {}, agotado: {} };
+function _esAgotadoFila(v) {
+  const s = String(v == null ? "" : v).trim().toLowerCase();
+  return s === "false" || s === "falso" || s === "0" || s === "no" || s === "agotado" || s === "no hay";
+}
+const _fmtP = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
+function aplicarPreciosBandejas() {
+  Object.entries(bandejasPrecios.tamanos).forEach(([t, p]) => {
+    if (!(p > 0)) return;
+    const radio = document.querySelector('input[name="tamano-bandeja"][value="' + t + '"]');
+    if (radio) radio.setAttribute("data-price", p);
+    document.querySelectorAll('[data-bandeja-tag="' + t + '"],[data-bandeja-base="' + t + '"]').forEach(e => e.textContent = _fmtP(p));
+    document.querySelectorAll('[data-bandeja-precio="' + t + '"]').forEach(e => e.textContent = "$" + p.toFixed(2));
+  });
+  Object.entries(bandejasPrecios.extras).forEach(([x, p]) => {
+    if (!(p >= 0)) return;
+    const chk = document.querySelector('.extra-panel[data-extra="' + x + '"]');
+    if (chk) chk.value = p.toFixed(2);
+    document.querySelectorAll('[data-extra-precio="' + x + '"]').forEach(e => e.textContent = "$" + p.toFixed(2));
+  });
+  // Disponibilidad: "No hay" si la fila dice disponible = FALSE
+  ["grande", "mediana", "pequena"].forEach(t => {
+    const sin = !!bandejasPrecios.agotado[t];
+    const card = document.querySelector('.platter-card[data-size="' + t + '"]');
+    const radio = document.querySelector('input[name="tamano-bandeja"][value="' + t + '"]');
+    if (card) {
+      card.classList.toggle("agotada", sin);
+      const gal = card.querySelector(".platter-gallery");
+      let tag = card.querySelector(".platter-agotado-tag");
+      if (sin && gal && !tag) { tag = document.createElement("span"); tag.className = "platter-agotado-tag"; tag.textContent = "NO HAY HOY"; gal.appendChild(tag); }
+      if (!sin && tag) tag.remove();
+      const btn = card.querySelector(".platter-elegir");
+      if (btn) { btn.disabled = sin; btn.textContent = sin ? "No disponible" : "Elegir esta bandeja"; }
+    }
+    if (radio) {
+      radio.disabled = sin;
+      if (sin && radio.checked) radio.checked = false;
+      const lab = radio.closest(".size-option");
+      if (lab) lab.classList.toggle("agotada", sin);
+    }
+  });
+  Object.keys(bandejasPrecios.extras).forEach(x => {
+    const sin = !!bandejasPrecios.agotado["extra:" + x];
+    const chk = document.querySelector('.extra-panel[data-extra="' + x + '"]');
+    if (!chk) return;
+    chk.disabled = sin;
+    if (sin) chk.checked = false;
+    const lab = chk.closest("label");
+    if (lab) lab.classList.toggle("agotada", sin);
+    const sp = lab && lab.querySelector("[data-extra-precio]");
+    if (sp) sp.textContent = sin ? "no hay" : "$" + bandejasPrecios.extras[x].toFixed(2);
+  });
+  if (typeof actualizarPanelPedido === "function") actualizarPanelPedido();
+}
+
 async function cargarMenuDesdeSheets() {
   if (!MENU_CSV_URL || MENU_CSV_URL.includes("PEGA_AQUÍ")) {
     console.warn("[Menu] No hay URL configurada. Usando ingredients.js local.");
@@ -1681,11 +1738,25 @@ async function cargarMenuDesdeSheets() {
 
     const agrupado = {};
     extrasMenu.length = 0;
+    bandejasPrecios.tamanos = {};
+    bandejasPrecios.extras = {};
+    bandejasPrecios.agotado = {};
     filas.forEach(fila => {
       const cat = normalizarCategoria(fila.categoria);
       const id = (fila.id || "").trim();
       if (!cat || !id) return;
       const disponible = parseBool(fila.disponible);
+      const catPlano = String(fila.categoria || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\s_-]+/g, "");
+      if (catPlano === "bandejas" || catPlano === "bandeja") {
+        bandejasPrecios.tamanos[id.toLowerCase()] = parseFloat(String(fila.precio).replace(",", "."));
+        bandejasPrecios.agotado[id.toLowerCase()] = _esAgotadoFila(fila.disponible);
+        return;
+      }
+      if (catPlano === "extrasbandeja" || catPlano === "extrasbandejas") {
+        bandejasPrecios.extras[id.toLowerCase()] = parseFloat(String(fila.precio).replace(",", "."));
+        bandejasPrecios.agotado["extra:" + id.toLowerCase()] = _esAgotadoFila(fila.disponible);
+        return;
+      }
       if (EXTRAS_CATS.includes(cat)) {
         extrasMenu.push({ id, name: fila.nombre || id, price: parseFloat(fila.precio) || 0,
           image: fila.image || "", _agotado: !disponible });
@@ -1710,6 +1781,8 @@ async function cargarMenuDesdeSheets() {
 
     menuData = agrupado;
     menuListo = true;
+    try { localStorage.setItem("bandejas_cache", JSON.stringify(bandejasPrecios)); } catch (e) { /* ignorar */ }
+    aplicarPreciosBandejas();
 
     try {
       localStorage.setItem("menu_cache", JSON.stringify({ ts: Date.now(), data: agrupado }));
@@ -1724,6 +1797,10 @@ async function cargarMenuDesdeSheets() {
       if (cache && cache.data) {
         menuData = cache.data;
         menuListo = true;
+        try {
+          const bc = JSON.parse(localStorage.getItem("bandejas_cache") || "null");
+          if (bc) { bandejasPrecios.tamanos = bc.tamanos || {}; bandejasPrecios.extras = bc.extras || {}; bandejasPrecios.agotado = bc.agotado || {}; aplicarPreciosBandejas(); }
+        } catch (e2) { /* ignorar */ }
         if (typeof buildAllGroups === "function") buildAllGroups();
         showToast("Usando menú guardado (sin conexión)", "info");
         return true;
